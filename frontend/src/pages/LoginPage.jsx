@@ -1,27 +1,3 @@
-// import React from 'react';
-// // import { makeStyles } from '@mui/styles';
-// // import { useTheme } from '@mui/material/styles';
-// // import useMediaQuery from '@mui/material/useMediaQuery';
-// // import { Grid, Typography } from '@mui/material';
-// // import { Form, Formik } from 'formik';
-// // import * as yup from 'yup';
-// // import EButton from '../components/EButton';
-// // import FormElement from '../form/FormElement';
-
-// // const useStyles = makeStyles(theme => ({
-
-// // }));
-
-// function LoginPage() {
-//     // const classes = useStyles();
-//     // const theme = useTheme();
-//     // const atLeastScreenSmall = useMediaQuery(theme.breakpoints.up('sm'));
-
-//     return "Sign Up Page";
-// }
-
-// export default LoginPage;
-
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -35,13 +11,15 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { theme } from '../theme';
+import {ThemeProvider } from '@mui/material/styles';
+import { useFormik } from 'formik';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
+      <Link color="inherit" href="e-Auction">
         Your Website
       </Link>{' '}
       {new Date().getFullYear()}
@@ -50,7 +28,6 @@ function Copyright(props) {
   );
 }
 
-const theme = createTheme();
 
 export default function LoginPage() {
   const handleSubmit = (event) => {
@@ -62,6 +39,31 @@ export default function LoginPage() {
       password: data.get('password'),
     });
   };
+
+  const validate = values => {
+    const errors = {};
+    
+    if (!values.email) {
+      errors.email = 'Required';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+      errors.email = 'Invalid email address';
+    }
+  
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validate,
+    onSubmit: values => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
+
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -81,7 +83,7 @@ export default function LoginPage() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -91,7 +93,11 @@ export default function LoginPage() {
               name="email"
               autoComplete="email"
               autoFocus
+              onChange={formik.handleChange}
+              value={formik.values.email}
+          
             />
+            {formik.errors.email ? <div>{formik.errors.email}</div> : null}
             <TextField
               margin="normal"
               required
@@ -101,6 +107,8 @@ export default function LoginPage() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={formik.handleChange}
+              value={formik.values.password}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -121,7 +129,7 @@ export default function LoginPage() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="signup" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

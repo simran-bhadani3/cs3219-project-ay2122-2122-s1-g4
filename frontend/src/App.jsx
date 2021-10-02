@@ -10,6 +10,7 @@ import BidsPage from './pages/BidsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import AuctionRoomPage from './AuctionRoom/AuctionRoomPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { pagesLoggedIn, pagesLoggedOut } from './resources/constants';
@@ -36,6 +37,7 @@ function App() {
             <Route exact path="/signup" component={SignUpPage} />
             <Route exact path="/login" component={LoginPage} />
             <Route exact path="/" component={LoginPage} />
+            <Route exact path="/auction" component={AuctionRoomPage} />
             <Route component={NotFoundPage} />
           </Switch>
           <Footer />
