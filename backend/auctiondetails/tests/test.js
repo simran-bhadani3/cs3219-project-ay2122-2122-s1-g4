@@ -38,8 +38,26 @@ describe("Auction Details", function() {
         end_time: "2022-10-05T16:01:20.807Z"
     }
 
+    const invalidAuctionDetail1 = {
+        room_display_name: "sampleRoom3",
+        auction_item_name: "sampleAuctionItem2",
+        owner_id: "000011112222", 
+    }
+
     let newAuctionDetailId;
     describe("POST /api/auctiondetails/", () => {
+        it("should throw error when properties are missing", (done) => {
+            chai.request(app)
+                .post('/api/auctiondetails')
+                .send(invalidAuctionDetail1)
+                .end((err, res) => {
+                    res.should.have.status(500);
+                    res.body.should.be.an('object'); 
+                    res.body.should.have.property('message');
+                    done();
+                });
+        });
+
         it("should create a new auction detail", (done) => {
             chai.request(app)
                 .post('/api/auctiondetails')
