@@ -16,7 +16,7 @@ exports.create = (req, res) => {
     // Validate request
     if (!req.body) {
         return res.status(400).send({
-            message: "Please fill all required field"
+            message: "Please fill all required fields"
         });
     }
     var id = new mongoose.Types.ObjectId();
@@ -64,7 +64,7 @@ exports.update = (req, res) => {
     // Validate Request
     if (!req.body) {
         return res.status(400).send({
-            message: "Please fill all required field"
+            message: "Please fill all required fields"
         });
     }
     // Find auctiondetail and update it with the request body
@@ -89,7 +89,7 @@ exports.update = (req, res) => {
                 });
             }
             return res.status(500).send({
-                message: "Error updating auctiondetail with id " + req.params.id
+                message: err.message
             });
         });
 };
@@ -99,14 +99,14 @@ exports.delete = (req, res) => {
         .then(auctiondetail => {
             if (!auctiondetail) {
                 return res.status(404).send({
-                    message: "Auctiondetail not found with id " + req.params.id
+                    message: "auctiondetail not found with id " + req.params.id
                 });
             }
             res.send({ message: "auctiondetail deleted successfully!" });
         }).catch(err => {
             if (err.kind === 'ObjectId' || err.name === 'NotFound') {
                 return res.status(404).send({
-                    message: "uauctiondetailser not found with id " + req.params.id
+                    message: "auctiondetail not found with id " + req.params.id
                 });
             }
             return res.status(500).send({

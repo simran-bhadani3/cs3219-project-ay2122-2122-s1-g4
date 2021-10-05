@@ -1,0 +1,122 @@
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const app = require('../server')
+
+// Configure chai
+chai.use(chaiHttp);
+chai.should();
+
+describe("Auction Details", function() {
+    describe("GET /", () => {
+        it("should suceed (dummy home page)", (done) => {
+             chai.request(app)
+                 .get('/')
+                 .end((err, res) => {
+                     res.should.have.status(200);
+                     done();
+                  });
+         });
+    });
+
+    describe("GET /api/auctiondetails", () => {
+        it("should get all auction details", (done) => {
+             chai.request(app)
+                 .get('/api/auctiondetails')
+                 .end((err, res) => {
+                     res.should.have.status(200);
+                     res.body.should.be.a('array');
+                     done();
+                  });
+         });
+    });
+
+    const sampleAuctionDetail1 = {
+        room_display_name: "sampleRoom1",
+        auction_item_name: "sampleAuctionItem1",
+        owner_id: "000011112222", 
+        start_time: "2022-01-05T16:01:20.807Z",
+        end_time: "2022-10-05T16:01:20.807Z"
+    }
+
+    let newAuctionDetailId;
+    describe("POST /api/auctiondetails/", () => {
+        it("should create a new auction detail", (done) => {
+            chai.request(app)
+                .post('/api/auctiondetails')
+                .send(sampleAuctionDetail1)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.an('object'); 
+                    res.body.should.have.property('room_display_name')
+                        .which.is.a('string').eq("sampleRoom1")
+                    res.body.should.have.property('_id');
+                    newAuctionDetailId = res.body._id;
+                    done();
+                });
+         });
+    });
+
+    describe("GET /api/auctiondetails", () => {
+        it("should get specified auction detail", (done) => {
+             chai.request(app)
+                 .get(`/api/auctiondetails/${newAuctionDetailId}`)
+                 .end((err, res) => {
+                     res.should.have.status(200);
+                     res.body.should.be.an('object');
+                     done();
+                  });
+         });
+    });
+
+    describe("PATCH /api/auctiondetails/:id", () => {
+        const sampleAuctionDetail2 = {
+            room_display_name: "sampleRoom2"
+        }
+
+        it("should patch an existing auction detail", (done) => {
+            chai.request(app)
+                .patch(`/api/auctiondetails/${newAuctionDetailId}`)
+                .send(sampleAuctionDetail2)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.an('object'); 
+                    res.body.should.have.property('room_display_name')
+                        .which.is.a('string').eq("sampleRoom2")
+                    done();
+                });
+         });
+
+         it("should return an error when start time is in invalid format", (done) => {
+            chai.request(app)
+                .patch(`/api/auctiondetails/${newAuctionDetailId}`)
+                .send({start_time: "invalid format"})
+                .end((err, res) => {
+                    res.should.have.status(500);
+                    res.body.should.be.an('object'); 
+                    res.body.should.have.property('message');            
+                    done();
+                });
+         });
+    });
+
+    describe("DELETE /api/auctiondetails/:id", () => {
+        it("should delete an existing auction detail", (done) => {
+            chai.request(app)
+                .delete(`/api/auctiondetails/${newAuctionDetailId}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.an('object'); 
+                    done();
+                });
+         });
+
+        it("should return 404 for a non-existant auction detail to delete", (done) => {
+            chai.request(app)
+                .delete(`/api/auctiondetails/${newAuctionDetailId}`)
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+    });
+});
