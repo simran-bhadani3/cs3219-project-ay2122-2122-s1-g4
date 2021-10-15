@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "mocha --require babel-register tests/*.js --exit"
+    "test": "mocha --require babel-register tests/*.js --exit",
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
