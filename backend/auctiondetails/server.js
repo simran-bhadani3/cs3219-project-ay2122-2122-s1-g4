@@ -12,7 +12,8 @@ const dbConfig = require('./config/db.config.js');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 // Connecting to the database
-mongoose.connect(dbConfig.url, {
+console.log(dbConfig.productionurl);
+mongoose.connect(dbConfig.productionurl, {
   useNewUrlParser: true
   }).then(() => {
     console.log("Successfully connected to the database");
