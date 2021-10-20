@@ -1,5 +1,6 @@
 # Starting the server
 `npm install nodemon`
+
 Run `npm run dev` to start with nodemon
 
 # Check connection
