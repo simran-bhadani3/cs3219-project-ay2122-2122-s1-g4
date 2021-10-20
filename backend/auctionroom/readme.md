@@ -22,3 +22,16 @@ GET from http://localhost:3000/api/room/getbid/:roomname/:username
 ```
 http://localhost:3000/api/room/getbid/room1/user1
 ```
+
+# Add a new auction room
+POST to http://localhost:3000/api/room/newroom
+
+```
+{
+    "roomname": "room3"
+}
+```
+
+# Delete an auction room
+
+DELETE http://localhost:3000/api/room/deleteroom/:roomname
