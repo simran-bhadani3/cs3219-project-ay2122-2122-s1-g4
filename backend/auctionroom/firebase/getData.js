@@ -3,6 +3,7 @@ module.exports = {
 	getBid: function (req, res) {
 		const bidRef = firebase.database().ref();
 		bidRef
+			.child("rooms")
 			.child(req.params.roomname)
 			.child("bids")
 			.child(req.params.username)
@@ -12,7 +13,7 @@ module.exports = {
 				if (snapshot.exists()) {
 					res.json({ bid: snapshot.val() });
 				} else {
-					res.json({ bid: 0 });
+					res.json({ bid: "Bid does not exist"});
 				}
 			})
 			.catch((error) => {
