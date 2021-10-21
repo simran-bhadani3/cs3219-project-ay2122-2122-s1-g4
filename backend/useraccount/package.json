@@ -1,0 +1,21 @@
+{
+	"name": "useraccount",
+	"version": "1.0.0",
+	"main": "server.js",
+	"license": "MIT",
+	"devDependencies": {
+		"nodemon": "^2.0.13"
+	},
+	"dependencies": {
+		"bcryptjs": "^2.4.3",
+		"express": "^4.17.1",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^6.0.9",
+		"passport-jwt": "^4.0.0",
+		"validator": "^13.6.0",
+		"passport": "^0.4.1"
+	},
+	"scripts": {
+		"dev": "nodemon -L server.js"
+	}
+}
