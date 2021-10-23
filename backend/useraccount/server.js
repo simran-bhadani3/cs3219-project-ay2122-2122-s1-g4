@@ -24,6 +24,8 @@ const userAccounts = require("./src/routes/User");
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+const cors = require('cors');
+app.use(cors())
 app.use("/api/user", userAccounts);
 
 const port = process.env.PORT || 8080;

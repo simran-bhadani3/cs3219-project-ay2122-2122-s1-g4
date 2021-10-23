@@ -66,6 +66,7 @@ function Header({ pages }) {
     const logout = () => {
         // perform log out
         history.push("/");
+        logoutAuth();
     }
 
     const renderLinks = (isMobile = false) => {
@@ -131,5 +132,12 @@ function Header({ pages }) {
         </AppBar >
     );
 }
+
+function logoutAuth() {
+    console.log(JSON.parse(localStorage.getItem('user')));
+    localStorage.removeItem("user");
+    console.log('logout')
+    console.log(JSON.parse(localStorage.getItem('user')));
+  }
 
 export default Header;

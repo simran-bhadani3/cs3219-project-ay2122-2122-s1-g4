@@ -12,8 +12,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { theme } from '../theme';
-import {ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import { useFormik } from 'formik';
+const axios = require('axios');
 
 function Copyright(props) {
   return (
@@ -27,28 +28,39 @@ function Copyright(props) {
     </Typography>
   );
 }
+async function login(values) {
+   await axios.post('http://localhost:8080/api/user/login', values)
+        .then(response => {
+          console.log(response);
+          alert('Login Success!');
+          if (response.data['jwtToken']) {
+            localStorage.setItem("user", JSON.stringify(response.data['jwtToken']));
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+}
+function logout() {
+  localStorage.removeItem("user");
+}
 
+
+function getCurrentUser() {
+  console.log(JSON.parse(localStorage.getItem('user')));
+  return JSON.parse(localStorage.getItem('user'));
+}
 
 export default function LoginPage() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
-
   const validate = values => {
     const errors = {};
-    
+
     if (!values.email) {
       errors.email = 'Required';
     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
       errors.email = 'Invalid email address';
     }
-  
+
     return errors;
   };
 
@@ -58,12 +70,13 @@ export default function LoginPage() {
       password: '',
     },
     validate,
-    onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async values => {
+      await login(values);
+      // getCurrentUser();
     },
   });
 
-  
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -95,7 +108,7 @@ export default function LoginPage() {
               autoFocus
               onChange={formik.handleChange}
               value={formik.values.email}
-          
+
             />
             {formik.errors.email ? <div>{formik.errors.email}</div> : null}
             <TextField
