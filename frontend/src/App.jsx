@@ -37,7 +37,7 @@ function App() {
             <Route exact path="/signup" component={SignUpPage} />
             <Route exact path="/login" component={LoginPage} />
             <Route exact path="/" component={LoginPage} />
-            <Route exact path="/auction" component={AuctionRoomPage} />
+            <Route exact path="/auction/:id" component={AuctionRoomPage} />
             <Route component={NotFoundPage} />
           </Switch>
           <Footer />

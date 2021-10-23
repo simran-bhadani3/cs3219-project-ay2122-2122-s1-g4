@@ -27,6 +27,14 @@ import { ThemeProvider } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import clsx from "clsx";
 import { textAlign } from "@mui/system";
+import Paper from '@mui/material/Paper';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import Fab from '@mui/material/Fab';
+import SendIcon from '@mui/icons-material/Send';
+import ChatSection from './ChatSection';
+import useChat from "./useChat";
+import BidCard from './chat/BidCard';
 
 function Copyright(props) {
     return (
@@ -73,8 +81,10 @@ const useStyles = makeStyles({
 });
 
 
-export default function AuctionRoomDisplay() {
-
+export default function AuctionRoomDisplay(props) {
+    const roomId = props.match.params.id;
+    const { messages, sendMessage, bids, sendBid } = useChat(roomId);
+    const [newBid, setNewBid] = React.useState("");
     const classes = useStyles();
     // Pass the useFormik() hook initial form values, a validate function that will be called when
     // form values change or fields are blurred, and a submit function that will
@@ -96,6 +106,27 @@ export default function AuctionRoomDisplay() {
 
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
+    };
+
+
+    const handleNewBidChange = (event) => {
+        setNewBid(event.target.value);
+    };
+    // sendBid(newBid);
+    const handleSendBid = () => {
+        console.log('bid sent!');
+        console.log(newBid);
+        sendBid(newBid);
+        setNewBid("");
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            console.log('bid sent!');
+            console.log(newBid);
+            sendBid(newBid);
+            setNewBid("");
+        }
     };
 
     return (
@@ -121,33 +152,36 @@ export default function AuctionRoomDisplay() {
                         />
                     </ListItem>
                 </Grid>
-                <Grid item container direction="column" xs spacing={0}>
+                <Grid item container direction="column" xs={6} spacing={0}>
                     <Grid item xs>
                         <div className={clsx(classes.container, classes.containerTall)}>
-                            3
+                            Picture
+                            {<BidCard data={bids} />}
                         </div>
                     </Grid>
                     <Grid item xs={1} direction="row" sx={{
                         display: 'flex',
                         alignItems: 'center',
                     }} >
-                        <FormControl fullWidth sx={{ m: 1 }}>
+                        <FormControl fullWidth sx={{ m: 1 } }>
                             <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
-                            <OutlinedInput
+                            <OutlinedInput onKeyPress={handleKeyPress}
                                 id="outlined-adornment-amount"
-                                value={values.amount}
-                                onChange={handleChange('amount')}
+                                value={newBid}
+                                onChange={handleNewBidChange}
                                 startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                 label="Amount"
+                                autoComplete = 'off'
                             />
                         </FormControl>
-                        <Button variant="contained" sx={{mr: 1 }}>Bid</Button>
+                        <Button onClick={handleSendBid} variant="contained" sx={{ mr: 1 }}>Bid</Button>
                     </Grid>
                 </Grid>
-                <Grid item xs={3}>
-                    <div className={classes.container}>Chat to be implemented</div>
-                </Grid>
+                <ChatSection roomId={roomId} messages={messages} sendMessage={sendMessage} />
             </Grid>
+
+
+
             {/* <Container component="main" maxWidth="lg">
                 <CssBaseline />
                 {/* <Box
