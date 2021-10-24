@@ -3,7 +3,7 @@ import socketIOClient from "socket.io-client";
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const NEW_BID_EVENT = "newBid";
-const SOCKET_SERVER_URL = "http://localhost:9000";
+const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver||'localhost:9000'}`;
 
 const useChat = (roomId) => {
     const [messages, setMessages] = useState([]);

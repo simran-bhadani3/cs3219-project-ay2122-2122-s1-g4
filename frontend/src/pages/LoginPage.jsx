@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import { theme } from '../theme';
 import { ThemeProvider } from '@mui/material/styles';
 import { useFormik } from 'formik';
+import { AuthContext } from "../AuthContext";
 const axios = require('axios');
 
 function Copyright(props) {
@@ -28,19 +29,8 @@ function Copyright(props) {
     </Typography>
   );
 }
-async function login(values) {
-   await axios.post('http://localhost:8080/api/user/login', values)
-        .then(response => {
-          console.log(response);
-          alert('Login Success!');
-          if (response.data['jwtToken']) {
-            localStorage.setItem("user", JSON.stringify(response.data['jwtToken']));
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-}
+
+
 function logout() {
   localStorage.removeItem("user");
 }
@@ -52,6 +42,24 @@ function getCurrentUser() {
 }
 
 export default function LoginPage() {
+  const authContext = useContext(AuthContext);
+  const dockerauthserver = process.env.REACT_APP_dockerauthserver;
+  async function login(values) {
+    await axios.post(`http://${dockerauthserver||'localhost:8000'}/api/user/login`, values)
+      .then(response => {
+        console.log(response);
+        alert('Login Success!');
+        if (response.data['jwtToken']) {
+          localStorage.setItem("user", JSON.stringify(response.data['jwtToken']));
+          authContext.login(response.data['jwtToken']);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log(dockerauthserver);
+      });
+  }
+
   const validate = values => {
     const errors = {};
 
@@ -94,7 +102,7 @@ export default function LoginPage() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Login
           </Typography>
           <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -133,7 +141,7 @@ export default function LoginPage() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Login
             </Button>
             <Grid container>
               <Grid item xs>

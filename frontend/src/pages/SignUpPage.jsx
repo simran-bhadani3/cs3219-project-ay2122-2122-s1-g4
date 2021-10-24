@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { theme } from '../theme';
 import { ThemeProvider } from '@mui/material/styles';
+const axios = require('axios');
 
 function Copyright(props) {
     return (
@@ -74,13 +75,13 @@ export default function SignUp() {
         validate,
         onSubmit: values => {
             alert(JSON.stringify(values, null, 2));
-            // axios.post('http://localhost:8080/api/user/register', values)
-            //   .then(function (response) {
-            //     console.log(response);
-            //   })
-            //   .catch(function (error) {
-            //     console.log(error);
-            //   });
+            axios.post(`http://${process.env.REACT_APP_dockerauthserver||'localhost:8000'}/api/user/register`, values)
+              .then(function (response) {
+                console.log(response);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
         },
     });
 
