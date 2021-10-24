@@ -34,6 +34,7 @@ yarn add {PACKAGE_NAME}, e.g. yarn add formik
 
 Open http://localhost/auction/{any room name} to join or create a new auction room
 This is a crude implementation of chat
+Works without authentication for now
 
 ## Run mvp using docker-compose
 
