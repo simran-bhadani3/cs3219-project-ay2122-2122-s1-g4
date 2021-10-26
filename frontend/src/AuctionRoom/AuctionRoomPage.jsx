@@ -130,40 +130,114 @@ export default function AuctionRoomDisplay(props) {
     };
 
     return (
-        <ThemeProvider theme={theme}>
-            <Grid container direction="row" spacing={0} container style={{ height: '84vh', }}>
-                <Grid item xs={3} >
-                    <ListItem>
-                        <ListItemText
-                            primary="Item Name"
-                            secondary='Sample Text'
-                        />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemText
-                            primary="Details"
-                            secondary='Secondary text'
-                        />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemText
-                            primary="Single-line item"
-                            secondary='Secondary text'
-                        />
-                    </ListItem>
-                </Grid>
-                <Grid item container direction="column" xs={6} spacing={0}>
-                    <Grid item xs>
-                        <div className={clsx(classes.container, classes.containerTall)}>
-                            Picture
-                            {<BidCard data={bids} />}
-                        </div>
+        <Grid container direction="row" spacing={0} container style={{ height: '84vh', }}>
+            <Grid container item xs={3} border={1}>
+                <Grid container direction="column">
+                    <Grid item xs={1} >
+                        <Typography variant="h5" className="header-message" textAlign="center">Item Details</Typography>
                     </Grid>
-                    <Grid item xs={1} direction="row" sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                    }} >
-                        <FormControl fullWidth sx={{ m: 1 } }>
+                    <Grid container item xs={10} >
+                        <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                            <nav aria-label="main mailbox folders">
+                                <List>
+                                    <ListItem disablePadding>
+                                        <ListItemButton>
+                                            <ListItemText
+                                                primary="Item Name"
+                                                secondary='Sample Text'
+                                            />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <Divider />
+                                    <ListItem disablePadding>
+                                        <ListItemButton>
+                                            <ListItemText
+                                                primary="Details"
+                                                secondary='Secondary text'
+                                            />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </List>
+                            </nav>
+                            <Divider />
+                            <nav aria-label="secondary mailbox folders">
+                                <List>
+                                    <ListItem disablePadding>
+                                        <ListItemButton>
+                                            <ListItemText primary="Trash" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <Divider />
+                                    <ListItem disablePadding>
+                                        <ListItemButton component="a" href="#simple-list">
+                                            <ListItemText primary="Spam" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </List>
+                            </nav>
+                        </Box>
+                    </Grid>
+                    <Grid container item xs={1}>
+                        <Button variant="contained" color="warning" fullWidth sx={{ margin: 1 }}>End Auction</Button>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item container xs={6} spacing={0} border={1}>
+                <Grid container direction="column">
+                    <Grid item xs={1} >
+                        <Typography variant="h5" className="header-message" textAlign="center">Item Details</Typography>
+                    </Grid>
+                    <Grid container item xs={10} >
+                    </Grid>
+                    <Grid container item xs={1}>
+                        <Grid item xs={10}>
+                            <FormControl fullWidth sx={{ ml: 1, mr: 1 }}>
+                                <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
+                                <OutlinedInput onKeyPress={handleKeyPress}
+                                    id="outlined-adornment-amount"
+                                    value={newBid}
+                                    onChange={handleNewBidChange}
+                                    startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                    label="Amount"
+                                    autoComplete='off'
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid container item xs = {2} >
+                            <Button sx={{ ml: 1, mr: 1,   mb: 1 }} onClick={handleSendBid} variant="contained" color={'success'} fullWidth>Bid</Button>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
+
+                {/* <Grid item xs={11}>
+                     <div className={clsx(classes.container, classes.containerTall)}>
+                        Picture
+                        {<BidCard data={bids} />}
+                    </div> *
+                    <Typography variant="h5" className="header-message" textAlign="center">Picture</Typography>
+
+                </Grid> */}
+                {/* <Grid item xs={1} direction="row" sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                }} >
+                    <FormControl fullWidth sx={{ m: 1 }}>
+                        <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
+                        <OutlinedInput onKeyPress={handleKeyPress}
+                            id="outlined-adornment-amount"
+                            value={newBid}
+                            onChange={handleNewBidChange}
+                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                            label="Amount"
+                            autoComplete='off'
+                        />
+                    </FormControl>
+                    <Button onClick={handleSendBid} variant="contained" sx={{ mr: 1 }}>Bid</Button>
+                </Grid> */}
+                {/* <Grid container item xs={1}>
+                    <Grid container item xs={10}>
+                        <FormControl fullWidth sx={{ m: 1 }}>
                             <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
                             <OutlinedInput onKeyPress={handleKeyPress}
                                 id="outlined-adornment-amount"
@@ -171,38 +245,17 @@ export default function AuctionRoomDisplay(props) {
                                 onChange={handleNewBidChange}
                                 startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                 label="Amount"
-                                autoComplete = 'off'
+                                autoComplete='off'
                             />
                         </FormControl>
+                    </Grid>
+                    <Grid item xs={1}>
                         <Button onClick={handleSendBid} variant="contained" sx={{ mr: 1 }}>Bid</Button>
                     </Grid>
-                </Grid>
-                <ChatSection roomId={roomId} messages={messages} sendMessage={sendMessage} />
+
+                </Grid> */}
             </Grid>
-
-
-
-            {/* <Container component="main" maxWidth="lg">
-                <CssBaseline />
-                {/* <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Box sx={{ mt: 3, ml: 20, mr: 20 }} >
-                        <ListItemButton component="a" href="#simple-list">
-                            <ListItemText primary="Spam" />
-                        </ListItemButton>
-                        <ListItemButton component="a" href="#simple-list">
-                            <ListItemText primary="Spam" />
-                        </ListItemButton>
-                    </Box>
-                </Box> }
-                <Copyright sx={{ mt: 5 }} />
-            </Container> */}
-        </ThemeProvider>
+            <ChatSection roomId={roomId} messages={messages} sendMessage={sendMessage} />
+        </Grid>
     );
 }
