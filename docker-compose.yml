@@ -34,3 +34,10 @@ services:
     image: mongo:latest
     ports:
       - 27017:27017
+      
+  auctionbackend_auctiondetails:
+    build:  
+      context: ./backend/auctiondetails
+    image: auctionbackend_auctiondetails
+    ports:
+      - "7000:8080"
