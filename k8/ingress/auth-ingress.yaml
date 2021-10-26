@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/auth-url: http://userEndPoint # redirect to this page
+    nginx.ingress.kubernetes.io/auth-response-headers: userId # todo response headers need to be set by user api
+    nginx.ingress.kubernetes.io/auth-signin: http://userEndPoint/login # annotation specifies which page to redirect if 200 OK not received
+  namespace: production # all services referenced in this file need to be in the same name space
+  name: auth-ingress
+  host: localhost:3000 # our local/deployed frontend url goes here
+  # todo low prio - set up a default backend for error page for both ingress
+spec: 
+  rules:
+   - http:
+      paths:
+      - path: /auctiondetails
+        pathType: Prefix
+        backend:
+            service: # todo service name needs to match kube services file metadata name for each microservice. similar for port number
+              name: auctiondetails
+              port:
+                number: 80
+      - path: /auctionroom
+        pathType: Prefix
+        backend:
+            service:
+              name: auctionroom
+              port:
+                number: 80

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: prod 
+  name: ingress-with-auth
+  host: localhost:3000 # our local/deployed frontend url goes here
+  # default-backend- - #! set 404 error page here
+spec: 
+  rules:
+   - http:
+      paths:
+      - path: /useraccount
+        backend:
+          service:
+            name: useraccount
+            port:
+              number: 8080
