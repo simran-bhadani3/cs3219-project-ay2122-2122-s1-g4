@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: auctiondetails
+  name: auctiondetails
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: auctiondetails
+  template:
+    metadata:
+      labels:
+        app: auctiondetails
+    spec:
+      containers:
+        - image: auctionbackend_auctiondetails:latest
+          imagePullPolicy: Never
+          name: auctionbackend_auctiondetails
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: auctiondetails
+  name: auctiondetails
+  namespace: default
+spec:
+  ports:
+    - nodePort: 30956
+      port: 7000
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    app: auctiondetails
+  type: NodePort
