@@ -1,4 +1,5 @@
-import React from "react";
+import { React, useEffect, useState} from "react";
+import { useHistory } from "react-router-dom";
 import { useFormik } from 'formik';
 import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
@@ -49,15 +50,7 @@ function Copyright(props) {
     );
 }
 
-const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-        email: data.get('email'),
-        password: data.get('password'),
-    });
-};
+
 
 
 
@@ -83,31 +76,22 @@ const useStyles = makeStyles({
 
 export default function AuctionRoomDisplay(props) {
     const roomId = props.match.params.id;
-    const { messages, sendMessage, bids, sendBid } = useChat(roomId);
-    const [newBid, setNewBid] = React.useState("");
+    const { messages, sendMessage, bids, sendBid, status, endAuction } = useChat(roomId);
+    const [newBid, setNewBid] = useState("");
+    let history = useHistory();
     const classes = useStyles();
-    // Pass the useFormik() hook initial form values, a validate function that will be called when
-    // form values change or fields are blurred, and a submit function that will
-    // be called when the form is submitted
-    const formik = useFormik({
-        initialValues: {
-            firstName: '',
-            lastName: '',
-            email: '',
-        },
-        onSubmit: values => {
-            alert(JSON.stringify(values, null, 2));
-        },
+
+    //redirect to home page if auction ends
+    useEffect(() => {
+        if (!status) {
+            history.push("/all");
+        };
     });
 
-    const [values, setValues] = React.useState({
+
+    const [values, setValues] = useState({
         amount: '',
     });
-
-    const handleChange = (prop) => (event) => {
-        setValues({ ...values, [prop]: event.target.value });
-    };
-
 
     const handleNewBidChange = (event) => {
         setNewBid(event.target.value);
@@ -127,6 +111,11 @@ export default function AuctionRoomDisplay(props) {
             sendBid(newBid);
             setNewBid("");
         }
+    };
+
+    const handleEndAuction = () => {
+        console.log('END');
+        endAuction(newBid);
     };
 
     return (
@@ -178,7 +167,7 @@ export default function AuctionRoomDisplay(props) {
                         </Box>
                     </Grid>
                     <Grid container item xs={1}>
-                        <Button variant="contained" color="warning" fullWidth sx={{ margin: 1 }}>End Auction</Button>
+                        <Button onClick={handleEndAuction} variant="contained" color="warning" fullWidth sx={{ margin: 1 }}>End Auction</Button>
                     </Grid>
                 </Grid>
             </Grid>
@@ -203,57 +192,12 @@ export default function AuctionRoomDisplay(props) {
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid container item xs = {2} >
-                            <Button sx={{ ml: 1, mr: 1,   mb: 1 }} onClick={handleSendBid} variant="contained" color={'success'} fullWidth>Bid</Button>
+                        <Grid container item xs={2} >
+                            <Button sx={{ ml: 1, mr: 1, mb: 1 }} onClick={handleSendBid} variant="contained" color={'success'} fullWidth>Bid</Button>
                         </Grid>
                     </Grid>
 
                 </Grid>
-
-                {/* <Grid item xs={11}>
-                     <div className={clsx(classes.container, classes.containerTall)}>
-                        Picture
-                        {<BidCard data={bids} />}
-                    </div> *
-                    <Typography variant="h5" className="header-message" textAlign="center">Picture</Typography>
-
-                </Grid> */}
-                {/* <Grid item xs={1} direction="row" sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                }} >
-                    <FormControl fullWidth sx={{ m: 1 }}>
-                        <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
-                        <OutlinedInput onKeyPress={handleKeyPress}
-                            id="outlined-adornment-amount"
-                            value={newBid}
-                            onChange={handleNewBidChange}
-                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                            label="Amount"
-                            autoComplete='off'
-                        />
-                    </FormControl>
-                    <Button onClick={handleSendBid} variant="contained" sx={{ mr: 1 }}>Bid</Button>
-                </Grid> */}
-                {/* <Grid container item xs={1}>
-                    <Grid container item xs={10}>
-                        <FormControl fullWidth sx={{ m: 1 }}>
-                            <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
-                            <OutlinedInput onKeyPress={handleKeyPress}
-                                id="outlined-adornment-amount"
-                                value={newBid}
-                                onChange={handleNewBidChange}
-                                startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                label="Amount"
-                                autoComplete='off'
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={1}>
-                        <Button onClick={handleSendBid} variant="contained" sx={{ mr: 1 }}>Bid</Button>
-                    </Grid>
-
-                </Grid> */}
             </Grid>
             <ChatSection roomId={roomId} messages={messages} sendMessage={sendMessage} />
         </Grid>

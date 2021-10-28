@@ -1,0 +1,118 @@
+# contains deployment pods, service configuration for api gateway to call, and HPA configuration
+# nginx ingress
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/cloud/deploy.yaml
+# metrics
+# kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auctionbackend-auctiondetails
+spec:
+  selector:
+    matchLabels:
+      run: auctionbackend-auctiondetails
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: auctionbackend-auctiondetails
+    spec:
+      containers:
+      - name: auctionbackend-auctiondetails
+        image: auctionbackend_auctiondetails
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4000
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auctionbackend-auctiondetails
+  labels:
+    run: auctionbackend-auctiondetails
+spec:
+  selector:
+    run: auctionbackend-auctiondetails
+  type: NodePort
+  ports:
+    - port: 8080
+    targetPort: 4000  
+    nodePort: 30007
+  selector:
+    run: auctionbackend-auctiondetails
+# apiVersion: v1
+# kind: Service
+metadata:
+  name: auctionbackend-auctiondetails
+spec:
+  type: NodePort
+  selector:
+    run: auctionbackend-auctiondetails
+  ports:
+      # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
+    - port: 80
+      targetPort: 80
+      # Optional field
+      # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+      nodePort: 30007
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: auctionbackend-auctiondetails
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: auctionbackend-auctiondetails
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 30
+
+---
+
+# This should be for the api gateway
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: auction-api-gateway
+#   namespace: default
+#   annotations:
+#     kubernetes.io/ingress.class: "nginx"
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+#     nginx.ingress.kubernetes.io/affinity: "cookie"
+#     nginx.ingress.kubernetes.io/affinity-mode: "balanced"
+#     nginx.ingress.kubernetes.io/session-cookie-name: "route"
+#     nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+#     nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+
+# spec:
+#   defaultBackend:
+#       service:
+#         name: auctionbackend-auctiondetails
+#         port:
+#           number: 80
+#   rules:
+#   - host : kubernetes.docker.internal
+#   - http:
+#       paths:
+#       - path: /auctiondetails
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: auctionbackend-auctiondetails
+#             port:
+#               number: 8080
+

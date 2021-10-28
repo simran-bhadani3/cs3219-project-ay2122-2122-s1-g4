@@ -3,18 +3,20 @@ import socketIOClient from "socket.io-client";
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const NEW_BID_EVENT = "newBid";
-const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver||'localhost:9000'}`;
+const END_AUCTION_EVENT = "endAuction";
+const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:9000'}`;
 
 const useChat = (roomId) => {
     const [messages, setMessages] = useState([]);
     const [bids, setBids] = useState([]);
+    const [status, setStatus] = useState(true);
     const socketRef = useRef();
 
     useEffect(() => {
         socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
             query: { roomId },
         });
-        
+
         //new message
         socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
             const incomingMessage = {
@@ -34,6 +36,12 @@ const useChat = (roomId) => {
             setBids((bids) => [...bids, incomingBid]);
         });
 
+        //room ended by auction owner
+        socketRef.current.on(END_AUCTION_EVENT, (bid) => {
+            setStatus(false);
+            socketRef.current.disconnect();
+        });
+
         return () => {
             socketRef.current.disconnect();
         };
@@ -48,8 +56,8 @@ const useChat = (roomId) => {
         });
     };
 
-     //send bid
-     const sendBid = (bidBody) => {
+    //send bid
+    const sendBid = (bidBody) => {
         socketRef.current.emit(NEW_BID_EVENT, {
             body: bidBody,
             senderId: socketRef.current.id,
@@ -57,7 +65,18 @@ const useChat = (roomId) => {
         });
     };
 
-    return { messages, sendMessage, bids, sendBid };
+    //auction owner ends auction, contains authtoken for authorization
+    const endAuction = (bidBody) => {
+        socketRef.current.emit(END_AUCTION_EVENT, {
+            body: bidBody,
+            authtoken: localStorage.getItem('user'),
+            senderId: socketRef.current.id,
+            timestamp: Date()
+        });
+    };
+
+
+    return { messages, sendMessage, bids, sendBid, status, endAuction };
 };
 
 export default useChat;
