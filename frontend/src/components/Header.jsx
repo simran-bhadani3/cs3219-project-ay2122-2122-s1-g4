@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
 import {
@@ -12,6 +12,7 @@ import {
     Typography
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { AuthContext } from "../AuthContext";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -33,9 +34,12 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+
+
 function Header({ pages }) {
     const classes = useStyles();
     const location = useLocation();
+    const authContext = useContext(AuthContext);
     let history = useHistory();
     const [isMobileView, setIsMobileView] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -65,8 +69,14 @@ function Header({ pages }) {
 
     const logout = () => {
         // perform log out
+        console.log(JSON.parse(localStorage.getItem('user')));
+        localStorage.removeItem("user");
+        authContext.logout();
+        console.log('logout')
+        console.log(JSON.parse(localStorage.getItem('user')));
         history.push("/");
     }
+
 
     const renderLinks = (isMobile = false) => {
         console.log("pages", pages);
@@ -131,5 +141,7 @@ function Header({ pages }) {
         </AppBar >
     );
 }
+
+
 
 export default Header;

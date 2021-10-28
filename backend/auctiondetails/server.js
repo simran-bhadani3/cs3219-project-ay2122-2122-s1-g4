@@ -12,8 +12,9 @@ const dbConfig = require('./config/db.config.js');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 // Connecting to the database
+//CHANGE TO dbConfig.url for local deployment!
 console.log(dbConfig.productionurl);
-mongoose.connect(dbConfig.productionurl, {
+mongoose.connect(dbConfig.dockerurl, {
   useNewUrlParser: true
   }).then(() => {
     console.log("Successfully connected to the database");

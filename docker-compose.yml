@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 version: '3.8'
 
 services:
@@ -43,3 +44,48 @@ services:
       - "7000:8080"
     environment:
         PORT: "8080"
+=======
+version: '3.8'
+
+services:
+  auctionfrontend:
+    build:  
+      context: ./frontend
+      args:
+       # need to embed variables during build
+        - REACT_APP_dockerauthserver=host.docker.internal:8000
+        - REACT_APP_dockerauctionmanagerserver=host.docker.internal:9000
+    image: auctionfrontend
+    ports:
+      - "80:3000"
+    
+    # environment:
+      # react env variables need to start with REACT_APP_
+      # REACT_APP_dockerauthserver: host.docker.internal:8000
+    
+  auctionbackend-useraccount:
+    build:  
+      context: ./backend/useraccount
+    image: auctionbackend-useraccount
+    ports:
+      - "8000:8080"
+    environment:
+      backend: mongodb://host.docker.internal:27017/useraccounts
+  auctionbackend-auctionroommanager:
+    build:  
+      context: ./backend/auctionroommanager
+    image: auctionbackend-auctionroommanager
+    ports:
+      - "9000:9000"
+  mongodb_container:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+      
+  auctionbackend_auctiondetails:
+    build:  
+      context: ./backend/auctiondetails
+    image: auctionbackend_auctiondetails
+    ports:
+      - "7000:8080"
+>>>>>>> mvp-frontend-integration

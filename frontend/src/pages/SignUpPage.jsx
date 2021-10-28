@@ -13,7 +13,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { theme } from '../theme';
-import {ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+const axios = require('axios');
 
 function Copyright(props) {
     return (
@@ -32,16 +33,10 @@ function Copyright(props) {
 // which keys are symmetrical to our values/initialValues
 const validate = values => {
     const errors = {};
-    if (!values.firstName) {
-        errors.firstName = 'Required';
-    } else if (values.firstName.length > 15) {
-        errors.firstName = 'Must be 15 characters or less';
-    }
-
-    if (!values.lastName) {
-        errors.lastName = 'Required';
-    } else if (values.lastName.length > 20) {
-        errors.lastName = 'Must be 20 characters or less';
+    if (!values.username) {
+        errors.username = 'Required';
+    } else if (values.username.length > 15) {
+        errors.username = 'Must be 15 characters or less';
     }
 
     if (!values.email) {
@@ -52,39 +47,45 @@ const validate = values => {
 
     if (!values.password) {
         errors.password = 'Required';
-    } 
+    }
+
+    if (!values.confirmpassword) {
+        errors.confirmpassword = 'Required';
+    }
+
+    if (values.confirmpassword != values.password) {
+        errors.confirmpassword = 'Different passwords provided';
+    }
 
     return errors;
 };
 
 export default function SignUp() {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        // eslint-disable-next-line no-console
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    };
 
     // Pass the useFormik() hook initial form values, a validate function that will be called when
     // form values change or fields are blurred, and a submit function that will
     // be called when the form is submitted
     const formik = useFormik({
         initialValues: {
-            firstName: '',
-            lastName: '',
+            username: '',
             email: '',
+            password: '',
+            confirmpassword: '',
         },
         validate,
         onSubmit: values => {
             alert(JSON.stringify(values, null, 2));
+            axios.post(`http://${process.env.REACT_APP_dockerauthserver||'localhost:8000'}/api/user/register`, values)
+              .then(function (response) {
+                console.log(response);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
         },
     });
 
     return (
-        <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
@@ -103,32 +104,21 @@ export default function SignUp() {
                     </Typography>
                     <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={12}>
                                 <TextField
-                                    autoComplete="fname"
-                                    name="firstName"
+                                    autoComplete="username"
+                                    name="username"
                                     required
                                     fullWidth
-                                    id="firstName"
-                                    label="First Name"
+                                    id="username"
+                                    label="Username"
                                     autoFocus
                                     onChange={formik.handleChange}
-                                    value={formik.values.firstName}
+                                    value={formik.values.username}
                                 />
+                                {formik.errors.username ? <div>{formik.errors.username}</div> : null}
                             </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    required
-                                    fullWidth
-                                    id="lastName"
-                                    label="Last Name"
-                                    name="lastName"
-                                    autoComplete="lname"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.lastName}
-                                />
-                            </Grid>
-                            {formik.errors.firstName ? <div>{formik.errors.firstName}</div> : null}
+
                             <Grid item xs={12}>
                                 <TextField
                                     required
@@ -143,7 +133,7 @@ export default function SignUp() {
                                 />
                                 {formik.errors.email ? <div>{formik.errors.email}</div> : null}
                             </Grid>
-                            
+
                             <Grid item xs={12}>
                                 <TextField
                                     required
@@ -158,12 +148,20 @@ export default function SignUp() {
                                 />
                                 {formik.errors.password ? <div>{formik.errors.password}</div> : null}
                             </Grid>
-                            {/* <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid> */}
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    name="confirmpassword"
+                                    label="Confirm Password"
+                                    type="password"
+                                    id="confirmpassword"
+                                    autoComplete="new-password"
+                                    onChange={formik.handleChange}
+                                    value={formik.values.confirmpassword}
+                                />
+                                {formik.errors.confirmpassword ? <div>{formik.errors.confirmpassword}</div> : null}
+                            </Grid>
                         </Grid>
                         <Button
                             type="submit"
@@ -184,6 +182,5 @@ export default function SignUp() {
                 </Box>
                 <Copyright sx={{ mt: 5 }} />
             </Container>
-        </ThemeProvider>
     );
 }
