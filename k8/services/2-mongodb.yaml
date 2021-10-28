@@ -23,6 +23,11 @@ spec:
           ports:
             - containerPort: 27017
               protocol: TCP
+          resources:
+            limits:
+              cpu: 50m
+            requests:
+              cpu: 50m
 ---
 apiVersion: v1
 kind: Service
