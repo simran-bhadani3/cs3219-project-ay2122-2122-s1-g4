@@ -5,6 +5,7 @@ kubectl apply -f ./k8/services/3-useraccount.yaml
 kubectl apply -f ./k8/services/4-auctionroommanager.yaml 
 kubectl apply -f ./k8/services/5-accountdetails.yaml
 kubectl apply -f ./k8/ingress/unauth-ingress.yaml 
+kubectl apply -f ./k8/ingress/auth-ingress.yaml 
 
 # clean up
 kubectl delete deployment frontend
@@ -28,3 +29,6 @@ kubectl delete -f ./k8/ingress/unauth-ingress.yaml
 # kubectl get ingress  --watch
 # kubectl delete ing auth-ingress
 # kubectl delete ing unauth-ingress
+
+# to view logs
+# kubectl logs -n ingress-nginx ingress-nginx-controller-5c8d66c76d-lwwrf
