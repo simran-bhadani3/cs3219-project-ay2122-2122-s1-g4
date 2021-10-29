@@ -32,3 +32,14 @@ kubectl delete -f ./k8/ingress/unauth-ingress.yaml
 
 # to view logs
 # kubectl logs -n ingress-nginx ingress-nginx-controller-5c8d66c76d-lwwrf
+
+# URLs that should work if yaml files are working correctly | status 
+curl -X POST localhost/api/user/login                       # 404 cannot post
+curl -X POST localhost/api/user/register                    # 404 cannot post
+curl localhost/api/user/user                                # 404 cannot get
+curl localhost/test-unauth                                  # currently seems like wrong frontend page being served
+curl localhost/test-auth                                    # same as above
+curl localhost/to-throw-error                               # correctly delivers the default backend. need specific link to 404 page 
+curl localhost/auctiondetails/api/auctiondetails/:id        # is being directed to default backend
+curl -X POST localhost/auctiondetails/api/auctiondetails    # is being directed to default backend
+curl localhost/auctionroom                                  # is being directed to default backend
