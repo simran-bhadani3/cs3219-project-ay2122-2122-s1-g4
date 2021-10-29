@@ -30,25 +30,6 @@ describe("Users", function () {
 				});
 		});
 
-		it("should register a user", (done) => {
-			chai
-				.request(app)
-				.post(`/api/user/register`).send({username: "testuser2", currency: 1000, email: "e0411064@u.nus.edu", password: "xxx123!!X", confirmpassword: "xxx123!!X"})
-				.end((err, res) => {
-					res.should.have.status(200);
-					expect(res.body.username).to.equal(
-						"testuser2"
-					)
-					expect(res.body.currency).to.equal(
-						1000
-                    )
-                    expect(res.body.email).to.equal(
-						"e0411064@u.nus.edu"
-					)
-					done();
-				});
-		});
-
 		it("should return an error as email and username already exists", (done) => {
             chai
                 .request(app)
@@ -61,74 +42,10 @@ describe("Users", function () {
 					done();
 				});
 		});
-		it("should get the amount of currency", (done) => {
-			chai
-				.request(app)
-				.get("/api/user/currency/testuser")
-				.end((err, res) => {
-					res.should.have.status(200);
-                    expect(res.body.username).to.equal("testuser");
-                    expect(res.body.currency).to.equal(1000);
-					done();
-				});
-		});
-
-		it("should create a transaction", (done) => {
-			chai
-				.request(app)
-				.post(`/api/user/transaction`).send({
-					"sender": "testuser2",
-					"receiver": "testuser",
-					"currency": 1000
-				})
-				.end((err, res) => {
-					res.should.have.status(200);
-					expect(res.body.message).to.equal(
-						"Transaction completed"
-					)
-					done();
-				});
-		});
-		
-		it("should get the amount of currency of the receiver after the transaction", (done) => {
-			chai
-				.request(app)
-				.get("/api/user/currency/testuser")
-				.end((err, res) => {
-					res.should.have.status(200);
-                    expect(res.body.username).to.equal("testuser");
-                    expect(res.body.currency).to.equal(2000);
-					done();
-				});
-		});
-
-		it("should get the amount of currency of the sender after the transaction", (done) => {
-			chai
-				.request(app)
-				.get("/api/user/currency/testuser2")
-				.end((err, res) => {
-					res.should.have.status(200);
-                    expect(res.body.username).to.equal("testuser2");
-                    expect(res.body.currency).to.equal(0);
-					done();
-				});
-		});
-
-		it("should delete the first user", (done) => {
+		it("should delete the user", (done) => {
             chai
                 .request(app)
                 .delete(`/api/user/testuser`)
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    expect(res.body.message).to.equal("User deleted");
-					done();
-				});
-		});
-
-		it("should delete the second user", (done) => {
-            chai
-                .request(app)
-                .delete(`/api/user/testuser2`)
                 .end((err, res) => {
                     res.should.have.status(200);
                     expect(res.body.message).to.equal("User deleted");

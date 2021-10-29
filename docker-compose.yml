@@ -24,20 +24,33 @@ services:
       - "8000:8080"
     environment:
       backend: mongodb://host.docker.internal:27017/useraccounts
+  
+  auctionbackend-currencymanagement:
+    build:  
+      context: ./backend/currencymanagement
+    image: auctionbackend-currencymanagement
+    ports:
+      - "8001:8080"
+    environment:
+      backend: mongodb://host.docker.internal:27017/useraccounts
+  
   auctionbackend-auctionroommanager:
     build:  
       context: ./backend/auctionroommanager
     image: auctionbackend-auctionroommanager
     ports:
       - "9000:9000"
+
   mongodb_container:
     image: mongo:latest
     ports:
       - 27017:27017
       
-  auctionbackend_auctiondetails:
+  auctionbackend-auctiondetails:
     build:  
       context: ./backend/auctiondetails
-    image: auctionbackend_auctiondetails
+    image: auctionbackend-auctiondetails
     ports:
       - "7000:8080"
+    environment:
+          PORT: "8080"
