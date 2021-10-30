@@ -29,6 +29,13 @@ spec:
                 name: auctiondetails
                 port:
                   number: 8081
+        - path: /api/currency
+          pathType: Prefix
+          backend:
+              service:
+                name: currencymanagement
+                port:
+                  number: 8082
         - path: /test-auth
           pathType: Prefix
           backend:
