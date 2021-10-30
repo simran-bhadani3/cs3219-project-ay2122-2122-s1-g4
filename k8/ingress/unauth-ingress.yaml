@@ -1,17 +1,41 @@
+# This should be for the api gateway
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: prod 
-  name: ingress-with-auth
-  host: localhost:3000 # our local/deployed frontend url goes here
-  # default-backend- - #! set 404 error page here
-spec: 
+  name: unauth-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    # nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: "360"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/affinity: "cookie"
+    # nginx.ingress.kubernetes.io/affinity-mode: "balanced"
+    # nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    # nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    # nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+spec:
+  defaultBackend:
+      service:
+        name: frontend
+        port:
+          number: 3000
   rules:
-   - http:
+  - host: kubernetes.docker.internal
+  - http:
       paths:
-      - path: /useraccount
+      - path: /api/user
+        pathType: Prefix
         backend:
           service:
             name: useraccount
             port:
               number: 8080
+      - path: /test-unauth
+        pathType: Prefix
+        backend:
+            service:
+              name: frontend
+              port:
+                number: 3000
+      
