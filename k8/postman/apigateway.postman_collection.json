@@ -224,6 +224,149 @@
 							"body": "{\n    \"username\": \"user1111\",\n    \"id\": \"615dc1e164f9840b85f85edc\",\n    \"jwtToken\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxMTExIiwiZW1haWwiOiJlMDAwMDExMUB1Lm51cy5lZHUiLCJpYXQiOjE2MzM1MzQ1ODMsImV4cCI6MTYzMzk2NjU4M30.bp_OGGAcN3RzYfM-MwLCZG0N4xhkqVA93KoCqyDftAw\"\n}"
 						}
 					]
+				},
+				{
+					"name": "get user's currency",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost/api/currency/user1111",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"currency",
+								"user1111"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get auctiondetails",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost/api/auctiondetails",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"auctiondetails"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create auction room",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "room_display_name",
+									"value": "displaynametest",
+									"type": "text"
+								},
+								{
+									"key": "auction_item_name",
+									"value": "itemnametest",
+									"type": "text"
+								},
+								{
+									"key": "owner_id",
+									"value": "111122223333",
+									"type": "text"
+								},
+								{
+									"key": "start_time",
+									"value": "2021-10-30T09:03:49.300681800Z",
+									"type": "text"
+								},
+								{
+									"key": "end_time",
+									"value": "2021-11-30T09:03:49.300681800Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/api/auctiondetails",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auctiondetails"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"event": [
@@ -294,7 +437,7 @@
 			"response": []
 		},
 		{
-			"name": "get test page behind auth wall",
+			"name": "get test page behind auth wall (200)",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -381,7 +524,7 @@
 			"response": []
 		},
 		{
-			"name": "get non-existant page 404 error",
+			"name": "get non-existant page (404 status)",
 			"event": [
 				{
 					"listen": "test",
