@@ -7,6 +7,7 @@ kubectl apply -f ./k8/services/2-mongodb.yaml
 kubectl apply -f ./k8/services/3-useraccount.yaml 
 kubectl apply -f ./k8/services/4-auctionroommanager.yaml 
 kubectl apply -f ./k8/services/5-accountdetails.yaml
+kubectl apply -f ./k8/services/6-currencymanagement.yaml
 kubectl apply -f ./k8/ingress/unauth-ingress.yaml 
 kubectl apply -f ./k8/ingress/auth-ingress.yaml 
 
@@ -26,6 +27,8 @@ kubectl apply -f ./k8/ingress/auth-ingress.yaml
 
 # kubectl delete deployment mongodb
 # kubectl delete service mongodb
+
+# kubectl delete -f ./k8/services/6-currencymanagement.yaml
 
 # kubectl delete -f ./k8/ingress/unauth-ingress.yaml 
 # kubectl delete -f ./k8/ingress/auth-ingress.yaml 
