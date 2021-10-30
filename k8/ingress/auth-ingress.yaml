@@ -5,14 +5,15 @@ metadata:
   namespace: default
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    # nginx.ingress.kubernetes.io/auth-url: http://kubernetes.docker.internal/useraccount # 200 ok from this page should imply that user is authenticated
+    nginx.ingress.kubernetes.io/auth-url: http://useraccount.default.svc.cluster.local:8080/api/user/user
+    # nginx.ingress.kubernetes.io/auth-signin: localhost/api/user/login # page to redirect if 200 OK not received # this url is wrong, causing too many redirects
+    # http://$host/api/user (gave 500) # example123hello.com # localhost/api/user # 200 ok from this page should imply that user is authenticated    
+    # nginx.ingress.kubernetes.io/rewrite-target: /
     # nginx.ingress.kubernetes.io/auth-response-headers: userId # todo response headers need to be set by user api
-    # nginx.ingress.kubernetes.io/auth-signin: http://kubernetes.docker.internal/useraccount/login # page to redirect if 200 OK not received
 spec: 
   rules:
    - host: kubernetes.docker.internal
-     http:
+   - http:
         paths:
         - path: /auctionroom
           pathType: Prefix
@@ -21,14 +22,13 @@ spec:
                 name: auctionroommanager
                 port:
                   number: 9000
-        - path: /auctiondetails
+        - path: /api/auctiondetails
           pathType: Prefix
           backend:
               service:
                 name: auctiondetails
                 port:
                   number: 8081
-        # just for testing if this ingress is running:
         - path: /test-auth
           pathType: Prefix
           backend:

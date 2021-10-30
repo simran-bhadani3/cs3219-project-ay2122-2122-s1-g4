@@ -15,11 +15,11 @@ metadata:
     # nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
     # nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
 spec:
-  defaultBackend:
-      service:
-        name: frontend
-        port:
-          number: 3000
+  # defaultBackend:
+  #     service:
+  #       name: frontend
+  #       port:
+  #         number: 3000
   rules:
   - host: kubernetes.docker.internal
   - http:
@@ -31,11 +31,11 @@ spec:
             name: useraccount
             port:
               number: 8080
-      - path: /test-unauth
-        pathType: Prefix
-        backend:
-            service:
-              name: frontend
-              port:
-                number: 3000
+      # - path: /test-unauth
+      #   pathType: Prefix
+      #   backend:
+      #       service:
+      #         name: frontend
+      #         port:
+      #           number: `3000
       
