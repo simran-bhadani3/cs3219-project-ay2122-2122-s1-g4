@@ -15,6 +15,7 @@ import { theme } from '../theme';
 import { ThemeProvider } from '@mui/material/styles';
 import { useFormik } from 'formik';
 import { AuthContext } from "../AuthContext";
+import { useHistory } from "react-router-dom";
 const axios = require('axios');
 
 function Copyright(props) {
@@ -44,8 +45,9 @@ function getCurrentUser() {
 export default function LoginPage() {
   const authContext = useContext(AuthContext);
   const dockerauthserver = process.env.REACT_APP_dockerauthserver;
+  let history = useHistory();
   async function login(values) {
-    await axios.post(`http://${dockerauthserver||'localhost:8000'}/api/user/login`, values)
+    await axios.post(`http://${dockerauthserver||'localhost'}/api/user/login`, values)
       .then(response => {
         console.log(response);
         alert('Login Success!');
@@ -53,6 +55,8 @@ export default function LoginPage() {
           localStorage.setItem("user", JSON.stringify(response.data['jwtToken']));
           authContext.login(response.data['jwtToken']);
         }
+        // redirect to home page
+        history.push("/all");
       })
       .catch(function (error) {
         console.log(error);
