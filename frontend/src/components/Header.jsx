@@ -72,8 +72,7 @@ function Header({ pages }) {
         console.log(JSON.parse(localStorage.getItem('user')));
         localStorage.removeItem("user");
         authContext.logout();
-        console.log('logout')
-        console.log(JSON.parse(localStorage.getItem('user')));
+        localStorage.removeItem("userid");
         history.push("/");
     }
 
