@@ -2,7 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const passport = require("passport");
 
-const dbUrl = "mongodb://127.0.0.1:27017/useraccounts";
+const dbUrl = process.env.backend || "mongodb://127.0.0.1:27017/useraccounts";
+console.log(dbUrl);
+//const dbUrl = "mongodb://host.docker.internal:27017/useraccounts";
 mongoose.Promise = global.Promise;
 mongoose
 	.connect(dbUrl, {
@@ -24,6 +26,8 @@ const userAccounts = require("./src/routes/User");
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+const cors = require('cors');
+app.use(cors())
 app.use("/api/user", userAccounts);
 
 const port = process.env.PORT || 8080;
