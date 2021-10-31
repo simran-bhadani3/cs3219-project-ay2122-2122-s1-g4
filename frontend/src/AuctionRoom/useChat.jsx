@@ -4,20 +4,21 @@ import socketIOClient from "socket.io-client";
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const NEW_BID_EVENT = "newBid";
 const END_AUCTION_EVENT = "endAuction";
-// const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:9000'}`;
+const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:9000'}`;
 //kubernetes nodeport
 // const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:30199'}`;
 //chat ingress
-const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost/auctionroom'}`;
+// const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost/auctionroom'}`;
 const useChat = (roomId) => {
     const [messages, setMessages] = useState([]);
     const [bids, setBids] = useState([]);
+    const [highestBid, setHighestBid] = useState('0');
     const [status, setStatus] = useState(true);
     const socketRef = useRef();
 
     useEffect(() => {
         socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
-            transport : ['websocket'],
+            transport: ['websocket'],
             query: { roomId },
         });
 
@@ -31,13 +32,17 @@ const useChat = (roomId) => {
         });
 
         //new bid
+        // socketRef.current.on(NEW_BID_EVENT, (bid) => {
+        //     console.log(bid);
+        //     const incomingBid = {
+        //         ...bid,
+        //         ownedByCurrentUser: bid.senderId === socketRef.current.id,
+        //     };
+        //     setBids((bids) => [...bids, incomingBid]);
+        // });
         socketRef.current.on(NEW_BID_EVENT, (bid) => {
-            console.log(bid);
-            const incomingBid = {
-                ...bid,
-                ownedByCurrentUser: bid.senderId === socketRef.current.id,
-            };
-            setBids((bids) => [...bids, incomingBid]);
+            console.log(bid.bid);
+            setHighestBid(bid.bid);
         });
 
         //room ended by auction owner
@@ -61,9 +66,12 @@ const useChat = (roomId) => {
     };
 
     //send bid
-    const sendBid = (bidBody) => {
+    const sendBid = (bidamount) => {
         socketRef.current.emit(NEW_BID_EVENT, {
-            body: bidBody,
+            bid: bidamount,
+            username: 'testuser',
+            // username: JSON.parse(localStorage.getItem('userid')),
+            roomname: roomId,
             senderId: socketRef.current.id,
             timestamp: Date()
         });
@@ -80,7 +88,7 @@ const useChat = (roomId) => {
     };
 
 
-    return { messages, sendMessage, bids, sendBid, status, endAuction };
+    return { messages, sendMessage, bids, sendBid, status, endAuction, highestBid};
 };
 
 export default useChat;

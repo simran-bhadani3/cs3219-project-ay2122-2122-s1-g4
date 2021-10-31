@@ -1,4 +1,5 @@
-import { React, useEffect, useState} from "react";
+import { useEffect, useState } from "react";
+import * as React from 'react';
 import { useHistory } from "react-router-dom";
 import { useFormik } from 'formik';
 import IconButton from '@mui/material/IconButton';
@@ -36,6 +37,12 @@ import SendIcon from '@mui/icons-material/Send';
 import ChatSection from './ChatSection';
 import useChat from "./useChat";
 import BidCard from './chat/BidCard';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
 
 function Copyright(props) {
     return (
@@ -50,7 +57,9 @@ function Copyright(props) {
     );
 }
 
-
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 
 
@@ -74,42 +83,57 @@ const useStyles = makeStyles({
 });
 
 
+
 export default function AuctionRoomDisplay(props) {
     const roomId = props.match.params.id;
-    const { messages, sendMessage, bids, sendBid, status, endAuction } = useChat(roomId);
-    const [newBid, setNewBid] = useState("");
+    const { messages, sendMessage, bids, sendBid, status, endAuction, highestBid } = useChat(roomId);
+    const [newBid, setNewBid] = useState();
+    const [isOwner, setOwner] = useState(false);
     let history = useHistory();
-    const classes = useStyles();
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     //redirect to home page if auction ends
     useEffect(() => {
         if (!status) {
             history.push("/all");
         };
+        if (true) {
+            setOwner(true);
+        }
     });
 
-
-    const [values, setValues] = useState({
-        amount: '',
-    });
 
     const handleNewBidChange = (event) => {
         setNewBid(event.target.value);
     };
-    // sendBid(newBid);
-    const handleSendBid = () => {
-        console.log('bid sent!');
-        console.log(newBid);
-        sendBid(newBid);
-        setNewBid("");
-    };
 
-    const handleKeyPress = (event) => {
-        if (event.key === 'Enter') {
+    const validateAndSend = () => {
+        if (!/^[0-9\b]+$/i.test(newBid)) {
+            console.log('Please enter a valid bid!');
+            handleClickOpen();
+        } else {
             console.log('bid sent!');
             console.log(newBid);
             sendBid(newBid);
             setNewBid("");
+        }
+    }
+
+    const handleSendBid = () => {
+        validateAndSend();
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            validateAndSend();
         }
     };
 
@@ -165,10 +189,29 @@ export default function AuctionRoomDisplay(props) {
                                 </List>
                             </nav>
                         </Box>
+                        <Dialog
+                            open={open}
+                            TransitionComponent={Transition}
+                            keepMounted
+                            onClose={handleClose}
+                            aria-describedby="alert-dialog-slide-description"
+                        >
+                            <DialogTitle>{"Please enter a valid bid!"}</DialogTitle>
+                            <DialogContent>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleClose}>Okay</Button>
+                            </DialogActions>
+                        </Dialog>
                     </Grid>
-                    <Grid container item xs={1}>
-                        <Button onClick={handleEndAuction} variant="contained" color="warning" fullWidth sx={{ margin: 1 }}>End Auction</Button>
-                    </Grid>
+                    {isOwner ? (
+                        <Grid container item xs={1}>
+                            <Button onClick={handleEndAuction} variant="contained" color="warning" fullWidth sx={{ margin: 1 }}>End Auction</Button>
+                        </Grid>
+                    ) : (
+                        null
+                    )}
+
                 </Grid>
             </Grid>
             <Grid item container xs={6} spacing={0} border={1}>
@@ -177,13 +220,17 @@ export default function AuctionRoomDisplay(props) {
                         <Typography variant="h5" className="header-message" textAlign="center">Item Details</Typography>
                     </Grid>
                     <Grid container item xs={10} >
+                        <Typography variant="h5" className="header-message" textAlign="center">Highest Bid: ${highestBid}</Typography>
                     </Grid>
                     <Grid container item xs={1}>
                         <Grid item xs={10}>
                             <FormControl fullWidth sx={{ ml: 1, mr: 1 }}>
                                 <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
                                 <OutlinedInput onKeyPress={handleKeyPress}
-                                    id="outlined-adornment-amount"
+                                    name="bid"
+                                    label="bid"
+                                    type="bid"
+                                    id="bid"
                                     value={newBid}
                                     onChange={handleNewBidChange}
                                     startAdornment={<InputAdornment position="start">$</InputAdornment>}
