@@ -15,13 +15,13 @@ spec:
    - host: kubernetes.docker.internal
    - http:
         paths:
-        - path: /auctionroom
-          pathType: Prefix
-          backend:
-              service:
-                name: auctionroommanager
-                port:
-                  number: 9000
+        # - path: /auctionroom
+        #   pathType: Prefix
+        #   backend:
+        #       service:
+        #         name: auctionroommanager
+        #         port:
+        #           number: 9000
         - path: /api/auctiondetails
           pathType: Prefix
           backend:
