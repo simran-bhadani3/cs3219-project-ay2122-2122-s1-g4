@@ -53,7 +53,7 @@ export default function LoginPage() {
         alert('Login Success!');
         if (response.data['jwtToken']) {
           localStorage.setItem("user", JSON.stringify(response.data['jwtToken']));
-          localStorage.setItem("userid", JSON.stringify(response.data['userid']));
+          localStorage.setItem("userid", JSON.stringify(response.data['id']));
           authContext.login(response.data['jwtToken']);
         }
         // redirect to home page
