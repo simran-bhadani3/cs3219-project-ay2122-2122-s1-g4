@@ -88,11 +88,13 @@ const useStyles = makeStyles({
 
 export default function AuctionRoomDisplay(props) {
     const roomId = props.match.params.id;
-    const { messages, sendMessage, bids, sendBid, status, endAuction, highestBid } = useChat(roomId);
+    const { messages, sendMessage, bids, sendBid, status, endAuction, highestBid, setHighestBid } = useChat(roomId);
     const [newBid, setNewBid] = useState();
     const [isOwner, setOwner] = useState(false);
     let history = useHistory();
     const [open, setOpen] = React.useState(false);
+    const [auctionclose, setAuctionclose] = React.useState(false);
+    const [auctiondetails, setDetails] = useState({});
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -100,6 +102,14 @@ export default function AuctionRoomDisplay(props) {
 
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleAuctionclose = () => {
+        setAuctionclose(true);
+    };
+
+    const handleAuctioncomplete = () => {
+        history.push("/all");
     };
 
     function getCurrentUser() {
@@ -112,20 +122,20 @@ export default function AuctionRoomDisplay(props) {
     //redirect to home page if auction ends
     useEffect(() => {
         if (!status) {
-            history.push("/all");
+            handleAuctionclose();
+            // history.push("/all");
         };
-
-
-
     });
     useEffect(() => {
         //check whether client is room owner, then show end auction button
         const config = {
             headers: { Authorization: JSON.parse(localStorage.getItem('user')) }
         };
+
         axios.get(`${auctiondetailurl + roomId}`, config)
             .then(response => {
                 console.log(response);
+                setDetails(response.data)
                 if (getCurrentUser() == response.data['owner_id']) {
                     setOwner(true);
                 }
@@ -133,6 +143,9 @@ export default function AuctionRoomDisplay(props) {
             .catch(function (error) {
                 console.log(error);
             });
+
+        //call api sethighestbid
+        // setHighestBid()
     }, []);
 
 
@@ -141,10 +154,17 @@ export default function AuctionRoomDisplay(props) {
     };
 
     const validateAndSend = () => {
+        // non-numerical input
         if (!/^[0-9\b]+$/i.test(newBid)) {
             console.log('Please enter a valid bid!');
             handleClickOpen();
-        } else {
+        }
+        // bid does not satisfy minimum bid or increment
+        else if (newBid < auctiondetails['increment'] || newBid <= highestBid + auctiondetails['increment']) {
+            console.log('Please enter a valid bid!');
+            handleClickOpen();
+        }
+        else {
             console.log('bid sent!');
             console.log(newBid);
             sendBid(newBid);
@@ -163,6 +183,7 @@ export default function AuctionRoomDisplay(props) {
     };
 
     const handleEndAuction = () => {
+        // handleAuctionclose();
         console.log('END');
         endAuction(newBid);
     };
@@ -182,7 +203,7 @@ export default function AuctionRoomDisplay(props) {
                                         <ListItemButton>
                                             <ListItemText
                                                 primary="Item Name"
-                                                secondary='Sample Text'
+                                                secondary={`${auctiondetails['auction_item_name']}`}
                                             />
                                         </ListItemButton>
                                     </ListItem>
@@ -190,8 +211,8 @@ export default function AuctionRoomDisplay(props) {
                                     <ListItem disablePadding>
                                         <ListItemButton>
                                             <ListItemText
-                                                primary="Details"
-                                                secondary='Secondary text'
+                                                primary="Description"
+                                                secondary={`${auctiondetails['description']}`}
                                             />
                                         </ListItemButton>
                                     </ListItem>
@@ -202,13 +223,18 @@ export default function AuctionRoomDisplay(props) {
                                 <List>
                                     <ListItem disablePadding>
                                         <ListItemButton>
-                                            <ListItemText primary="Trash" />
+                                            <ListItemText
+                                                primary="Minimum Increment"
+                                                secondary={`${auctiondetails['increment']}`}
+                                            />
                                         </ListItemButton>
                                     </ListItem>
                                     <Divider />
                                     <ListItem disablePadding>
                                         <ListItemButton component="a" href="#simple-list">
-                                            <ListItemText primary="Spam" />
+                                            <ListItemText primary="Minimum Bid"
+                                                secondary={`${auctiondetails['minbid']}`}
+                                            />
                                         </ListItemButton>
                                     </ListItem>
                                 </List>
@@ -228,6 +254,23 @@ export default function AuctionRoomDisplay(props) {
                                 <Button onClick={handleClose}>Okay</Button>
                             </DialogActions>
                         </Dialog>
+                        <Dialog
+                            open={auctionclose}
+                            TransitionComponent={Transition}
+                            keepMounted
+                            onClose={handleAuctioncomplete}
+                            aria-describedby="alert-dialog-slide-description"
+                        >
+                            <DialogTitle>{"Auction closed!"}</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-dialog-description">
+                                    Winner : {highestBid['username']}
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleAuctioncomplete}>Okay</Button>
+                            </DialogActions>
+                        </Dialog>
                     </Grid>
                     {isOwner ? (
                         <Grid container item xs={1}>
@@ -245,7 +288,7 @@ export default function AuctionRoomDisplay(props) {
                         <Typography variant="h5" className="header-message" textAlign="center">Item Details</Typography>
                     </Grid>
                     <Grid container item xs={10} >
-                        <Typography variant="h5" className="header-message" textAlign="center">Highest Bid: ${highestBid}</Typography>
+                        <Typography variant="h5" className="header-message" textAlign="center">Highest Bid: ${highestBid['bid']}</Typography>
                     </Grid>
                     <Grid container item xs={1}>
                         <Grid item xs={10}>

@@ -12,7 +12,7 @@ const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerse
 const useChat = (roomId) => {
     const [messages, setMessages] = useState([]);
     const [bids, setBids] = useState([]);
-    const [highestBid, setHighestBid] = useState('0');
+    const [highestBid, setHighestBid] = useState({});
     const [status, setStatus] = useState(true);
     const socketRef = useRef();
 
@@ -42,8 +42,8 @@ const useChat = (roomId) => {
         //     setBids((bids) => [...bids, incomingBid]);
         // });
         socketRef.current.on(NEW_BID_EVENT, (bid) => {
-            console.log(bid.bid);
-            setHighestBid(bid.bid);
+            console.log(bid);
+            setHighestBid(bid);
         });
 
         //room ended by auction owner
@@ -70,8 +70,7 @@ const useChat = (roomId) => {
     const sendBid = (bidamount) => {
         socketRef.current.emit(NEW_BID_EVENT, {
             bid: bidamount,
-            username: 'testuser',
-            // username: JSON.parse(localStorage.getItem('userid')),
+            username: localStorage.getItem('username'),
             roomname: roomId,
             senderId: socketRef.current.id,
             timestamp: Date()
@@ -89,7 +88,7 @@ const useChat = (roomId) => {
     };
 
 
-    return { messages, sendMessage, bids, sendBid, status, endAuction, highestBid };
+    return { messages, sendMessage, bids, sendBid, status, endAuction, highestBid, setHighestBid };
 };
 
 export default useChat;
