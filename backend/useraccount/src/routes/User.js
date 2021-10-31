@@ -2,8 +2,9 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-
 const router = express.Router();
+var cors = require('cors')
+router.use(cors())
 const validateLogin = require("../validation/login");
 const validateNewAccount = require("../validation/register");
 const User = require("../models/User");
@@ -104,11 +105,16 @@ router.post("/login", (req, res) => {
 });
 
 // authenticating using jwt
+//, successRedirect: '/all' redirect to homepage
 router.get(
 	"/user",
-	passport.authenticate("jwt", { session: false }),
+	passport.authenticate("jwt", { session: false  }),
 	(req, res) => {
-		res.status(200).send("Authorized");
+		res.status(200).send(
+			{
+				status: "Authorized",
+				userid: req.user
+			});
 	}
 );
 
