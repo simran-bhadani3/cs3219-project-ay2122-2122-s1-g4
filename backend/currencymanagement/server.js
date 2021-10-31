@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const passport = require("passport");
 
 const dbUrl = process.env.backend || "mongodb://127.0.0.1:27017/useraccounts";
 console.log(dbUrl);
@@ -19,20 +18,18 @@ mongoose
 
 require("./src/models/User");
 
-require("./src/config/passport.js")(passport);
-
-const userAccounts = require("./src/routes/User");
+const currencyManagement = require("./src/routes/CurrencyManagement");
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-const cors = require('cors');
-app.use(cors())
-app.use("/api/user", userAccounts);
+const cors = require("cors");
+app.use(cors());
+app.use("/api/currency", currencyManagement);
 
 const port = process.env.PORT || 8080;
 
 app.listen(port, () => {
-	console.log(`useraccount server is listening on port ${port}`);
-});
+	console.log(`currencymanagement server is listening on port ${port}`);
+})
 
 module.exports.app = app;
