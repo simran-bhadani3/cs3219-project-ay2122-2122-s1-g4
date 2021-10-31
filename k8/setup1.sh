@@ -11,4 +11,6 @@ kubectl apply -f ./k8/services/5-auctiondetails.yaml;
 kubectl apply -f ./k8/ingress/unauth-ingress.yaml ;
 kubectl apply -f ./k8/ingress/auth-ingress.yaml ;
 kubectl apply -f ./k8/ingress/chat-ingress.yaml ;
-docker run --publish 8080:3000 --name auctiondocker -i  -t auctionfrontend:latest  
+# run this if frontend container has not been built
+# docker run --publish 8080:3000 --name auctiondocker -i  -t auctionfrontend:latest  
+docker container start auctiondocker
