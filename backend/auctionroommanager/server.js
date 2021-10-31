@@ -2,21 +2,24 @@ const { createAdapter } = require("@socket.io/redis-adapter");
 //const { createClient } = require("redis");
 const Redis = require("ioredis");
 const { RateLimiterRedis } = require('rate-limiter-flexible');
-
 const server = require("http").createServer();
+const axios = require('axios');
 
-//rate limit client
-// const redisClient = new Redis({ enableOfflineQueue: false });
-
-// docker redis
-
+//internal urls within kubernetes cluster
+const roomstorageurl = "http://localhost:3000/api/room/"
+// const roomstorageurl = 'useraccount.default.svc.cluster.local:8080'
+// const authurl = 'http://localhost:30198/api/user/user'
+const authurl = 'http://useraccount.default.svc.cluster.local:8080/'
+// const auctiondetailurl = 'http://localhost:30200/api/auctiondetails/'
+const auctiondetailurl = 'http://auctiondetails.default.svc.cluster.local:8081/api/auctiondetails/'
 // const redisClient = new Redis(
 // 	{
 // 		host: "localhost",
-// 		port: 30379,
+// 		port: 6379,
 // 		enableOfflineQueue: false,
 // 	});
 
+//rate limit client
 //kubernetes cluster
 const redisClient = new Redis(
 	{
@@ -25,14 +28,6 @@ const redisClient = new Redis(
 		enableOfflineQueue: false,
 	});
 
-// options = {
-// 	cors: true,
-// 	origins: ["*"],
-// 	methods: ["GET", "POST"],
-//     credentials: true
-// }
-
-// const io = require("socket.io")(server);
 
 const io = require("socket.io")(server, {
 	cors: {
@@ -41,30 +36,12 @@ const io = require("socket.io")(server, {
 	},
 });
 
-// io.set("transports", ["websocket"]);
-
-// socket io redis adapter
-// const pubClient = createClient({ host: "localhost", port: 6379});
-
-// redis.connect(function () {
-// 	/* then run all your code, get rid of setTimeout() */
-
-// })30379
 
 // docker redis
 // const pubClient = new Redis(
 // 	{
 // 		host: "localhost",
 // 		port: 6379,
-// 		enableOfflineQueue: false,
-// 		lazyConnect: true
-// 	});
-
-// kubernetes nodeport
-// const pubClient = new Redis(
-// 	{
-// 		host: "localhost",
-// 		port: 30379,
 // 		enableOfflineQueue: false,
 // 		lazyConnect: true
 // 	});
@@ -117,53 +94,113 @@ const nsp = io.of("/auctionroom");
 
 nsp.on("connection", (socket) => {
 	console.log('new connection!');
+	// console.log(socket.adapter.rooms);
 	// Join a conversation
-	const { roomId } = socket.handshake.query;
-	socket.join(roomId);
+	const roomId = socket.handshake.query['roomid'];
+	const token = socket.handshake.query['token']
+	const config = {
+		headers: { Authorization: `${token}` }
+	};
 
-	// Listen for new messages
-	socket.on(NEW_CHAT_MESSAGE_EVENT, async (data) => {
-		console.log(data);
-		rateLimiterRedis.consume(socket.handshake.address)
-			.then((rateLimiterRes) => {
-				// ... Some app logic here ...
-				console.log(rateLimiterRes);
-				console.log(data);
-				nsp.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data);
-			})
-			.catch((rejRes) => {
-				if (rejRes instanceof Error) {
-					// Some Redis error
-					// Never happen if `insuranceLimiter` set up
-					// Decide what to do with it in other case
-				} else {
-					// Can't consume
-					// If there is no error, rateLimiterRedis promise rejected with number of ms before next request allowed
-					const secs = Math.round(rejRes.msBeforeNext / 1000) || 1;
-					socket.emit(NEW_CHAT_MESSAGE_EVENT, { body: "Please do not spam the chat!" });
-					// res.set('Retry-After', String(secs));
-					// res.status(429).send('Too Many Requests');
-				}
+	//check if room exists
+	axios.get(`${auctiondetailurl + roomId}`, config)
+		.then(response => {
+			console.log(response.data['owner_id']);
+			const ownerid = response.data['owner_id']
+
+			console.log(roomId)
+			socket.join(roomId);
+
+			// Listen for new messages
+			socket.on(NEW_CHAT_MESSAGE_EVENT, async (data) => {
+				rateLimiterRedis.consume(socket.handshake.address)
+					.then((rateLimiterRes) => {
+						// ... Some app logic here ...
+						// console.log(rateLimiterRes);
+						console.log(data);
+						nsp.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data);
+					})
+					.catch((rejRes) => {
+						if (rejRes instanceof Error) {
+							// Some Redis error
+							// Never happen if `insuranceLimiter` set up
+							// Decide what to do with it in other case
+						} else {
+							// Can't consume
+							// If there is no error, rateLimiterRedis promise rejected with number of ms before next request allowed
+							const secs = Math.round(rejRes.msBeforeNext / 1000) || 1;
+							socket.emit(NEW_CHAT_MESSAGE_EVENT, { body: "Please do not spam the chat!" });
+							// res.set('Retry-After', String(secs));
+							// res.status(429).send('Too Many Requests');
+						}
+					});
 			});
-	});
 
-	// Listen for new bids
-	socket.on(NEW_BID_EVENT, (data) => {
-		console.log(data);
-		nsp.in(roomId).emit(NEW_BID_EVENT, data);
-	});
+			// Listen for new bids
+			socket.on(NEW_BID_EVENT, (data) => {
+				console.log(data);
+				axios.post(`${roomstorageurl}newbid`, data)
+					.then(response => {
+						console.log(response);
+						nsp.in(roomId).emit(NEW_BID_EVENT, data);
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
 
-	// Listen for auction end
-	socket.on(END_AUCTION_EVENT, (data) => {
-		console.log(data);
-		nsp.in(roomId).emit(END_AUCTION_EVENT, data);
-	});
 
-	//
-	// Leave the room if the user closes the socket
-	socket.on("disconnect", () => {
-		socket.leave(roomId);
-	});
+			});
+
+			// Listen for auction end
+			socket.on(END_AUCTION_EVENT, (data) => {
+				console.log(data);
+				//make api call to auctionroom server which will process the transaction
+				//make call the auction details to indicate auction ended
+				//make sure caller is the roomowner
+				console.log(data.authtoken);
+				const config = {
+					headers: { Authorization: `${JSON.parse(data.authtoken)}` }
+				};
+
+				//check whether client is room owner, then show end auction button
+				axios.get(`${auctiondetailurl + roomId}`, config)
+					.then(response => {
+						console.log(response.data['owner_id']);
+						const ownerid = response.data['owner_id']
+						axios.get(
+							`${authurl}`, config
+						).then(response => {
+							// console.log(response);
+							if (response.data['userid'] == ownerid)
+								console.log(response.data['userid']);
+							nsp.in(roomId).emit(END_AUCTION_EVENT, data);
+							//TODO
+							//call end auction api in auction room
+						})
+							.catch(function (error) {
+								console.log("failed");
+								// console.log(error);
+							});
+					})
+					.catch(function (error) {
+						// console.log(error);
+					});
+
+			});
+
+			//
+			// Leave the room if the user closes the socket
+			socket.on("disconnect", () => {
+				socket.leave(roomId);
+			});
+
+
+
+		})
+		.catch(function (error) {
+			console.log(error);
+			console.log("Room does not exist!");
+		});
 });
 
 server.listen(PORT, () => {
