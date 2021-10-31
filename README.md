@@ -36,7 +36,7 @@ Open http://localhost/auction/{any room name} to join or create a new auction ro
 This is a crude implementation of chat
 Works without authentication for now
 
-## Run mvp using docker-compose
+## Run mvp using shell script
 
 Go to root folder and run 'docker-compose build' to build images
-Run 'docker-compose up' to run all containers
+Then from wsl/linux terminal, run ./k8/setup1.sh

@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auth-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/auth-url: http://useraccount.default.svc.cluster.local:8080/api/user/user
+    # nginx.ingress.kubernetes.io/auth-response-headers: userId # todo response headers need to be set by user api
+spec: 
+  rules:
+   - host: kubernetes.docker.internal
+   - http:
+        paths:
+        # - path: /api/room
+        #   pathType: Prefix
+        #   backend:
+        #       service:
+        #         name: auctionroommanager
+        #         port:
+        #           number: 9000
+        - path: /api/auctiondetails
+          pathType: Prefix
+          backend:
+              service:
+                name: auctiondetails
+                port:
+                  number: 8081
+        - path: /api/currency
+          pathType: Prefix
+          backend:
+              service:
+                name: currencymanagement
+                port:
+                  number: 8082
+        - path: /test-auth
+          pathType: Prefix
+          backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
