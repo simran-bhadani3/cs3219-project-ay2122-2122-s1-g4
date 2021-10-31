@@ -7,10 +7,13 @@ const AuctionDetailSchema = mongoose.Schema({
     owner_id: {type: String, required: [true, 'valid owner id required']},
     start_time: {type: Date, required: [true, 'valid date string required for end time']},
     end_time: {type: Date, required: [true, 'valid date string required for end time']},
+    description: {type: String},
+    increment: {type: Number, required: [true, 'increment required']},
+    minbid: {type: Number, required: [true, 'minbid required']}
 }, {
     timestamps: true
 });
 
 AuctionDetailSchema.plugin(uuid.plugin, 'room_id');
 
-module.exports = mongoose.model('Auctiondetail', AuctionDetailSchema);
+module.exports = mongoose.model('Auctiondetail', AuctionDetailSchema); 
