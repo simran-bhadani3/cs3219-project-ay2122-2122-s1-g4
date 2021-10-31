@@ -43,6 +43,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
+const axios = require('axios');
+
 
 function Copyright(props) {
     return (
@@ -100,15 +102,38 @@ export default function AuctionRoomDisplay(props) {
         setOpen(false);
     };
 
+    function getCurrentUser() {
+        console.log(JSON.parse(localStorage.getItem('userid')));
+        return JSON.parse(localStorage.getItem('userid'));
+    }
+
+    // external auctiondetails url
+    const auctiondetailurl = 'http://localhost/api/auctiondetails/'
     //redirect to home page if auction ends
     useEffect(() => {
         if (!status) {
             history.push("/all");
         };
-        if (true) {
-            setOwner(true);
-        }
+
+
+
     });
+    useEffect(() => {
+        //check whether client is room owner, then show end auction button
+        const config = {
+            headers: { Authorization: JSON.parse(localStorage.getItem('user')) }
+        };
+        axios.get(`${auctiondetailurl + roomId}`, config)
+            .then(response => {
+                console.log(response);
+                if (getCurrentUser() == response.data['owner_id']) {
+                    setOwner(true);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, []);
 
 
     const handleNewBidChange = (event) => {

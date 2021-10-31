@@ -49,11 +49,12 @@ export default function LoginPage() {
   async function login(values) {
     await axios.post(`http://${dockerauthserver||'localhost'}/api/user/login`, values)
       .then(response => {
-        console.log(response);
-        alert('Login Success!');
+        // console.log(response);
+        // alert('Login Success!');
         if (response.data['jwtToken']) {
           localStorage.setItem("user", JSON.stringify(response.data['jwtToken']));
           localStorage.setItem("userid", JSON.stringify(response.data['id']));
+          console.log(response.data['id']);
           authContext.login(response.data['jwtToken']);
         }
         // redirect to home page

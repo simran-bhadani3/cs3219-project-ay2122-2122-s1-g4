@@ -4,11 +4,11 @@ import socketIOClient from "socket.io-client";
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const NEW_BID_EVENT = "newBid";
 const END_AUCTION_EVENT = "endAuction";
-const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:9000'}`;
+// const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:9000'}`;
 //kubernetes nodeport
 // const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:30199'}`;
 //chat ingress
-// const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost/auctionroom'}`;
+const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost/auctionroom'}`;
 const useChat = (roomId) => {
     const [messages, setMessages] = useState([]);
     const [bids, setBids] = useState([]);
@@ -19,7 +19,8 @@ const useChat = (roomId) => {
     useEffect(() => {
         socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
             transport: ['websocket'],
-            query: { roomId },
+            query: { roomid : roomId, token: JSON.parse(localStorage.getItem('user')) }
+
         });
 
         //new message
@@ -88,7 +89,7 @@ const useChat = (roomId) => {
     };
 
 
-    return { messages, sendMessage, bids, sendBid, status, endAuction, highestBid};
+    return { messages, sendMessage, bids, sendBid, status, endAuction, highestBid };
 };
 
 export default useChat;
