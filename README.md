@@ -40,3 +40,4 @@ Works without authentication for now
 
 Go to root folder and run 'docker-compose build' to build images
 Then from wsl/linux terminal, run ./k8/setup1.sh
+Change sh files to CLRF for windows, LF for unix

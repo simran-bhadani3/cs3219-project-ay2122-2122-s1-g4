@@ -31,7 +31,13 @@ spec:
             name: useraccount
             port:
               number: 8080
-      # - path: /test-unauth
+      - path: /test-unauth-agg
+        pathType: Prefix
+        backend:
+            service:
+              name: aggregatesvr
+              port:
+                number: 8085      # - path: /test-unauth
       #   pathType: Prefix
       #   backend:
       #       service:
