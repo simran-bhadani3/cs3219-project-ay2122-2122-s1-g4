@@ -1,0 +1,22 @@
+{
+	"name": "useraccount",
+	"version": "1.0.0",
+	"main": "server.js",
+	"license": "MIT",
+	"devDependencies": {
+		"chai": "^4.3.4",
+		"chai-http": "^4.3.0",
+		"mocha": "^9.1.3",
+		"nodemon": "^2.0.13"
+	},
+	"dependencies": {
+		"cors": "^2.8.5",
+		"express": "^4.17.1",
+		"mongoose": "^6.0.9"
+	},
+	"scripts": {
+		"dev": "nodemon -L server.js",
+		"start": "node server.js",
+		"test": "mocha --exit"
+	}
+}

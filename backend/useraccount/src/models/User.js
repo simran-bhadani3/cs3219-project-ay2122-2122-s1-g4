@@ -17,6 +17,10 @@ const UserSchema = new Schema({
 		type: String,
 		required: true,
 	},
+	currency: {
+		type: Number,
+		required: true,
+	},
 	//can delete later if not needed
 	date: {
 		type: Date,
