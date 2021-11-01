@@ -27,10 +27,10 @@ http://localhost:3000/api/room/getbid/room1/user1
 
 # Get highest bid value of a room
 
-GET from http://localhost:3000/api/room/gethighest/:roomname/
+GET from http://localhost:3000/api/room/gethighest/:roomname
 
 ```
-http://localhost:3000/api/room/getbid/room1/user1
+http://localhost:3000/api/room/gethighest/room1
 ```
 
 # Add a new auction room
