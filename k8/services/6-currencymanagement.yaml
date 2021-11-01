@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: currencymanagement
+  name: currencymanagement
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: currencymanagement
+  template:
+    metadata:
+      labels:
+        app: currencymanagement
+    spec:
+      containers:
+        - env:
+          - name: backend
+            value: mongodb://mongodb:27017/useraccounts
+          image: auctionbackend-currencymanagement:latest
+          imagePullPolicy: Never
+          name: auctionbackend-currencymanagement
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 50m
+            requests:
+              cpu: 50m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: currencymanagement
+  name: currencymanagement
+  namespace: default
+spec:
+  ports:
+  - nodePort: 30201
+    port: 8082
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: currencymanagement
+  type: NodePort
