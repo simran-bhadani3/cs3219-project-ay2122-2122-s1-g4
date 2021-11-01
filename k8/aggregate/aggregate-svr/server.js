@@ -10,7 +10,8 @@ app.use(express.json());
 
 app.get("/api/agg/:userId", async (req, res) => {
     try {
-        console.log(`received req: ${JSON.stringify(req.url)}`);
+        console.log(`received req:\n${JSON.stringify(req.url)}`);
+        console.log(`received req headers:\n${JSON.stringify(req.headers)}`);
         
         const jsonResponseFromTestApi = await axios({
             host: "kubernetes.docker.internal", //"localhost",

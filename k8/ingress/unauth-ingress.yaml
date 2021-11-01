@@ -37,7 +37,8 @@ spec:
             service:
               name: aggregatesvr
               port:
-                number: 8085      # - path: /test-unauth
+                number: 8085      
+      # - path: /test-unauth
       #   pathType: Prefix
       #   backend:
       #       service:
