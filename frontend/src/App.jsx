@@ -19,7 +19,6 @@ import { AuthContext } from './AuthContext';
 
 function App() {
   const auth = useContext(AuthContext);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // can set to false to view login/signup
   const [token, setToken] = useState(null);
   const login = (token) => {
     setToken(token);
@@ -35,11 +34,7 @@ function App() {
     login(storedData);
     console.log(storedData);
   }, [login]);
-  // @ David, if you can figure out...
-  // Need to update with authentication, where users that are not logged in can only view the login or signup page
 
-  // feel free to change that for login/ signup if need to
-  // might remove my auctions and my bids page - ignore those for now (not in mvp)
   return (
     <AuthContext.Provider value={{ isLoggedIn: !!token, login: login, logout: logout }}>
       <ThemeProvider theme={theme}>
