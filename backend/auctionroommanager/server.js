@@ -9,7 +9,7 @@ const axios = require('axios');
 const roomstorageurl = "http://localhost:3000/api/room/"
 // const roomstorageurl = 'useraccount.default.svc.cluster.local:8080'
 // const authurl = 'http://localhost:30198/api/user/user'
-const authurl = 'http://useraccount.default.svc.cluster.local:8080/'
+const authurl = 'http://useraccount.default.svc.cluster.local:8080/api/user/user'
 // const auctiondetailurl = 'http://localhost:30200/api/auctiondetails/'
 const auctiondetailurl = 'http://auctiondetails.default.svc.cluster.local:8081/api/auctiondetails/'
 // const redisClient = new Redis(
@@ -112,7 +112,10 @@ nsp.on("connection", (socket) => {
 			socket.join(roomId);
 			//check if room started or already ended
 			let date = new Date();
-			if (response.data['start_time'] < date.getDate() || response.data['end_time'] > date.getDate()) {
+			var start = new Date(response.data['start_time']);
+			var end = new Date(response.data['end_time']);
+			if ((start < date) && (end > date)) {
+				console.log('room open');
 				// Listen for new messages
 				socket.on(NEW_CHAT_MESSAGE_EVENT, async (data) => {
 					rateLimiterRedis.consume(socket.handshake.address)
@@ -120,7 +123,9 @@ nsp.on("connection", (socket) => {
 							// ... Some app logic here ...
 							// console.log(rateLimiterRes);
 							console.log(data);
-							nsp.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data);
+							if (/\S/.test(data['body'])) {
+								nsp.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data);
+							}
 						})
 						.catch((rejRes) => {
 							if (rejRes instanceof Error) {
@@ -131,7 +136,7 @@ nsp.on("connection", (socket) => {
 								// Can't consume
 								// If there is no error, rateLimiterRedis promise rejected with number of ms before next request allowed
 								const secs = Math.round(rejRes.msBeforeNext / 1000) || 1;
-								socket.emit(NEW_CHAT_MESSAGE_EVENT, { body: "Please do not spam the chat!" });
+								socket.emit(NEW_CHAT_MESSAGE_EVENT, { body: "Please do not spam the chat!", username: '"Room Admin"' });
 								// res.set('Retry-After', String(secs));
 								// res.status(429).send('Too Many Requests');
 							}
@@ -168,20 +173,35 @@ nsp.on("connection", (socket) => {
 					axios.get(`${auctiondetailurl + roomId}`, config)
 						.then(response => {
 							console.log(response.data['owner_id']);
+							const auctiondata = response.data;
 							const ownerid = response.data['owner_id']
 							axios.get(
 								`${authurl}`, config
-							).then(response => {
-								// console.log(response);
-								if (response.data['userid'] == ownerid)
-									console.log(response.data['userid']);
-								nsp.in(roomId).emit(END_AUCTION_EVENT, data);
-								//TODO
-								//call end auction api in auction room
-								//update end date in roomdetails to now
+							).then(authres => {
+								console.log('authentication success');
+								var authid = authres.data['userid']['_id']
+								console.log(authres.data['userid']['_id'])
+								if (authid == ownerid) {
+									console.log('owner verified');
+									console.log(authres.data['userid']);
+									nsp.in(roomId).emit(END_AUCTION_EVENT, data);
+									//end auction by setting end date to now
+									auctiondata['end_time'] = date.toISOString();
+									axios.patch(`${auctiondetailurl + roomId}`, auctiondata, config)
+										.then(updateres => {
+											console.log('update success');
+											const ownerid = updateres.data['owner_id']
+										})
+										.catch(function (error) {
+											console.log("Update endtime failed");
+										});
+									//TODO
+									//call end auction api in auction room
+									//update end date in roomdetails to now
+								}
 							})
 								.catch(function (error) {
-									console.log("failed");
+									console.log("End auction failed");
 									// console.log(error);
 								});
 						})

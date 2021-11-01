@@ -89,12 +89,13 @@ const useStyles = makeStyles({
 export default function AuctionRoomDisplay(props) {
     const roomId = props.match.params.id;
     const { messages, sendMessage, bids, sendBid, status, endAuction, highestBid, setHighestBid } = useChat(roomId);
-    const [newBid, setNewBid] = useState();
+    const [newBid, setNewBid] = useState(0);
     const [isOwner, setOwner] = useState(false);
     let history = useHistory();
     const [open, setOpen] = React.useState(false);
     const [auctionclose, setAuctionclose] = React.useState(false);
     const [auctiondetails, setDetails] = useState({});
+    const [currency, setCurrency] = useState(0);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -119,6 +120,11 @@ export default function AuctionRoomDisplay(props) {
 
     // external auctiondetails url
     const auctiondetailurl = 'http://localhost/api/auctiondetails/'
+
+    // external currency url
+    const currencyurl = 'http://localhost/api/currency/'
+    // external bid url
+    const bidurl = 'http://localhost/api/room/'
     //redirect to home page if auction ends
     useEffect(() => {
         if (!status) {
@@ -144,8 +150,26 @@ export default function AuctionRoomDisplay(props) {
                 console.log(error);
             });
 
+        //get money
+        axios.get(`${currencyurl + getCurrentUser()}`, config)
+            .then(response => {
+                console.log(response);
+                setCurrency(response.data['currency'])
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
         //call api sethighestbid
         // setHighestBid()
+        axios.get(`${bidurl + roomId}`, config)
+            .then(response => {
+                setHighestBid(response.data['highestbid'])
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
     }, []);
 
 
@@ -161,7 +185,12 @@ export default function AuctionRoomDisplay(props) {
         }
         // bid does not satisfy minimum bid or increment
         else if (newBid < auctiondetails['increment'] || newBid <= highestBid + auctiondetails['increment']) {
-            console.log('Please enter a valid bid!');
+            console.log('Bid does not satisfy requirements');
+            handleClickOpen();
+        }
+        // insufficient currency
+        else if (currency < newBid) {
+            console.log('Insufficient currency');
             handleClickOpen();
         }
         else {

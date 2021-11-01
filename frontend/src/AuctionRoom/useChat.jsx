@@ -25,6 +25,7 @@ const useChat = (roomId) => {
 
         //new message
         socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
+            message['timestamp'] = new Date().toLocaleTimeString();
             const incomingMessage = {
                 ...message,
                 ownedByCurrentUser: message.senderId === socketRef.current.id,
@@ -62,7 +63,8 @@ const useChat = (roomId) => {
         socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
             body: messageBody,
             senderId: socketRef.current.id,
-            timestamp: Date()
+            timestamp: Date(),
+            username: localStorage.getItem('username')
         });
     };
 
