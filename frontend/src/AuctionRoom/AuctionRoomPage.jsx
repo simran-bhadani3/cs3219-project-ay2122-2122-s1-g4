@@ -164,8 +164,8 @@ export default function AuctionRoomDisplay(props) {
         // setHighestBid()
         axios.get(`${bidurl}/gethighest/${roomId}`, config)
             .then(response => {
-                console.log(response.data['highest']);
-                setHighestBid({highest : parseInt(response.data['highest']), username : response.data['username']})
+                setHighestBid({highest : parseInt(response['data'].bid), username : response['data'].username})
+                console.log(response['data'].bid);
             })
             .catch(function (error) {
                 console.log(error);
@@ -179,7 +179,7 @@ export default function AuctionRoomDisplay(props) {
     };
 
     const validateAndSend = () => {
-        var min = highestBid['highest'] + auctiondetails['increment'];
+        var min =  parseInt(highestBid['highest']) + parseInt(auctiondetails['increment']);
         console.log(min)
         // non-numerical input
         if (!/^[0-9\b]+$/i.test(newBid)) {
@@ -193,7 +193,7 @@ export default function AuctionRoomDisplay(props) {
         }
         // bid does not satisfy increment
         else if (newBid < min) {
-            console.log('Bid does not satisfy increment' + highestBid['highest'] + 'increment' + auctiondetails['increment']);
+            console.log('Bid does not satisfy increment' + min);
             handleClickOpen();
         }
         // insufficient currency
@@ -302,7 +302,7 @@ export default function AuctionRoomDisplay(props) {
                             <DialogContent>
                                 <DialogContentText id="alert-dialog-description">
                                     Winner : {highestBid['username']} 
-                                    Sold For : {highestBid['highest']}
+                                    Sold For : {highestBid['highest']} 
                                     Thank you for joining this auction!
                                 </DialogContentText>
                             </DialogContent>

@@ -108,8 +108,7 @@ nsp.on("connection", (socket) => {
 			console.log(response.data['owner_id']);
 			const ownerid = response.data['owner_id']
 
-			console.log(roomId)
-			socket.join(roomId);
+
 			//check if room started or already ended
 			let date = new Date();
 			var start = new Date(response.data['start_time']);
@@ -117,6 +116,8 @@ nsp.on("connection", (socket) => {
 			if ((start < date) && (end > date)) {
 				console.log('room open');
 				// Listen for new messages
+				console.log(roomId)
+				socket.join(roomId);
 				socket.on(NEW_CHAT_MESSAGE_EVENT, async (data) => {
 					rateLimiterRedis.consume(socket.handshake.address)
 						.then((rateLimiterRes) => {
@@ -190,7 +191,6 @@ nsp.on("connection", (socket) => {
 									axios.patch(`${auctiondetailurl + roomId}`, auctiondata, config)
 										.then(updateres => {
 											console.log('update success');
-											const ownerid = updateres.data['owner_id']
 										})
 										.catch(function (error) {
 											console.log("Update endtime failed");
@@ -199,7 +199,7 @@ nsp.on("connection", (socket) => {
 									//call end auction api in auction room
 									axios.delete(`${roomstorageurl}deleteroom/${roomId}`, data)
 										.then(response => {
-											console.log('Room deleted and transaction made');				
+											console.log('Room deleted and transaction made');
 										})
 										.catch(function (error) {
 											console.log("Transaction failed");
@@ -222,13 +222,15 @@ nsp.on("connection", (socket) => {
 				socket.on("disconnect", () => {
 					socket.leave(roomId);
 				});
+			} else {
+				console.log('Auction has ended')
 			}
 
 
 
 		})
 		.catch(function (error) {
-			console.log(error);
+			// console.log(error);
 			console.log("Room does not exist!");
 		});
 
