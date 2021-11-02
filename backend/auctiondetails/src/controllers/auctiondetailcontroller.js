@@ -27,6 +27,9 @@ exports.create = (req, res) => {
         owner_id: req.body.owner_id,
         start_time: req.body.start_time,
         end_time: req.body.end_time,
+        description: req.body.description,
+        increment: req.body.increment,
+        minbid: req.body.minbid,
     });
     // Save Auctiondetail in the database
     auctiondetail.save()
@@ -74,6 +77,9 @@ exports.update = (req, res) => {
         owner_id: req.body.owner_id,
         start_time: req.body.start_time,
         end_time: req.body.end_time,
+        description: req.body.description,
+        increment: req.body.increment,
+        minbid: req.body.minbid
     }, { new: true })
         .then(auctiondetail => {
             if (!auctiondetail) {

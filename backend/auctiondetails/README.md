@@ -17,3 +17,9 @@ POST /api/auctiondetails: user can create a new auctiondetail
 PATCH /api/auctiondetails/<auctiondetails>: update a auctiondetail partially
 DELETE /api/auctiondetails/<auctiondetails>: delete a auctiondetail
 PUT /api/auctiondetails/<auctiondetails>: update a auctiondetail completely
+
+
+## Date time format
+"start_time": "2021-11-01T03:53:58.358Z",
+"end_time": "2021-11-01T22:53:58.358Z",
+This is in UTC time, can check current time here : https://www.timeanddate.com/worldclock/timezone/utc

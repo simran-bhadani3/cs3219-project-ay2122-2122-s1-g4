@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,8 +12,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { theme } from '../theme';
-import {ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import { useFormik } from 'formik';
+import { AuthContext } from "../AuthContext";
+import { useHistory } from "react-router-dom";
+const axios = require('axios');
 
 function Copyright(props) {
   return (
@@ -29,26 +32,50 @@ function Copyright(props) {
 }
 
 
+function logout() {
+  localStorage.removeItem("user");
+}
+
+
+function getCurrentUser() {
+  console.log(JSON.parse(localStorage.getItem('user')));
+  return JSON.parse(localStorage.getItem('user'));
+}
+
 export default function LoginPage() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  const authContext = useContext(AuthContext);
+  const dockerauthserver = process.env.REACT_APP_dockerauthserver;
+  let history = useHistory();
+  async function login(values) {
+    await axios.post(`http://${dockerauthserver||'localhost/api/user/login'}`, values)
+      .then(response => {
+        // console.log(response);
+        // alert('Login Success!');
+        if (response.data['jwtToken']) {
+          localStorage.setItem("user", JSON.stringify(response.data['jwtToken']));
+          localStorage.setItem("userid", JSON.stringify(response.data['id']));
+          localStorage.setItem("username", JSON.stringify(response.data['username']));
+          console.log(response.data['id']);
+          authContext.login(response.data['jwtToken']);
+        }
+        // redirect to home page
+        history.push("/all");
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log(dockerauthserver);
+      });
+  }
 
   const validate = values => {
     const errors = {};
-    
+
     if (!values.email) {
       errors.email = 'Required';
     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
       errors.email = 'Invalid email address';
     }
-  
+
     return errors;
   };
 
@@ -58,15 +85,15 @@ export default function LoginPage() {
       password: '',
     },
     validate,
-    onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async values => {
+      await login(values);
+      // getCurrentUser();
     },
   });
 
-  
+
 
   return (
-    <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -81,7 +108,7 @@ export default function LoginPage() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Login
           </Typography>
           <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -95,7 +122,7 @@ export default function LoginPage() {
               autoFocus
               onChange={formik.handleChange}
               value={formik.values.email}
-          
+
             />
             {formik.errors.email ? <div>{formik.errors.email}</div> : null}
             <TextField
@@ -120,7 +147,7 @@ export default function LoginPage() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Login
             </Button>
             <Grid container>
               <Grid item xs>
@@ -138,6 +165,5 @@ export default function LoginPage() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
-    </ThemeProvider>
   );
 }

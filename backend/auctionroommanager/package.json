@@ -1,0 +1,29 @@
+{
+  "name": "auctionroom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon -L server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@socket.io/redis-adapter": "^7.0.0",
+    "artillery": "^2.0.0-4",
+    "artillery-engine-socketio-v3": "^1.1.2",
+    "axios": "^0.22.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "firebase": "^8.1.2",
+    "ioredis": "^4.28.0",
+    "moment": "^2.29.1",
+    "rate-limiter-flexible": "^2.3.2",
+    "react-moment": "^1.1.1",
+    "redis": "^3.1.2",
+    "socket.io": "^4.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
