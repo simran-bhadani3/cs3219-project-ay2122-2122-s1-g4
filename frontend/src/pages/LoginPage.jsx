@@ -47,7 +47,7 @@ export default function LoginPage() {
   const dockerauthserver = process.env.REACT_APP_dockerauthserver;
   let history = useHistory();
   async function login(values) {
-    await axios.post(`http://${dockerauthserver||'localhost'}/api/user/login`, values)
+    await axios.post(`http://${dockerauthserver||'localhost/api/user/login'}`, values)
       .then(response => {
         // console.log(response);
         // alert('Login Success!');

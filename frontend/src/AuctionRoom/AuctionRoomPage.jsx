@@ -119,12 +119,12 @@ export default function AuctionRoomDisplay(props) {
     }
 
     // external auctiondetails url
-    const auctiondetailurl = 'http://localhost/api/auctiondetails/'
+    const auctiondetailurl = `http://${process.env.REACT_APP_dockerauctiondetailsserver || 'localhost/api/auctiondetails/'}`;
 
     // external currency url
-    const currencyurl = 'http://localhost/api/currency/'
+    const currencyurl = `http://${process.env.REACT_APP_dockercurrencymanagementserver || 'localhost/api/currency/'}`;
     // external bid url
-    const bidurl = 'http://localhost/api/room/'
+    const bidurl = `http://${process.env.REACT_APP_dockerauctionroomserver || 'localhost/api/room/'}`;
     //redirect to home page if auction ends
     useEffect(() => {
         if (!status) {
@@ -162,9 +162,9 @@ export default function AuctionRoomDisplay(props) {
 
         //call api sethighestbid
         // setHighestBid()
-        axios.get(`${bidurl + roomId}`, config)
+        axios.get(`${bidurl}/gethighest/${roomId}`, config)
             .then(response => {
-                setHighestBid(response.data['highestbid'])
+                setHighestBid(parseInt(response.data['highestbid']))
             })
             .catch(function (error) {
                 console.log(error);
@@ -183,9 +183,14 @@ export default function AuctionRoomDisplay(props) {
             console.log('Please enter a valid bid!');
             handleClickOpen();
         }
+        // bid does not satisfy minimum bid
+        else if (newBid < auctiondetails['minbid']) {
+            console.log('Bid does not satisfy minimum bid ' + auctiondetails['minbid']);
+            handleClickOpen();
+        }
         // bid does not satisfy minimum bid or increment
-        else if (newBid < auctiondetails['increment'] || newBid <= highestBid + auctiondetails['increment']) {
-            console.log('Bid does not satisfy requirements');
+        else if (newBid <= highestBid + auctiondetails['increment']) {
+            console.log('Bid does not satisfy increment' + highestBid + 'increment' + auctiondetails['increment']);
             handleClickOpen();
         }
         // insufficient currency
