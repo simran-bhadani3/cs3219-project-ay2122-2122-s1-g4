@@ -3,65 +3,41 @@ const express = require("express");
 const router = express.Router();
 
 // note that you need the http:// part if youre not using localhost, for axios requests
-const local = "localhost";
-const deployed = "http://...";
-const hostUrl = local
+const deployedUrl = "http://...";
 const endpoint1 = "/api/auctiondetails";
 const endpoint2 = "/api/currency";
 const endpoint3 = "/api/user";
 
+// dont need to set host for localhost
+if (process.env.NODE_ENV === "production")
+    axios.defaults.baseURL = deployedUrl;
 
-
-
-// axios.defaults.baseURL = hostUrl;
+// i do not want axios to throw errors for any error codes, only want promise rejections for actual rejections 
+axios.defaults.validateStatus = function (status) {
+    return true;
+}; 
 
 router.get("/:userId", async (req, res) => {
     try {
-        axios.defaults.validateStatus = function (status) {
-            return true;
-        }; // i do not want axios to throw errors for any error codes, just forward to front end / manipulate it as is
         const {userId} = req.params;
         console.log(`userid: ${userId}`);
         console.log(`received req:\n${JSON.stringify(req.url)}`);
         console.log(`received req headers:\n${JSON.stringify(req.headers)}`);
-        const AUTH_HEADER = req.headers['authorization'];
+
+        const AUTH_HEADER = req.headers['authorization'] || "";
 
         // technically the api gateway is currently catching auth errors...
-        console.log("authorization header: " + AUTH_HEADER);
+        // console.log("authorization header: " + AUTH_HEADER);
 
-        const AUTH_TOKEN = (AUTH_HEADER && AUTH_HEADER.split(" ")[1]) || "";
+        const instance = axios.create();
+        instance.defaults.headers.common['Authorization'] = AUTH_HEADER;     
 
-        const instance = axios.create({
-            validateStatus: function (status) {
-                return true;
-            }
-        });
-        instance.defaults.headers.common['Authorization'] = AUTH_HEADER;
-        
-        
-        const jsonResponseFromTestApi = await instance({
-            url: `/api/currency/${userId}`,
-			method: "get",
-		})
-        .then(axiosRes => {
-            // if (!axiosRes.response) { throw axiosRes; }
+        const currencyApiRes = await getCurrencyApi(instance, userId);
 
-            // console.log(axiosRes)
-            const json = {
-                // "data": axiosRes.response.data,
-                "status": axiosRes.status,
-                "message": `${axiosRes.status} ${axiosRes.statusText}`
-            };
-            return json;
-        });
-
-        console.log("here");
-
-        console.log(`test: ${jsonResponseFromTestApi}`)
         const combineJson = {
-            "testApi": jsonResponseFromTestApi,
+            "currencyApi": currencyApiRes,
             "userApi": null, 
-            "currencyApi": null
+            "auctiondetailsApi": null
         }; // we need to think about how to format the aggregated response
 
 		res.status(200).json(combineJson);
@@ -71,5 +47,36 @@ router.get("/:userId", async (req, res) => {
 		res.status(500).send(err.message);
 	}
 })
+
+async function getCurrencyApi(instance, userId) {    
+    const currencyApiRes = await instance({
+        url: `/api/currency/${userId}`,
+        method: "get",
+    })
+    .then(axiosRes => {
+        console.log(axiosRes)
+        const json = {
+            "data": axiosRes.data,
+            "status": axiosRes.status,
+            "message": `${axiosRes.status} ${axiosRes.statusText}`
+        };
+        return json;
+    });
+    return currencyApiRes;
+}
+
+function validateIdentity() {
+
+}
+
+function auth(req, res, next) {
+    // 
+    // get from localhost/api/user/user
+    // from the response, get headers (userid, username)
+    // and then call the relevant api accordingly 
+
+
+    next();
+}
 
 module.exports = router;

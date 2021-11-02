@@ -1,7 +1,7 @@
 # commented out everything that's not needed to setup the api gateway
 # run using ./k8/setup.sh
 
-docker build -t aggregatesvr:latest . 
+docker build -t aggregatesvr:latest ./k8/aggregate/aggregatesvr/
 docker run -p 8085:8085 --name aggregatesvr -i  -t aggregatesvr:latest -d 
 
 # commands to get all our kube resources up 
