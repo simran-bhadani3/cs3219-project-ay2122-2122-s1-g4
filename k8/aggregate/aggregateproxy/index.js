@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.port || 8085;
 const HOST = "localhost";
 
-// Configuration for the proxy middleware
+// Configuring api gateway location for the proxy middleware
 const TEST_URL = "https://jsonplaceholder.typicode.com";
 const LOCAL_URL = "http://localhost"; // need http://
 const DEPLOYED_URL = "http://...";
@@ -22,21 +22,13 @@ app.use(morgan('dev'));
 
 // To see if this proxy is running
 app.get('/agg/test', (req, res) => {
-    res.send('This is an aggregation and proxy service.');
+    res.send('This is an aggregation and proxy endpoint. It seems to be running.');
 });
 
-// app.use('/agg/userdetails', combiner);
+// Aggregate endpoints
 app.use('/agg/userdetails', axiosCombiner);
  
 // Proxy endpoints
-app.use('/json_placeholder', createProxyMiddleware({
-    target: TEST_URL,
-    changeOrigin: true,
-    pathRewrite: {
-        [`^/json_placeholder`]: '',
-    },
-}));
-
 // https://www.twilio.com/blog/node-js-proxy-server
 app.use('/api', createProxyMiddleware({
     target: FORWARDING_URL,

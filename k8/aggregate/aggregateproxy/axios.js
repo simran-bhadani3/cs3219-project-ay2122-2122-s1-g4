@@ -3,8 +3,9 @@ const express = require("express");
 const router = express.Router();
 
 // note that you need the http:// part if youre not using localhost, for axios requests
+// ! duplication here
 const deployedUrl = "http://...";
-const endpoint1 = "/api/auctiondetails";
+const pathAuctionDetails = "/api/auctiondetails/owner";
 const endpoint2 = "/api/currency";
 const endpoint3 = "/api/user";
 
@@ -12,7 +13,7 @@ const endpoint3 = "/api/user";
 if (process.env.NODE_ENV === "production")
     axios.defaults.baseURL = deployedUrl;
 
-// i do not want axios to throw errors for any error codes, only want promise rejections for actual rejections 
+// do not want axios to throw errors for any error codes, only want promise rejections for actual rejections 
 axios.defaults.validateStatus = function (status) {
     return true;
 }; 
@@ -34,10 +35,12 @@ router.get("/:userId", async (req, res) => {
 
         const currencyApiRes = await getCurrencyApi(instance, userId);
 
+        const auctiondetailsApiRes = await getApi(instance, `${pathAuctionDetails}/${userId}`);
+
         const combineJson = {
             "currencyApi": currencyApiRes,
             "userApi": null, 
-            "auctiondetailsApi": null
+            "auctiondetailsApi": auctiondetailsApiRes
         }; // we need to think about how to format the aggregated response
 
 		res.status(200).json(combineJson);
@@ -48,13 +51,14 @@ router.get("/:userId", async (req, res) => {
 	}
 })
 
-async function getCurrencyApi(instance, userId) {    
-    const currencyApiRes = await instance({
-        url: `/api/currency/${userId}`,
+async function getApi(instance, url) {    
+    console.log(`url to get from: ${url}`)
+    const apiRes = await instance({
+        url: `${url}`,
         method: "get",
     })
     .then(axiosRes => {
-        console.log(axiosRes)
+        // console.log(axiosRes)
         const json = {
             "data": axiosRes.data,
             "status": axiosRes.status,
@@ -62,21 +66,24 @@ async function getCurrencyApi(instance, userId) {
         };
         return json;
     });
-    return currencyApiRes;
+    return apiRes;
 }
 
-function validateIdentity() {
-
-}
-
-function auth(req, res, next) {
-    // 
-    // get from localhost/api/user/user
-    // from the response, get headers (userid, username)
-    // and then call the relevant api accordingly 
-
-
-    next();
+async function getCurrencyApi(instance, userId) {    
+    const apiRes = await instance({
+        url: `/api/currency/${userId}`,
+        method: "get",
+    })
+    .then(axiosRes => {
+        // console.log(axiosRes)
+        const json = {
+            "data": axiosRes.data,
+            "status": axiosRes.status,
+            "message": `${axiosRes.status} ${axiosRes.statusText}`
+        };
+        return json;
+    });
+    return apiRes;
 }
 
 module.exports = router;
