@@ -2,26 +2,23 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: currencymanagement
-  name: currencymanagement
+    app: auctionroom
+  name: auctionroom
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: currencymanagement
+      app: auctionroom
   template:
     metadata:
       labels:
-        app: currencymanagement
+        app: auctionroom
     spec:
       containers:
-        - env:
-          - name: backend
-            value: mongodb://mongodb:27017/useraccounts
-          image: auctionbackend-currencymanagement:latest
+        - image: auctionbackend-auctionroom:latest
           imagePullPolicy: Never
-          name: auctionbackend-currencymanagement
+          name: auctionbackend-auctionroom
           ports:
           - containerPort: 8080
             protocol: TCP
@@ -35,15 +32,15 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: currencymanagement
-  name: currencymanagement
+    app: auctionroom
+  name: auctionroom
   namespace: default
 spec:
   ports:
-  - nodePort: 30201
-    port: 8082
+  - nodePort: 30202
+    port: 8083
     protocol: TCP
     targetPort: 8080
   selector:
-    app: currencymanagement
+    app: auctionroom
   type: NodePort

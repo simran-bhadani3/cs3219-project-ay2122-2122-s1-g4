@@ -17,9 +17,9 @@ services:
     ports:
       - "80:3000"
     
-    # environment:
-      # react env variables need to start with REACT_APP_
-      # REACT_APP_dockerauthserver: host.docker.internal:8000
+  #   # environment:
+  #     # react env variables need to start with REACT_APP_
+  #     # REACT_APP_dockerauthserver: host.docker.internal:8000
     
   auctionbackend-useraccount:
     build:  
@@ -38,6 +38,13 @@ services:
       - "8001:8080"
     environment:
       backend: mongodb://host.docker.internal:27017/useraccounts
+  
+  auctionbackend-auctionroom:
+    build:  
+      context: ./backend/auctionroom
+    image: auctionbackend-auctionroom
+    ports:
+      - "8002:8080"
 
   auctionbackend-auctionroommanager:
     build:  
@@ -58,6 +65,7 @@ services:
     ports:
       - "7000:8080"
     environment:
+        backend: mongodb://host.docker.internal:27017/auctiondetails
         PORT: "8080"
 
   aggregatesvr:
@@ -68,5 +76,3 @@ services:
       - "8085:8085"
     environment:
         PORT: "8085"
-
-

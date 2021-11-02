@@ -29,7 +29,8 @@ export default function MessageCard(props) {
             </Grid>
             <Grid item xs={12}>
                 <ListItemText align="left" secondary={
-                    props.data.timestamp + " " + props.data.username.replace(/['"]+/g, '')}>
+                    props.data.timestamp + " " + props.data.username}>
+                        {/* props.data.timestamp + " " + props.data.username.replace(/['"]+/g, '')}> */}
                 </ListItemText>
             </Grid>
         </Grid>

@@ -6,8 +6,8 @@ const server = require("http").createServer();
 const axios = require('axios');
 
 //internal urls within kubernetes cluster
-const roomstorageurl = "http://localhost:3000/api/room/"
-// const roomstorageurl = 'useraccount.default.svc.cluster.local:8080'
+// const roomstorageurl = "http://localhost:3000/api/room/"
+const roomstorageurl = 'http://auctionroom.default.svc.cluster.local:8083/api/room/'
 // const authurl = 'http://localhost:30198/api/user/user'
 const authurl = 'http://useraccount.default.svc.cluster.local:8080/api/user/user'
 // const auctiondetailurl = 'http://localhost:30200/api/auctiondetails/'
@@ -197,7 +197,13 @@ nsp.on("connection", (socket) => {
 										});
 									//TODO
 									//call end auction api in auction room
-									//update end date in roomdetails to now
+									axios.delete(`${roomstorageurl}deleteroom/${roomId}`, data)
+										.then(response => {
+											console.log('Room deleted and transaction made');				
+										})
+										.catch(function (error) {
+											console.log("Transaction failed");
+										});
 								}
 							})
 								.catch(function (error) {

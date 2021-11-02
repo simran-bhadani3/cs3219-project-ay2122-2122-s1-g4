@@ -54,7 +54,7 @@ export default function LoginPage() {
         if (response.data['jwtToken']) {
           localStorage.setItem("user", JSON.stringify(response.data['jwtToken']));
           localStorage.setItem("userid", JSON.stringify(response.data['id']));
-          localStorage.setItem("username", JSON.stringify(response.data['username']));
+          localStorage.setItem("username", response.data['username']);
           console.log(response.data['id']);
           authContext.login(response.data['jwtToken']);
         }
