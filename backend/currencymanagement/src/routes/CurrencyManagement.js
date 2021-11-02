@@ -4,12 +4,13 @@ const router = express.Router();
 
 const User = require("../models/User");
 
-router.get("/:username", (req, res) => {
-	username = req.params.username;
-	User.findOne({ username: username })
+router.get("/:userid", (req, res) => {
+	userid = req.params.userid;
+	User.findOne({ _id: userid })
 		.then((user) => {
 			if (user) {
 				res.status(200).json({
+					_id: user._id,
 					username: user.username,
 					currency: user.currency,
 				});
