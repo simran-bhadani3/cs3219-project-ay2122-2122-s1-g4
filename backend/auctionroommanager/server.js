@@ -94,7 +94,7 @@ const nsp = io.of("/auctionroom");
 
 nsp.on("connection", (socket) => {
 	console.log('new connection!');
-	// console.log(socket.adapter.rooms);
+	console.log(socket.handshake.query);
 	// Join a conversation
 	const roomId = socket.handshake.query['roomid'];
 	const token = socket.handshake.query['token']
