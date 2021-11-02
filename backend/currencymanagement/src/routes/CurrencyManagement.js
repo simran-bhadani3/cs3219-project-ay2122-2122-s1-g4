@@ -54,7 +54,7 @@ router.post("/transaction", async (req, res) => {
 			res.status(200).json({ message: "Transaction completed" });
 		})
 		.catch((err) => {
-			res.status(400).send(err);
+			res.status(500).send(err);
 		});
 	session.endSession();
 });

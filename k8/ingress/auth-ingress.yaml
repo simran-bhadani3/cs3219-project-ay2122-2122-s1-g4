@@ -33,6 +33,13 @@ spec:
                 name: currencymanagement
                 port:
                   number: 8082
+        - path: /api/room
+          pathType: Prefix
+          backend:
+              service:
+                name: auctionroom
+                port:
+                  number: 8083
         - path: /test-auth
           pathType: Prefix
           backend:
