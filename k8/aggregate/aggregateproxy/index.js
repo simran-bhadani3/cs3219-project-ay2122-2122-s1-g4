@@ -1,4 +1,3 @@
-const combiner = require('./combiner');
 const axiosCombiner = require('./axios');
 const express = require('express');
 const morgan = require("morgan");
@@ -15,7 +14,9 @@ const HOST = "localhost";
 const TEST_URL = "https://jsonplaceholder.typicode.com";
 const LOCAL_URL = "http://localhost"; // need http://
 const DEPLOYED_URL = "http://...";
-const FORWARDING_URL = LOCAL_URL;
+const FORWARDING_URL = (process.env.NODE_ENV === "production") 
+    ? DEPLOYED_URL 
+    : LOCAL_URL 
 
 // Logging
 app.use(morgan('dev'));
