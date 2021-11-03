@@ -26,6 +26,11 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: /data/db
+        resources:
+          limits:
+            cpu: 200m
+          requests:
+            cpu: 200m
   volumeClaimTemplates:
   - metadata:
       name: storage
