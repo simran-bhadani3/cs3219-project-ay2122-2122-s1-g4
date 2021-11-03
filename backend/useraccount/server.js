@@ -5,7 +5,6 @@ const passport = require("passport");
 const dbUrl = process.env.backend || "mongodb://127.0.0.1:27017/useraccounts";
 console.log(dbUrl);
 //const dbUrl = "mongodb://host.docker.internal:27017/useraccounts";
-mongoose.Promise = global.Promise;
 mongoose
 	.connect(dbUrl, {
 		useNewUrlParser: true,
@@ -35,3 +34,5 @@ const port = process.env.PORT || 8080;
 app.listen(port, () => {
 	console.log(`useraccount server is listening on port ${port}`);
 });
+
+module.exports.app = app;

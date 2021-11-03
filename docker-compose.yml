@@ -35,9 +35,21 @@ services:
     ports:
       - 27017:27017
       
-  auctionbackend_auctiondetails:
+  auctionbackend-auctiondetails:
     build:  
       context: ./backend/auctiondetails
-    image: auctionbackend_auctiondetails
+    image: auctionbackend-auctiondetails
     ports:
       - "7000:8080"
+    environment:
+        PORT: "8080"
+
+  aggregatesvr:
+    build:  
+      context: ./k8/aggregate/aggregate-svr
+    image: aggregatesvr
+    ports:
+      - "8085:8085"
+    environment:
+        PORT: "8085"
+

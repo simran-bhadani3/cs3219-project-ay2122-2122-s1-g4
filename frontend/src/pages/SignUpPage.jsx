@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { theme } from '../theme';
 import { ThemeProvider } from '@mui/material/styles';
+import { useHistory } from "react-router-dom";
 const axios = require('axios');
 
 function Copyright(props) {
@@ -65,6 +66,8 @@ export default function SignUp() {
     // Pass the useFormik() hook initial form values, a validate function that will be called when
     // form values change or fields are blurred, and a submit function that will
     // be called when the form is submitted
+    let history = useHistory();
+
     const formik = useFormik({
         initialValues: {
             username: '',
@@ -74,10 +77,11 @@ export default function SignUp() {
         },
         validate,
         onSubmit: values => {
-            alert(JSON.stringify(values, null, 2));
-            axios.post(`http://${process.env.REACT_APP_dockerauthserver||'localhost:8000'}/api/user/register`, values)
+            // alert(JSON.stringify(values, null, 2));
+            axios.post(`http://${process.env.REACT_APP_dockerauthserver||'localhost'}/api/user/register`, values)
               .then(function (response) {
                 console.log(response);
+                history.push("/login");
               })
               .catch(function (error) {
                 console.log(error);

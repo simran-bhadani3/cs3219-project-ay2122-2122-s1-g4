@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { theme } from './theme';
@@ -23,9 +23,9 @@ function App() {
   const [token, setToken] = useState(null);
   const login = (token) => {
     setToken(token);
-    console.log(token);
-    console.log(auth.isLoggedIn);
-    console.log(!!token);
+    // console.log(token);
+    // console.log(auth.isLoggedIn);
+    // console.log(!!token);
   }
   const logout = () => {
     setToken(null);
@@ -47,17 +47,25 @@ function App() {
         <div className="wrapper">
           <BrowserRouter>
             <Header pages={!!token ? pagesLoggedIn : pagesLoggedOut} />
-            <Switch>
-              <Route exact path="/all" component={HomePage} />
-              <Route exact path="/new" component={AddAuctionPage} />
-              <Route exact path="/myauctions" component={AuctionsPage} />
-              <Route exact path="/mybids" component={BidsPage} />
-              <Route exact path="/signup" component={SignUpPage} />
-              <Route exact path="/login" component={LoginPage} />
-              <Route exact path="/" component={LoginPage} />
-              <Route exact path="/auction/:id" component={AuctionRoomPage} />
-              <Route component={NotFoundPage} />
-            </Switch>
+            {/* redirects user to login or signup page only */}
+            {!!token ? (
+              <Switch>
+                <Route exact path="/all" component={HomePage} />
+                <Route exact path="/new" component={AddAuctionPage} />
+                <Route exact path="/myauctions" component={AuctionsPage} />
+                <Route exact path="/mybids" component={BidsPage} />
+                <Route exact path="/" component={HomePage} />
+                <Route exact path="/auction/:id" component={AuctionRoomPage} />
+                <Route exact path="/login" component={HomePage} />
+                <Route component={NotFoundPage} />
+              </Switch>
+            ) : (
+              <Switch>
+                <Route exact path="/signup" component={SignUpPage} />
+                <Route exact path="/*" component={LoginPage} />
+              </Switch>
+            )}
+
             <Footer />
           </BrowserRouter>
         </div>

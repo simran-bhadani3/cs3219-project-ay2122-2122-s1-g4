@@ -1,3 +1,5 @@
+# run redis container for redis adapter
+# docker run --name my-redis -p 6379:6379 -d redis
 FROM node:14
 
 # Create app directory
