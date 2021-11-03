@@ -2,7 +2,7 @@ const express = require("express");
 
 const app = express();
 
-const port = 3000;
+const port = 9090;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -15,6 +15,6 @@ app.listen(port, function (err, data) {
 	if (err) {
 		console.log(err);
 	} else {
-		console.log("connected");
+		console.log("connected on port " + port);
 	}
 });

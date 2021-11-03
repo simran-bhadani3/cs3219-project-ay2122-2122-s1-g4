@@ -68,5 +68,11 @@ services:
       - "8085:8085"
     environment:
         PORT: "8085"
-
+        
+  auctionbackend-auctionroom:
+    build:  
+      context: ./backend/auctionroom
+    image: auctionbackend-auctionroom
+    ports:
+      - "9095:9095"
 
