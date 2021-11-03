@@ -1,41 +1,39 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  annotations:
-  labels:
-    app: mongodb
   name: mongodb
   namespace: default
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: mongodb
+  serviceName: "mongodb"
+  replicas: 1
   template:
     metadata:
       labels:
         app: mongodb
     spec:
+      terminationGracePeriodSeconds: 10
       containers:
-        - image: mongo
-          imagePullPolicy: Always
-          name: mongo
-          ports:
-            - containerPort: 27017
-              protocol: TCP
-          volumeMounts:
-            - name: storage
-              mountPath: /data/db
-          resources:
-            limits:
-              cpu: 200m
-            requests:
-              cpu: 200m
-      volumes:
+      - name: mongo
+        image: mongo
+        imagePullPolicy: Always
+        name: mongo
+        ports:
+        - containerPort: 27017
+          # name: web
+        volumeMounts:
         - name: storage
-          persistentVolumeClaim:
-            claimName: mongo-pvc
-
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
@@ -47,8 +45,8 @@ metadata:
 spec:
   ports:
     - port: 27017
-      protocol: TCP
       targetPort: 27017
+  clusterIP: None
   selector:
     app: mongodb
   type: ClusterIP
