@@ -6,8 +6,8 @@ const server = require("http").createServer();
 const axios = require('axios');
 
 //internal urls within kubernetes cluster
-const roomstorageurl = "http://localhost:3000/api/room/"
-// const roomstorageurl = 'useraccount.default.svc.cluster.local:8080'
+// const roomstorageurl = "http://localhost:3000/api/room/"
+const roomstorageurl = 'http://auctionroom.default.svc.cluster.local:8083/api/room/'
 // const authurl = 'http://localhost:30198/api/user/user'
 const authurl = 'http://useraccount.default.svc.cluster.local:8080/api/user/user'
 // const auctiondetailurl = 'http://localhost:30200/api/auctiondetails/'
@@ -94,7 +94,7 @@ const nsp = io.of("/auctionroom");
 
 nsp.on("connection", (socket) => {
 	console.log('new connection!');
-	// console.log(socket.adapter.rooms);
+	console.log(socket.handshake.query);
 	// Join a conversation
 	const roomId = socket.handshake.query['roomid'];
 	const token = socket.handshake.query['token']
@@ -108,8 +108,7 @@ nsp.on("connection", (socket) => {
 			console.log(response.data['owner_id']);
 			const ownerid = response.data['owner_id']
 
-			console.log(roomId)
-			socket.join(roomId);
+
 			//check if room started or already ended
 			let date = new Date();
 			var start = new Date(response.data['start_time']);
@@ -117,6 +116,8 @@ nsp.on("connection", (socket) => {
 			if ((start < date) && (end > date)) {
 				console.log('room open');
 				// Listen for new messages
+				console.log(roomId)
+				socket.join(roomId);
 				socket.on(NEW_CHAT_MESSAGE_EVENT, async (data) => {
 					rateLimiterRedis.consume(socket.handshake.address)
 						.then((rateLimiterRes) => {
@@ -190,14 +191,19 @@ nsp.on("connection", (socket) => {
 									axios.patch(`${auctiondetailurl + roomId}`, auctiondata, config)
 										.then(updateres => {
 											console.log('update success');
-											const ownerid = updateres.data['owner_id']
 										})
 										.catch(function (error) {
 											console.log("Update endtime failed");
 										});
 									//TODO
 									//call end auction api in auction room
-									//update end date in roomdetails to now
+									axios.delete(`${roomstorageurl}deleteroom/${roomId}`, data)
+										.then(response => {
+											console.log('Room deleted and transaction made');
+										})
+										.catch(function (error) {
+											console.log("Transaction failed");
+										});
 								}
 							})
 								.catch(function (error) {
@@ -216,13 +222,15 @@ nsp.on("connection", (socket) => {
 				socket.on("disconnect", () => {
 					socket.leave(roomId);
 				});
+			} else {
+				console.log('Auction has ended')
 			}
 
 
 
 		})
 		.catch(function (error) {
-			console.log(error);
+			// console.log(error);
 			console.log("Room does not exist!");
 		});
 

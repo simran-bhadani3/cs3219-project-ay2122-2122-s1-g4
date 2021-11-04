@@ -14,7 +14,7 @@ module.exports = {
 						.child(req.roomname)
 						.child("highest")
 						.get()
-						.then((snapshot) => {
+						.then(async (snapshot) => {
 							if (snapshot.exists()) {
 								highestBid = snapshot.val();
 								if (highestBid.bid >= req.bid) {
@@ -22,14 +22,14 @@ module.exports = {
 										err: "Bid has to be higher than current highest bid",
 									});
 								} else {
-									firebase
+									await firebase
 										.database()
 										.ref("rooms/" + req.roomname + "/bids/" + req.username)
 										.set({
 											username: req.username,
 											bid: req.bid,
 										});
-									firebase
+									await firebase
 										.database()
 										.ref("rooms/" + req.roomname + "/highest/")
 										.set({
@@ -40,21 +40,6 @@ module.exports = {
 										"Inserted user " + req.username + " with bid " + req.bid
 									);
 								}
-							} else {
-								firebase
-									.database()
-									.ref("rooms/" + req.roomname + "/highest/")
-									.set({
-										username: req.username,
-										bid: req.bid,
-									});
-								firebase
-									.database()
-									.ref("rooms/" + req.roomname + "/bids/" + req.username)
-									.set({
-										username: req.username,
-										bid: req.bid,
-									});
 							}
 						})
 						.catch((err) => {
@@ -88,12 +73,28 @@ module.exports = {
 						.set({
 							username: "dummy",
 							bid: 0,
+						})
+						.then(() => {
+							firebase
+								.database()
+								.ref("rooms/" + req.roomname + "/owner/")
+								.set({
+									username: req.owner,
+								})
+								.then(() => {
+									res.status(200).send("Room created");
+								})
+								.catch(() => {
+									res.status(500).send("Error: " + err);
+								});
+						})
+						.catch((err) => {
+							res.status(500).send("Error: " + err);
 						});
-					res.status(200).send("Room created");
 				}
 			})
 			.catch((err) => {
-				console.log(err);
+				res.status(500).send("Error: " + err);
 			});
 	},
 };

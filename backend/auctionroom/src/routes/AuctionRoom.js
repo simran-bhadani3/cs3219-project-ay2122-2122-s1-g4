@@ -16,6 +16,9 @@ router.post("/newroom/", (req, res) => {
 router.get("/getbid/:roomname/:username", (req, res) => {
 	getters.getBid(req, res);
 });
+router.get("/gethighest/:roomname/", (req, res) => {
+	getters.getHighestBid(req, res);
+});
 
 router.delete("/deleteroom/:roomname", (req, res) => {
 	deleters.deleteRoom(req, res);
