@@ -3,27 +3,30 @@ const express = require('express');
 const morgan = require("morgan");
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+
 // Create Express Server
 const app = express();
 
 // Configuration
-const PORT = process.env.port || 8085;
-const HOST = "localhost";
+const PORT = process.env.PORT || 8085;
+const HOST = "0.0.0.0";
 
 // Configuring api gateway location for the proxy middleware
-const TEST_URL = "https://jsonplaceholder.typicode.com";
 const LOCAL_URL = "http://localhost"; // need http://
-const DEPLOYED_URL = "http://...";
-const FORWARDING_URL = (process.env.NODE_ENV === "production") 
+const DEPLOYED_URL = "http://abc.com//...";
+const FORWARDING_URL = (process.env.NODE_ENV === "production" && process.env.API_GATEWAY_URL) 
     ? DEPLOYED_URL 
     : LOCAL_URL 
+
+console.log(`FORWARDING_URL: ${FORWARDING_URL}`);
 
 // Logging
 app.use(morgan('dev'));
 
 // To see if this proxy is running
 app.get('/agg/test', (req, res) => {
-    res.send('This is an aggregation and proxy endpoint. It seems to be running.');
+    res.send('This is an aggregation and proxy endpoint. It seems to be up and running.');
 });
 
 // Aggregate endpoints

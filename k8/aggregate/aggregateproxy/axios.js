@@ -4,14 +4,14 @@ const router = express.Router();
 
 // note that you need the http:// part if youre not using localhost, for axios requests
 // ! duplication here
-const deployedUrl = "http://...";
+const DEPLOYED_URL = "http://...";
 const PATH_AUCTIONDETAILS = "/api/auctiondetails/owner";
 const PATH_CURRENCY = "/api/currency";
 const endpoint3 = "/api/user";
 
 // dont need to set host for localhost
 if (process.env.NODE_ENV === "production")
-    axios.defaults.baseURL = deployedUrl;
+    axios.defaults.baseURL = DEPLOYED_URL;
 
 // do not want axios to throw errors for any error codes, only want promise rejections for actual rejections 
 axios.defaults.validateStatus = function (status) {
@@ -33,7 +33,7 @@ router.get("/:userId", async (req, res) => {
         const instance = axios.create();
         instance.defaults.headers.common['Authorization'] = AUTH_HEADER;     
 
-        const currencyApiRes = await getCurrencyApi(instance, `${PATH_CURRENCY}${userId}`,);
+        const currencyApiRes = await getApi(instance, `${PATH_CURRENCY}${userId}`,);
 
         const auctiondetailsApiRes = await getApi(instance, `${PATH_AUCTIONDETAILS}/${userId}`);
 

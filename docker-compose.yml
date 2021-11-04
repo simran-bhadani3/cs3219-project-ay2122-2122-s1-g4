@@ -60,13 +60,5 @@ services:
     environment:
         PORT: "8080"
 
-  aggregatesvr:
-    build:  
-      context: ./k8/aggregate/aggregate-svr
-    image: aggregatesvr
-    ports:
-      - "8085:8085"
-    environment:
-        PORT: "8085"
 
 
