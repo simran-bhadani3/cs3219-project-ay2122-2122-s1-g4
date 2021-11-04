@@ -62,11 +62,6 @@ jobs:
           ./backend/auctiondetails
         docker push "gcr.io/$PROJECT_ID/$IMAGE:1.0"
 
-    # Push the Docker image to Google Container Registry
-    # - name: Publish
-    #   run: |-
-        
-
     # Set up kustomize
     - name: Set up Kustomize
       run: |-
