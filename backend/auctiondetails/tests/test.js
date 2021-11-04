@@ -16,7 +16,7 @@ describe("Auction Details", function () {
                     done();
                 });
         });
-    });
+    }).timeout(10000);
 
     describe("GET /api/auctiondetails", () => {
         it("should get all auction details", (done) => {
@@ -28,7 +28,7 @@ describe("Auction Details", function () {
                     done();
                 });
         });
-    });
+    }).timeout(10000);;
 
     const sampleAuctionDetail1 = {
         room_display_name: "sampleRoom1",
@@ -60,7 +60,7 @@ describe("Auction Details", function () {
                     res.body.should.have.property('message');
                     done();
                 });
-        });
+        }).timeout(10000);;
 
         it("should create a new auction detail", (done) => {
             chai.request(app)
@@ -75,7 +75,7 @@ describe("Auction Details", function () {
                     newAuctionDetailId = res.body._id;
                     done();
                 });
-        });
+        }).timeout(10000);;
     });
 
     describe("GET /api/auctiondetails", () => {
@@ -87,7 +87,7 @@ describe("Auction Details", function () {
                     res.body.should.be.an('object');
                     done();
                 });
-        });
+        }).timeout(10000);;
     });
 
 
@@ -102,7 +102,7 @@ describe("Auction Details", function () {
                         .which.is.a('string').eq("sampleRoom1")
                     done();
                 });
-        });
+        }).timeout(10000);;
     });
 
     describe("GET /api/auctiondetails/notover", () => {
@@ -115,7 +115,7 @@ describe("Auction Details", function () {
                     res.body[0].should.have.property('room_display_name')
                     done();
                 });
-        });
+        }).timeout(10000);;
     });
 
     describe("GET /api/auctiondetails/pricerange?lowerbound=100&upperbound=200", () => {
@@ -128,7 +128,7 @@ describe("Auction Details", function () {
                     res.body[0].should.have.property('room_display_name')
                     done();
                 });
-        });
+        }).timeout(10000);;
     });
 
     describe("GET /api/auctiondetails/category/:category", () => {
@@ -142,7 +142,7 @@ describe("Auction Details", function () {
                         .which.is.a('string').eq("samplecategory")
                     done();
                 });
-        });
+        }).timeout(10000);;
     });
 
     describe("PATCH /api/auctiondetails/:id", () => {
@@ -161,7 +161,7 @@ describe("Auction Details", function () {
                         .which.is.a('string').eq("sampleRoom2")
                     done();
                 });
-        });
+        }).timeout(10000);;
 
         it("should return an error when start time is in invalid format", (done) => {
             chai.request(app)
@@ -173,7 +173,7 @@ describe("Auction Details", function () {
                     res.body.should.have.property('message');
                     done();
                 });
-        });
+        }).timeout(10000);;
     });
 
     describe("DELETE /api/auctiondetails/:id", () => {
@@ -185,7 +185,7 @@ describe("Auction Details", function () {
                     res.body.should.be.an('object');
                     done();
                 });
-        });
+        }).timeout(10000);;
 
         it("should return 404 for a non-existant auction detail to delete", (done) => {
             chai.request(app)
@@ -194,7 +194,7 @@ describe("Auction Details", function () {
                     res.should.have.status(404);
                     done();
                 });
-        });
+        }).timeout(10000);;
     });
 
 });
