@@ -18,11 +18,11 @@ on:
       - main
 
 env:
-  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   GKE_CLUSTER: cluster-1    # TODO: update to cluster name
-  GKE_ZONE: us-central1-c   # TODO: update to cluster zone
+  GKE_ZONE: asia-southeast1-a  # TODO: update to cluster zone
   DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
-  IMAGE: static-site
+  IMAGE: auctiondetails
 
 jobs:
   setup-build-publish-deploy:
@@ -37,7 +37,7 @@ jobs:
     # Setup gcloud CLI
     - uses: google-github-actions/setup-gcloud@v0.2.0
       with:
-        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
         project_id: ${{ secrets.GKE_PROJECT }}
 
     # Configure Docker to use the gcloud command-line tool as a credential
@@ -50,7 +50,7 @@ jobs:
       with:
         cluster_name: cluster-1
         location: asia-southeast1-a
-        credentials: ${{ secrets.GKE_SA_KEY }}
+        credentials: ${{ secrets.GCP_SA_KEY }}
 
     # Build the Docker image
     - name: Build
@@ -59,7 +59,7 @@ jobs:
           --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
-          ./frontend
+          ./backend/auctiondetails
         docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
 
     # Push the Docker image to Google Container Registry
