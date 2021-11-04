@@ -16,7 +16,7 @@ spec:
         app: auctionroom
     spec:
       containers:
-          image: gcr.io/graphical-mile-329010/auctionbackend-auctionroom:1.0
+        - image: gcr.io/graphical-mile-329010/auctionbackend-auctionroom:1.0
           name: auctionbackend-auctionroom
           ports:
           - containerPort: 8080
