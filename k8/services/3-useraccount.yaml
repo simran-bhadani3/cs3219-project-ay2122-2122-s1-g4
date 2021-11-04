@@ -19,8 +19,7 @@ spec:
         - env:
           - name: backend
             value: mongodb://mongodb:27017/useraccounts
-          image: auctionbackend-useraccount:latest
-          imagePullPolicy: Never
+          image: gcr.io/graphical-mile-329010/auctionbackend-useraccount
           name: auctionbackend-useraccount
           ports:
           - containerPort: 8080
