@@ -21,7 +21,7 @@ spec:
             value: "8080"
           - name: backend
             value: mongodb://mongodb:27017/auctiondetails
-          image: "gcr.io/graphical-mile-329010/auctionbackend-auctiondetails@sha256:682e1e6ccb0379f133e9774c53b947769fa2a2be4e21f37584ed3d325af814c6"
+          image: "gcr.io/graphical-mile-329010/auctionbackend-auctiondetails"
           name: auctionbackend-auctiondetails
           ports:
           - containerPort: 8080
