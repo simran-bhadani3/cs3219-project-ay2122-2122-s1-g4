@@ -119,12 +119,12 @@ export default function AuctionRoomDisplay(props) {
     }
 
     // external auctiondetails url
-    const auctiondetailurl = `http://${process.env.REACT_APP_dockerauctiondetailsserver || 'localhost/api/auctiondetails/'}`;
+    const auctiondetailurl = `https://${process.env.REACT_APP_dockerauctiondetailsserver || 'localhost/api/auctiondetails/'}`;
 
     // external currency url
-    const currencyurl = `http://${process.env.REACT_APP_dockercurrencymanagementserver || 'localhost/api/currency/'}`;
+    const currencyurl = `https://${process.env.REACT_APP_dockercurrencymanagementserver || 'localhost/api/currency/'}`;
     // external bid url
-    const bidurl = `http://${process.env.REACT_APP_dockerauctionroomserver || 'localhost/api/room/'}`;
+    const bidurl = `https://${process.env.REACT_APP_dockerauctionroomserver || 'localhost/api/room/'}`;
     //redirect to home page if auction ends
     useEffect(() => {
         if (!status) {
