@@ -62,5 +62,4 @@ jobs:
     - name: Deploy
       run: |-
         kubectl apply -f ./k8/ingress/auth-ingress.yaml
-        kubectl rollout status ingress/$INGRESS_NAME
         kubectl get services -o wide
