@@ -22,7 +22,7 @@ env:
   GKE_CLUSTER: cluster-1    # TODO: update to cluster name
   GKE_ZONE: asia-southeast1-a  # TODO: update to cluster zone
   DEPLOYMENT_NAME: auctiondetails # TODO: update to deployment name
-  IMAGE: auctiondetails
+  IMAGE: auctionbackend-auctiondetails
 
 jobs:
   setup-build-publish-deploy:
