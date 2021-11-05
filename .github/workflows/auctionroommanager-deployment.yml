@@ -10,7 +10,7 @@
 #
 # For more support on how to run the workflow, please visit https://github.com/google-github-actions/setup-gcloud/tree/master/example-workflows/gke
 
-name: Build and Deploy to useraccount
+name: Build and Deploy auctionroommanager
 
 on:
   push:
@@ -21,8 +21,8 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   GKE_CLUSTER: cluster-1    # TODO: update to cluster name
   GKE_ZONE: asia-southeast1-a  # TODO: update to cluster zone
-  DEPLOYMENT_NAME: useraccount # TODO: update to deployment name
-  IMAGE: auctionbackend-useraccount
+  DEPLOYMENT_NAME: auctionroommanager # TODO: update to deployment name
+  IMAGE: auctionbackend-auctionroommanager
 
 jobs:
   setup-build-publish-deploy:
@@ -59,13 +59,8 @@ jobs:
           --tag "gcr.io/$PROJECT_ID/$IMAGE:1.0" \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
-          ./backend/useraccount
+          ./backend/auctionroommanager
         docker push "gcr.io/$PROJECT_ID/$IMAGE:1.0"
-
-    # Push the Docker image to Google Container Registry
-    # - name: Publish
-    #   run: |-
-        
 
     # Set up kustomize
     - name: Set up Kustomize
@@ -76,6 +71,6 @@ jobs:
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
       run: |-
-        kubectl apply -f ./k8deployment/services/3-useraccount.yaml
+        kubectl apply -f ./k8deployment/services/4-auctionroommanager.yaml
         kubectl rollout status deployment/$DEPLOYMENT_NAME
         kubectl get services -o wide
