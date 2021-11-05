@@ -1,8 +1,10 @@
 name: Test aggregate url
-on:
-  push:
-    branches:
-      - main
+on: workflow_dispatch 
+# dont trigger deployed endpoints too much in case of $$
+# on:
+#   push:
+#     branches:
+#       - main
 jobs:
   run-postman:
     runs-on: ubuntu-latest

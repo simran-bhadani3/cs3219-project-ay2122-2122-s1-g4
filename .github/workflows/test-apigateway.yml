@@ -1,8 +1,9 @@
 name: Test api gateway url
-on:
-  push:
-    branches:
-      - main
+on: workflow_dispatch
+# on:
+#   push:
+#     branches:
+#       - main
 jobs:
   run-postman:
     runs-on: ubuntu-latest
