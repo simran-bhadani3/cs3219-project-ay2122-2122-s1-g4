@@ -1,8 +1,8 @@
-name: Test api gateway and aggregate
+name: Test api gateway url
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   run-postman:
     runs-on: ubuntu-latest

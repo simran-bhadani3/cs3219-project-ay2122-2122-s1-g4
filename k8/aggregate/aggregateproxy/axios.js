@@ -5,7 +5,7 @@ const router = express.Router();
 // note that you need the http:// part if youre not using localhost, for axios requests
 // ! duplication here
 const DEPLOYED_URL = process.env.API_GATEWAY_URL; // format: "http://...";
-const PATH_AUCTIONDETAILS = "/api/auctiondetails/owner";
+const PATH_AUCTIONDETAILS = "/api/auctiondetails/user";
 const PATH_CURRENCY = "/api/currency";
 const endpoint3 = "/api/user";
 
@@ -33,7 +33,7 @@ router.get("/:userId", async (req, res) => {
         const instance = axios.create();
         instance.defaults.headers.common['Authorization'] = AUTH_HEADER;     
 
-        const currencyApiRes = await getApi(instance, `${PATH_CURRENCY}${userId}`,);
+        const currencyApiRes = await getApi(instance, `${PATH_CURRENCY}/${userId}`,);
 
         const auctiondetailsApiRes = await getApi(instance, `${PATH_AUCTIONDETAILS}/${userId}`);
 
