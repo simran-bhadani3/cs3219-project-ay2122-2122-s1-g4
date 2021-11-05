@@ -58,7 +58,6 @@ async function getApi(instance, url) {
         method: "get",
     })
     .then(axiosRes => {
-        // console.log(axiosRes)
         const json = {
             "data": axiosRes.data,
             "status": axiosRes.status,
