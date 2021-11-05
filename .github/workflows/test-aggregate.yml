@@ -1,0 +1,34 @@
+name: Test api gateway and aggregate
+on:
+  push:
+    branches:
+      - master
+jobs:
+  run-postman:
+    runs-on: ubuntu-latest
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+      
+    # Install Node on the runner
+    - name: Install Node
+      uses: actions/setup-node@v1
+      with: 
+        node-version: '12.x'
+    
+    # Install the newman command line utility and also install the html extra reporter
+    - name: Install newman
+      run: |
+       npm install -g newman
+
+    # Cd directory 
+    - name: Make Directory for results
+      run: |
+        cd k8/aggregate/aggregateproxy
+
+    # Run the Postman collection
+    - name: Run postman tests for deployed aggregate url
+      run: |
+        newman run postman/apigateway.postman_collection.json -e postman/tp-gcr-aggregate.postman_environment.json
+
+# https://theabodeofcode.com/running-postman-collections-in-github-action-workflows/
