@@ -28,15 +28,23 @@ module.exports = {
 			.child("rooms")
 			.child(req.params.roomname)
 			.child("highest")
-			.child("bid")
 			.get()
 			.then((snapshot) => {
 				if (snapshot.exists()) {
-					res.json({ highest: snapshot.val() });
+					res.send(snapshot);
 				} else {
 					res.json({ bid: "Room does not exist" });
 				}
 			})
+			// .child("bid")
+			// .get()
+			// .then((snapshot) => {
+			// 	if (snapshot.exists()) {
+			// 		res.json({ highest: snapshot.val() });
+			// 	} else {
+			// 		res.json({ bid: "Room does not exist" });
+			// 	}
+			// })
 			.catch((error) => {
 				res.status(500).json({
 					err: error,

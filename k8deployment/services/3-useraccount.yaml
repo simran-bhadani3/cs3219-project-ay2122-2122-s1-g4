@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: useraccount
+  name: useraccount
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: useraccount
+  template:
+    metadata:
+      labels:
+        app: useraccount
+    spec:
+      containers:
+        - env:
+          - name: backend
+            value: mongodb://mongodb:27017/useraccounts
+          image: gcr.io/graphical-mile-329010/auctionbackend-useraccount:1.0
+          name: auctionbackend-useraccount
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          # resources:
+          #   limits:
+          #     cpu: 200m
+          #   requests:
+          #     cpu: 200m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: useraccount
+  name: useraccount
+  namespace: default
+spec:
+  ports:
+  - nodePort: 30198
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: useraccount
+  type: NodePort
