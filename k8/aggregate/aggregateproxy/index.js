@@ -14,7 +14,7 @@ const HOST = "0.0.0.0";
 
 // Configuring api gateway location for the proxy middleware
 const LOCAL_URL = "http://localhost"; // need http://
-const DEPLOYED_URL = "http://abc.com//...";
+const DEPLOYED_URL = process.env.API_GATEWAY_URL; // need http://
 const FORWARDING_URL = (process.env.NODE_ENV === "production" && process.env.API_GATEWAY_URL) 
     ? DEPLOYED_URL 
     : LOCAL_URL 
