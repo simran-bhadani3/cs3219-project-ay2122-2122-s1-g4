@@ -2,48 +2,44 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: useraccount
-  name: useraccount
+    app: auctionroom
+  name: auctionroom
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: useraccount
+      app: auctionroom
   template:
     metadata:
       labels:
-        app: useraccount
+        app: auctionroom
     spec:
       containers:
-        - env:
-          - name: backend
-            value: mongodb://mongodb:27017/useraccounts
-          image: auctionbackend-useraccount:latest
-          imagePullPolicy: Never
-          name: auctionbackend-useraccount
+        - image: gcr.io/graphical-mile-329010/auctionbackend-auctionroom:1.0
+          name: auctionbackend-auctionroom
           ports:
           - containerPort: 8080
             protocol: TCP
           # resources:
           #   limits:
-          #     cpu: 200m
+          #     cpu: 50m
           #   requests:
-          #     cpu: 200m
+          #     cpu: 50m
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: useraccount
-  name: useraccount
+    app: auctionroom
+  name: auctionroom
   namespace: default
 spec:
   ports:
-  - nodePort: 30198
-    port: 8080
+  - nodePort: 30202
+    port: 8083
     protocol: TCP
     targetPort: 8080
   selector:
-    app: useraccount
+    app: auctionroom
   type: NodePort

@@ -21,13 +21,21 @@ const auctiondetailurl = 'http://auctiondetails.default.svc.cluster.local:8081/a
 
 //rate limit client
 //kubernetes cluster
+// const redisClient = new Redis(
+// 	{
+// 		host: "redis-leader.default.svc.cluster.local",
+// 		port: 6379,
+// 		enableOfflineQueue: false,
+// 	});
+
+
+//gke
 const redisClient = new Redis(
 	{
-		host: "redis-leader.default.svc.cluster.local",
+		host: "redis-cluster-redis-ha.default.svc.cluster.local",
 		port: 6379,
 		enableOfflineQueue: false,
 	});
-
 
 const io = require("socket.io")(server, {
 	cors: {
