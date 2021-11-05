@@ -24,11 +24,16 @@ jobs:
     # Cd directory 
     - name: Make Directory for results
       run: |
-        cd k8/aggregate/aggregateproxy
+        cd ./k8/aggregate/aggregateproxy/postman
 
+    - run: |
+        pwd
+
+    - run: |
+        ls
     # Run postman collection
     - name: Run postman tests for deployed ingress (api gateway) url
       run: |
-        newman run postman/apigateway.postman_collection.json -e postman/tp-gke-apigateway.postman_environment.json
+        newman run apigateway.postman_collection.json -e tp-gke-apigateway.postman_environment.json
 
 # https://theabodeofcode.com/running-postman-collections-in-github-action-workflows/

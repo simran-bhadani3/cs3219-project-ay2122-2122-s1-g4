@@ -26,6 +26,9 @@ jobs:
       run: |
         cd k8/aggregate/aggregateproxy
 
+    - run: |
+        pwd
+
     # Run the Postman collection
     - name: Run postman tests for deployed aggregate url
       run: |
