@@ -1,9 +1,6 @@
 # commented out everything that's not needed to setup the api gateway
 # run using ./k8/setup.sh
 
-docker build -t aggregatesvr:latest ./k8/aggregate/aggregatesvr/
-docker run -p 8085:8085 --name aggregatesvr -i  -t aggregatesvr:latest -d 
-
 # commands to get all our kube resources up 
 kubectl apply -f ./k8/services/1-frontend.yaml 
 kubectl apply -f ./k8/services/2-mongodb.yaml 
@@ -11,7 +8,6 @@ kubectl apply -f ./k8/services/3-useraccount.yaml
 kubectl apply -f ./k8/services/4-auctionroommanager.yaml 
 kubectl apply -f ./k8/services/5-auctiondetails.yaml
 kubectl apply -f ./k8/services/6-currencymanagement.yaml
-kubectl apply -f ./k8/services/8-aggregatesvr.yaml 
 kubectl apply -f ./k8/ingress/unauth-ingress.yaml 
 kubectl apply -f ./k8/ingress/auth-ingress.yaml 
 
