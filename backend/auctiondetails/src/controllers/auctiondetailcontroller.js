@@ -19,6 +19,7 @@ exports.create = (req, res) => {
             message: "Please fill all required fields"
         });
     }
+
     var id = new mongoose.Types.ObjectId();
     // Create a new Auctiondetail
     const auctiondetail = new Auctiondetail({
@@ -37,6 +38,9 @@ exports.create = (req, res) => {
         .then(data => {
             res.send(data);
         }).catch(err => {
+            if (err.message.split(' ')[0] === "E11000") {
+                return res.status(400).send({message: "This auction room name is taken. Please try another one."});
+            }
             res.status(500).send({
                 message: err.message || "Something went wrong while creating new auctiondetail."
             });
@@ -185,7 +189,7 @@ exports.delete = (req, res) => {
         .then(auctiondetail => {
             if (!auctiondetail) {
                 return res.status(404).send({
-                    message: "auctiondetail not found with id " + req.params.id
+                    message: "auctiondetail not found with id " + req.params.id // want to change to "user does not have any auction details"
                 });
             }
             res.send({ message: "auctiondetail deleted successfully!" });
@@ -197,6 +201,30 @@ exports.delete = (req, res) => {
             }
             return res.status(500).send({
                 message: "Could not delete auctiondetail with id " + req.params.id
+            });
+        });
+};
+
+exports.findByOwner = (req, res) => {
+    const userId = req.params.userId;
+    const errorMsg404 = `No auctiondetails found for user with userId ${userId}. Perhaps none have been created yet?`
+
+    Auctiondetail.find({owner_id: userId})
+        .then(auctiondetail => {
+            if (!auctiondetail) {
+                return res.status(404).send({
+                    message: errorMsg404
+                });
+            }
+            res.send(auctiondetail);
+        }).catch(err => {
+            if (err.kind === 'ObjectId') {
+                return res.status(404).send({
+                    message: errorMsg404
+                });
+            }
+            return res.status(500).send({
+                message: `Error getting auctiondetail for user with userId ${userId}`
             });
         });
 };
