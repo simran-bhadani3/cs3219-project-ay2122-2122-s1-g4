@@ -21,16 +21,6 @@ jobs:
       run: |
        npm install -g newman
 
-    # Cd directory 
-    # - name: Cd Directory
-    #   run: |
-    #     cd ./k8/aggregate/aggregateproxy/postman
-
-    - run: |
-        pwd
-
-    - run: |
-        ls
     # Run postman collection
     - name: Run postman tests for deployed ingress (api gateway) url
       run: |

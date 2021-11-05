@@ -9,14 +9,14 @@
 			"name": "requests that frontend will use (gateway layer)",
 			"item": [
 				{
-					"name": "register for account copy",
+					"name": "ensure this user is registered",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"pm.test(\"400 user already exists unless the db was wiped clean\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r",
 									"});"
 								],
 								"type": "text/javascript"
