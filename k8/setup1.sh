@@ -10,9 +10,12 @@ kubectl apply -f ./k8/services/5-auctiondetails.yaml;
 kubectl apply -f ./k8/ingress/unauth-ingress.yaml ;
 kubectl apply -f ./k8/ingress/auth-ingress.yaml ;
 kubectl apply -f ./k8/ingress/chat-ingress.yaml ;
+kubectl apply -f ./k8/services/6-currencymanagement.yaml
+kubectl apply -f ./k8/services/9-auctionroom.yaml
 # run this if frontend container has not been built(if the first time running this script)
-# docker run --publish 8080:3000 --name auctiondocker -i  -t auctionfrontend:latest  
-docker container start auctiondocker
+docker rm auctiondocker
+docker run -d --publish 8080:3000 --name auctiondocker -i  -t auctionfrontend:latest  
+# docker container start auctiondocker
 # wait for redis to start first
 sleep 5s
 kubectl apply -f ./k8/services/4-auctionroommanager.yaml; 

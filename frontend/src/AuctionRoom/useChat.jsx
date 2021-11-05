@@ -15,7 +15,7 @@ const useChat = (roomId) => {
     const [highestBid, setHighestBid] = useState({});
     const [status, setStatus] = useState(true);
     const socketRef = useRef();
-
+    
     useEffect(() => {
         socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
             transport: ['websocket'],
@@ -44,7 +44,7 @@ const useChat = (roomId) => {
         // });
         socketRef.current.on(NEW_BID_EVENT, (bid) => {
             console.log(bid);
-            setHighestBid(bid);
+            setHighestBid({highest : bid.bid, username : bid.username});
         });
 
         //room ended by auction owner
@@ -60,8 +60,10 @@ const useChat = (roomId) => {
 
     //send message
     const sendMessage = (messageBody) => {
+        console.log(roomId);
         socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
             body: messageBody,
+
             senderId: socketRef.current.id,
             timestamp: Date(),
             username: localStorage.getItem('username')

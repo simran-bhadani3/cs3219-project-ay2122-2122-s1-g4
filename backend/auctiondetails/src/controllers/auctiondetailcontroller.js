@@ -30,6 +30,7 @@ exports.create = (req, res) => {
         description: req.body.description,
         increment: req.body.increment,
         minbid: req.body.minbid,
+        category: req.body.category
     });
     // Save Auctiondetail in the database
     auctiondetail.save()
@@ -41,6 +42,83 @@ exports.create = (req, res) => {
             });
         });
 };
+// Retrieve all auctions with user id
+exports.findByUser = (req, res) => {
+    Auctiondetail.find({ owner_id : req.params.userid })
+        .then(auctiondetail => {
+            if (auctiondetail.length === 0) {
+                return res.status(404).send({
+                    message: "Auctiondetails not found with userid " + req.params.userid
+                });
+            }
+            res.send(auctiondetail);
+        }).catch(err => {
+            if (err.kind === 'ObjectId') {
+                return res.status(404).send({
+                    message: "Auctiondetails not found with user id " + req.params.userid
+                });
+            }
+            return res.status(500).send({
+                message: "Error getting auctiondetails with user id " + req.params.userid
+            });
+        });
+};
+
+
+
+// Retrieve all auctions that are not over
+exports.findFuture = (req, res) => {
+    const now = new Date()
+    Auctiondetail.find({end_time: { $gt: now}})
+        .then(auctiondetail => {
+            if (!auctiondetail) {
+                return res.status(204).send({
+                    message: "No future auctions"
+                });
+            }
+            res.send(auctiondetail);
+        }).catch(err => {
+            return res.status(500).send({
+                message: "Error getting auctiondetails"
+            });
+        });
+};
+
+
+// Retrieve all auctions by minbid
+exports.findRange = (req, res) => {
+    Auctiondetail.find({minbid: { $gte: req.query.lowerbound, $lte: req.query.upperbound}})
+        .then(auctiondetail => {
+            if (!auctiondetail) {
+                return res.status(204).send({
+                    message: "No auctions found" + console.log(req.query.lowerbound)
+                });
+            }
+            res.send(auctiondetail);
+        }).catch(err => {
+            return res.status(500).send({
+                message: "Error getting auctiondetails"
+            });
+        });
+};
+
+// Retrieve all auctions by category
+exports.findCategory = (req, res) => {
+    Auctiondetail.find({category : req.params.category})
+        .then(auctiondetail => {
+            if (!auctiondetail) {
+                return res.status(204).send({
+                    message: "No auctions found"
+                });
+            }
+            res.send(auctiondetail);
+        }).catch(err => {
+            return res.status(500).send({
+                message: "Error getting auctiondetails"
+            });
+        });
+};
+
 // Find a single Auctiondetail with a id
 exports.findOne = (req, res) => {
     Auctiondetail.findById(req.params.id)
@@ -62,6 +140,7 @@ exports.findOne = (req, res) => {
             });
         });
 };
+
 // Update a Auctiondetail identified by the id in the request
 exports.update = (req, res) => {
     // Validate Request
@@ -79,7 +158,8 @@ exports.update = (req, res) => {
         end_time: req.body.end_time,
         description: req.body.description,
         increment: req.body.increment,
-        minbid: req.body.minbid
+        minbid: req.body.minbid,
+        category: req.body.category
     }, { new: true })
         .then(auctiondetail => {
             if (!auctiondetail) {

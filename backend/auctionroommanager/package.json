@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "@socket.io/redis-adapter": "^7.0.0",
+    "artillery": "^2.0.0-4",
+    "artillery-engine-socketio-v3": "^1.1.2",
     "axios": "^0.22.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
