@@ -17,9 +17,9 @@ services:
     ports:
       - "80:3000"
     
-    # environment:
-    #   react env variables need to start with REACT_APP_
-    #   REACT_APP_dockerauthserver: host.docker.internal:8000
+  #   # environment:
+  #     # react env variables need to start with REACT_APP_
+  #     # REACT_APP_dockerauthserver: host.docker.internal:8000
     
   auctionbackend-useraccount:
     build:  
@@ -49,17 +49,9 @@ services:
   auctionbackend-auctionroommanager:
     build:  
       context: ./backend/auctionroommanager
-      args:
-       # need to embed variables during build
-       # can change this to change url when running frontend in docker-desktop container
-       # change to aggregator url or ingress url
-        - redis_cluster_url=primary.default.svc.cluster.local
-        - redis_follower_url=redis-follower.default.svc.cluster.local
     image: auctionbackend-auctionroommanager
     ports:
       - "9000:9000"
-    environment:
-      backend: mongodb://host.docker.internal:27017/useraccounts
 
   mongodb_container:
     image: mongo:latest
@@ -76,11 +68,5 @@ services:
         backend: mongodb://host.docker.internal:27017/auctiondetails
         PORT: "8080"
 
-  aggregatesvr:
-    build:  
-      context: ./k8/aggregate/aggregate-svr
-    image: aggregatesvr
-    ports:
-      - "8085:8085"
-    environment:
-        PORT: "8085"
+
+

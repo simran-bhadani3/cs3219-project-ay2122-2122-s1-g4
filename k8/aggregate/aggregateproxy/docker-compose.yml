@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  aggregateproxy:
+    build:  
+      context: ./
+    image: aggregateproxy
+    ports:
+      - "8085:8085"
+    environment:
+        PORT: "8085"
+        # set on cloud run's UI 
+        # NODE_ENV: "production"
+        # API_GATEWAY_URL: "" # both production and apigatewayURL needs to be set for this.
