@@ -36,15 +36,6 @@ module.exports = {
 					res.json({ bid: "Room does not exist" });
 				}
 			})
-			// .child("bid")
-			// .get()
-			// .then((snapshot) => {
-			// 	if (snapshot.exists()) {
-			// 		res.json({ highest: snapshot.val() });
-			// 	} else {
-			// 		res.json({ bid: "Room does not exist" });
-			// 	}
-			// })
 			.catch((error) => {
 				res.status(500).json({
 					err: error,
