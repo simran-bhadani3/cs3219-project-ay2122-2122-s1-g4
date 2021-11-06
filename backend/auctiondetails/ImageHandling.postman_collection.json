@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "a6b0cba9-e669-4a6a-8e41-ff6d36e3d7a1",
+		"name": "AuctionDetails",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/simra/Desktop/pexels-photo-255379.jpg"
+						},
+						{
+							"key": "id",
+							"value": "abcdefgh",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4003/api/auctiondetails/upload/",
+					"host": [
+						"localhost"
+					],
+					"port": "4003",
+					"path": [
+						"api",
+						"auctiondetails",
+						"upload",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4003/api/auctiondetails/download/abcdefgh",
+					"host": [
+						"localhost"
+					],
+					"port": "4003",
+					"path": [
+						"api",
+						"auctiondetails",
+						"download",
+						"abcdefgh"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

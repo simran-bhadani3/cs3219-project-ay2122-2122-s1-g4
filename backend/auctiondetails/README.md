@@ -23,3 +23,14 @@ PUT /api/auctiondetails/<auctiondetails>: update a auctiondetail completely
 "start_time": "2021-11-01T03:53:58.358Z",
 "end_time": "2021-11-01T22:53:58.358Z",
 This is in UTC time, can check current time here : https://www.timeanddate.com/worldclock/timezone/utc
+
+
+## Image upload and download
+Have attached the postman files
+1. Upload:
+    -  POST to /api/auctiondetails/upload/
+    -  POST body should be in from-data format with the following key-value pairs:
+        1. key: "file", value: file uploaded by user
+        1. key: "id", value: id of the auctiondetails for which the file has been uploaded
+1. Download:
+    - GET from /api/auctiondetails/download/:id
