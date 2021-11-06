@@ -6,7 +6,9 @@ const hostUrl = "localhost"// "kubernetes.docker.internal";
 const endpoint1 = "/api/auctiondetails";
 const endpoint2 = "/api/currency";
 app.use(express.json());
-
+// enable cors
+const cors = require('cors');
+app.use(cors())
 
 app.get("/api/agg/:userId", async (req, res) => {
     try {

@@ -1,0 +1,656 @@
+{
+	"info": {
+		"_postman_id": "feb802cb-ad4c-4ef1-97f6-2eeb31454a76",
+		"name": "apigateway",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "requests that frontend will use (gateway layer)",
+			"item": [
+				{
+					"name": "ensure this user is registered",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"400 user already exists unless the db was wiped clean\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"user1111\",\r\n    \"email\": \"e0000111@u.nus.edu\",\r\n    \"password\": \"Password1!\",\r\n    \"confirmpassword\": \"Password1!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{http/s}}://{{baseUrl}}/api/user/register",
+							"protocol": "{{http/s}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Register for account",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"user1111\",\r\n    \"email\": \"e0000111@u.nus.edu\",\r\n    \"password\": \"Password1!\",\r\n    \"confirmpassword\": \"Password1!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/user/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"user",
+										"register"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "201"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"c9-p7slc9VKmLz/IOR7bGmTmjQl97I\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 06 Oct 2021 15:33:56 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"username\": \"user1111\",\n    \"email\": \"e0000111@u.nus.edu\",\n    \"password\": \"$2a$15$JwpoEYFUJYG2kbeirHJ6yekqizzEaCdH.kkZgJsya3031JGw8kr3C\",\n    \"_id\": \"615dc1e164f9840b85f85edc\",\n    \"date\": \"2021-10-06T15:33:53.125Z\",\n    \"__v\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "login copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"  bodyData = JSON.parse(responseBody)\r",
+									"  value = bodyData.jwtToken\r",
+									"  pm.environment.set(\"jwtToken\", value)\r",
+									"  pm.environment.set(\"userId\", bodyData.id) "
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"e0000111@u.nus.edu\",\r\n    \"password\": \"Password1!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{http/s}}://{{baseUrl}}/api/user/login",
+							"protocol": "{{http/s}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "New Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"e0000111@u.nus.edu\",\r\n    \"password\": \"Password1!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/user/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"user",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "272"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"110-4Ly1l4UAZo8Oy+qa3zfnSOINqQQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 06 Oct 2021 15:36:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"username\": \"user1111\",\n    \"id\": \"615dc1e164f9840b85f85edc\",\n    \"jwtToken\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxMTExIiwiZW1haWwiOiJlMDAwMDExMUB1Lm51cy5lZHUiLCJpYXQiOjE2MzM1MzQ1ODMsImV4cCI6MTYzMzk2NjU4M30.bp_OGGAcN3RzYfM-MwLCZG0N4xhkqVA93KoCqyDftAw\"\n}"
+						}
+					]
+				},
+				{
+					"name": "get user's currency",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{http/s}}://{{baseUrl}}/api/currency/{{userId}}",
+							"protocol": "{{http/s}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"currency",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get auctiondetails",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{http/s}}://{{baseUrl}}/api/auctiondetails",
+							"protocol": "{{http/s}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auctiondetails"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create auction room (with dynamic userid) Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "room_display_name",
+									"value": "displaynametest-{{$randomCountry}}",
+									"type": "text"
+								},
+								{
+									"key": "auction_item_name",
+									"value": "itemnametest2",
+									"type": "text"
+								},
+								{
+									"key": "owner_id",
+									"value": "{{userId}}",
+									"type": "text"
+								},
+								{
+									"key": "start_time",
+									"value": "2022-11-01T19:37:04+0000",
+									"type": "text"
+								},
+								{
+									"key": "end_time",
+									"value": "2023-11-01T19:37:04+0000",
+									"type": "text"
+								},
+								{
+									"key": "increment",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "minbid",
+									"value": "100",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/api/auctiondetails",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auctiondetails"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "requests that frontend will use (aggregate layer)",
+			"item": [
+				{
+					"name": "agg user details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200 if deployed gcr url used\", function () {\r",
+									"    if(pm.environment.get(\"baseUrl\") == \"cs3219-project-ay2122-2122-s1-g4-x6yyb7nmgq-as.a.run.app\") {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{http/s}}://{{baseUrl}}/agg/userdetails/:userId",
+							"protocol": "{{http/s}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agg",
+								"userdetails",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "misc requests and error handling",
+			"item": [
+				{
+					"name": "authenticate user using jwt (200 if valid jwt) - this endpoint shouldn't be needed by the frontend",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{jwtToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{http/s}}://{{baseUrl}}/api/user/user",
+							"protocol": "{{http/s}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all of this user's auctions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{http/s}}://{{baseUrl}}/api/auctiondetails/user/{{userId}}",
+							"protocol": "{{http/s}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auctiondetails",
+								"user",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get non-existant page (404 status, make sure doesn't crash)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{http/s}}://{{baseUrl}}/to-throw-error",
+							"protocol": "{{http/s}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"to-throw-error"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "agg user details but invalid userid",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{jwtToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{http/s}}://{{baseUrl}}/agg/userdetails/:userId",
+							"protocol": "{{http/s}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agg",
+								"userdetails",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "sadsadsda"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "localhost"
+		},
+		{
+			"key": "http/s",
+			"value": "http"
+		}
+	]
+}

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: auctionroom
+  name: auctionroom
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auctionroom
+  template:
+    metadata:
+      labels:
+        app: auctionroom
+    spec:
+      containers:
+        - image: gcr.io/graphical-mile-329010/auctionbackend-auctionroom:1.0
+          imagePullPolicy: Always
+          name: auctionbackend-auctionroom
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          # resources:
+          #   limits:
+          #     cpu: 50m
+          #   requests:
+          #     cpu: 50m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: auctionroom
+  name: auctionroom
+  namespace: default
+spec:
+  ports:
+  - nodePort: 30202
+    port: 8083
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: auctionroom
+  type: NodePort

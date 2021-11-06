@@ -8,8 +8,8 @@ services:
        # need to embed variables during build
        # can change this to change url when running frontend in docker-desktop container
        # change to aggregator url or ingress url
-        - REACT_APP_dockerauthserver=localhost/api/user/login
-        - REACT_APP_dockerauctionmanagerserver=localhost/auctionroom
+        - REACT_APP_dockerauthserver=localhost/api/user/login/
+        - REACT_APP_dockerauctionmanagerserver=localhost/auctionroom/
         - REACT_APP_dockerauctiondetailsserver=localhost/api/auctiondetails/
         - REACT_APP_dockercurrencymanagementserver=localhost/api/currency/
         - REACT_APP_dockerauctionroomserver=localhost/api/room/
@@ -68,11 +68,5 @@ services:
         backend: mongodb://host.docker.internal:27017/auctiondetails
         PORT: "8080"
 
-  aggregatesvr:
-    build:  
-      context: ./k8/aggregate/aggregate-svr
-    image: aggregatesvr
-    ports:
-      - "8085:8085"
-    environment:
-        PORT: "8085"
+
+
