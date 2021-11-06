@@ -38,10 +38,17 @@ spec:
                   name: auctionroom
                   port:
                     number: 8083
-          - path: /test-auth # todo this isn't necessary for deployment
+          - path: /test-auth
             pathType: Prefix
             backend:
                 service:
                   name: frontend
                   port:
                     number: 3000
+          - path: /api/test-agg
+            pathType: Prefix
+            backend:
+                service:
+                  name: aggregatesvr
+                  port:
+                    number: 8085

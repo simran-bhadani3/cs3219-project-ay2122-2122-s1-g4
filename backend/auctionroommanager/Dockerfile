@@ -5,6 +5,14 @@ FROM node:14
 # Create app directory
 WORKDIR /usr/src/app
 
+# args
+
+ARG redis_cluster_url
+ENV redis_cluster_url $redis_cluster_url
+
+ARG redis_follower_url
+ENV redis_follower_url $redis_follower_url
+
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)

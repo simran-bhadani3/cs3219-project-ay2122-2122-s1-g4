@@ -6,17 +6,17 @@
 	},
 	"item": [
 		{
-			"name": "requests that frontend will use (gateway layer)",
+			"name": "requests that frontend will use",
 			"item": [
 				{
-					"name": "ensure this user is registered",
+					"name": "Register for account Copy",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"400 user already exists unless the db was wiped clean\", function () {\r",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r",
+									"pm.test(\"Status 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -36,8 +36,8 @@
 							}
 						},
 						"url": {
-							"raw": "{{http/s}}://{{baseUrl}}/api/user/register",
-							"protocol": "{{http/s}}",
+							"raw": "http://{{baseUrl}}/api/user/register",
+							"protocol": "http",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -116,7 +116,7 @@
 					]
 				},
 				{
-					"name": "login copy",
+					"name": "Login Copy",
 					"event": [
 						{
 							"listen": "test",
@@ -127,8 +127,7 @@
 									"});\r",
 									"  bodyData = JSON.parse(responseBody)\r",
 									"  value = bodyData.jwtToken\r",
-									"  pm.environment.set(\"jwtToken\", value)\r",
-									"  pm.environment.set(\"userId\", bodyData.id) "
+									"  pm.environment.set(\"jwtToken\", value)"
 								],
 								"type": "text/javascript"
 							}
@@ -147,8 +146,8 @@
 							}
 						},
 						"url": {
-							"raw": "{{http/s}}://{{baseUrl}}/api/user/login",
-							"protocol": "{{http/s}}",
+							"raw": "http://{{baseUrl}}/api/user/login",
+							"protocol": "http",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -251,15 +250,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{http/s}}://{{baseUrl}}/api/currency/{{userId}}",
-							"protocol": "{{http/s}}",
+							"raw": "localhost/api/currency/user1111",
 							"host": [
-								"{{baseUrl}}"
+								"localhost"
 							],
 							"path": [
 								"api",
 								"currency",
-								"{{userId}}"
+								"user1111"
 							]
 						}
 					},
@@ -290,10 +288,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{http/s}}://{{baseUrl}}/api/auctiondetails",
-							"protocol": "{{http/s}}",
+							"raw": "localhost/api/auctiondetails",
 							"host": [
-								"{{baseUrl}}"
+								"localhost"
 							],
 							"path": [
 								"api",
@@ -304,7 +301,7 @@
 					"response": []
 				},
 				{
-					"name": "Create auction room (with dynamic userid) Copy",
+					"name": "create auction room",
 					"event": [
 						{
 							"listen": "test",
@@ -332,37 +329,27 @@
 							"urlencoded": [
 								{
 									"key": "room_display_name",
-									"value": "displaynametest-{{$randomCountry}}",
+									"value": "displaynametest",
 									"type": "text"
 								},
 								{
 									"key": "auction_item_name",
-									"value": "itemnametest2",
+									"value": "itemnametest",
 									"type": "text"
 								},
 								{
 									"key": "owner_id",
-									"value": "{{userId}}",
+									"value": "111122223333",
 									"type": "text"
 								},
 								{
 									"key": "start_time",
-									"value": "2022-11-01T19:37:04+0000",
+									"value": "2021-10-30T09:03:49.300681800Z",
 									"type": "text"
 								},
 								{
 									"key": "end_time",
-									"value": "2023-11-01T19:37:04+0000",
-									"type": "text"
-								},
-								{
-									"key": "increment",
-									"value": "10",
-									"type": "text"
-								},
-								{
-									"key": "minbid",
-									"value": "100",
+									"value": "2021-11-30T09:03:49.300681800Z",
 									"type": "text"
 								}
 							]
@@ -404,223 +391,167 @@
 			]
 		},
 		{
-			"name": "requests that frontend will use (aggregate layer)",
-			"item": [
-				{
-					"name": "agg user details",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 200 if deployed gcr url used\", function () {\r",
-									"    if(pm.environment.get(\"baseUrl\") == \"cs3219-project-ay2122-2122-s1-g4-x6yyb7nmgq-as.a.run.app\") {\r",
-									"        pm.response.to.have.status(200);\r",
-									"    }\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwtToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{http/s}}://{{baseUrl}}/agg/userdetails/:userId",
-							"protocol": "{{http/s}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"agg",
-								"userdetails",
-								":userId"
-							],
-							"variable": [
-								{
-									"key": "userId",
-									"value": "{{userId}}"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			],
+			"name": "get page behind auth wall without jwt (401)",
 			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
 				{
 					"listen": "test",
 					"script": {
-						"type": "text/javascript",
 						"exec": [
-							""
-						]
+							"pm.test(\"401 Authorization Required\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
 					}
 				}
-			]
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{jwt_taskc}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/test-auth",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"test-auth"
+					]
+				}
+			},
+			"response": []
 		},
 		{
-			"name": "misc requests and error handling",
-			"item": [
-				{
-					"name": "authenticate user using jwt (200 if valid jwt) - this endpoint shouldn't be needed by the frontend",
-					"event": [
+			"name": "get test page behind auth wall (200)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "{{jwtToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{http/s}}://{{baseUrl}}/api/user/user",
-							"protocol": "{{http/s}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"user",
-								"user"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get all of this user's auctions",
-					"event": [
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxMTExIiwiZW1haWwiOiJlMDAwMDExMUB1Lm51cy5lZHUiLCJpYXQiOjE2MzU1MTA3MzYsImV4cCI6MTYzNTk0MjczNn0.BSFwj33prMobD7aQ2xIp5s0QvuqmDZFmKAiKXy0HXNk",
+							"type": "string"
+						},
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
+							"key": "password",
+							"value": "{{jwt_taskc}}",
+							"type": "string"
 						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwtToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{http/s}}://{{baseUrl}}/api/auctiondetails/user/{{userId}}",
-							"protocol": "{{http/s}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"auctiondetails",
-								"user",
-								"{{userId}}"
-							]
-						}
-					},
-					"response": []
+					]
 				},
-				{
-					"name": "get non-existant page (404 status, make sure doesn't crash)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 404\", function () {\r",
-									"    pm.response.to.have.status(404);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/test-auth",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
 					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{http/s}}://{{baseUrl}}/to-throw-error",
-							"protocol": "{{http/s}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"to-throw-error"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "agg user details but invalid userid",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "{{jwtToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{http/s}}://{{baseUrl}}/agg/userdetails/:userId",
-							"protocol": "{{http/s}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"agg",
-								"userdetails",
-								":userId"
-							],
-							"variable": [
-								{
-									"key": "userId",
-									"value": "sadsadsda"
-								}
-							]
-						}
-					},
-					"response": []
+					"path": [
+						"test-auth"
+					]
 				}
-			]
+			},
+			"response": []
+		},
+		{
+			"name": "JWT authentication Copy (200 if valid jwt) - this endpoint shouldn't be needed by the frontend",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxMTExIiwiZW1haWwiOiJlMDAwMDExMUB1Lm51cy5lZHUiLCJpYXQiOjE2MzU1MTA3MzYsImV4cCI6MTYzNTk0MjczNn0.BSFwj33prMobD7aQ2xIp5s0QvuqmDZFmKAiKXy0HXNk",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{jwt_taskc}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "{{jwtToken}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/api/user/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"user",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get non-existant page (404 status)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost/to-throw-error ",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"to-throw-error "
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -647,10 +578,6 @@
 		{
 			"key": "baseUrl",
 			"value": "localhost"
-		},
-		{
-			"key": "http/s",
-			"value": "http"
 		}
 	]
 }
