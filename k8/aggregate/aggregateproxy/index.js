@@ -43,9 +43,17 @@ app.on('upgrade', function (req, socket, head) {
     proxy.ws(req, socket, head);
   });
 
-// Proxy endpoints
+// Proxy websockets
 // https://www.twilio.com/blog/node-js-proxy-server
 app.use('/socket.io', createProxyMiddleware({
+    target: FORWARDING_URL,
+    changeOrigin: true,
+    ws: true
+}));
+
+// Proxy socket io
+// https://www.twilio.com/blog/node-js-proxy-server
+app.use('/auctionroom', createProxyMiddleware({
     target: FORWARDING_URL,
     changeOrigin: true,
     ws: true
