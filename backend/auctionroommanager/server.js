@@ -272,7 +272,7 @@ nsp.on("connection", (socket) => {
 					socket.leave(roomId);
 				});
 			} else {
-				console.log('Auction has ended')
+				console.log('Auction has ended or not yet started')
 			}
 
 
