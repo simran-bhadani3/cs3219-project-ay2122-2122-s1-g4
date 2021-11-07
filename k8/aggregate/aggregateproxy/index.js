@@ -22,7 +22,8 @@ const PORT = process.env.PORT || 8085;
 const HOST = "0.0.0.0";
 
 // Configuring api gateway location for the proxy middleware
-const LOCAL_URL = "http://localhost"; // need http://
+// const LOCAL_URL = "http://localhost"; // need http://
+const LOCAL_URL = "http://34.126.147.222";
 const DEPLOYED_URL = process.env.API_GATEWAY_URL; // need http://
 const FORWARDING_URL = (process.env.NODE_ENV === "production" && process.env.API_GATEWAY_URL) 
     ? DEPLOYED_URL 
@@ -54,27 +55,46 @@ const proxy = httpProxy.createProxyServer({
 });
 const proxyServer = http.createServer(app);
 
-// Proxy websockets
-proxyServer.on('upgrade', function (req, socket, head) {
-    console.log("proxying upgrade request", req.url);
-    proxy.ws(req, socket, head);
-});
 
-// Proxy websockets
-// https://www.twilio.com/blog/node-js-proxy-server
-const SOCKET_PATH = '/socket.io';
-app.use(`/${SOCKET_PATH}`, function ( req, res ) {
-	proxy.web( req, res, { target: `http://${FORWARDING_URL}/${SOCKET_PATH}` } );
-});
+// Proxy polling
+// app.use(`/socket.io`, function ( req, res ) {
+// 	proxy.web( req, res, { target: `${FORWARDING_URL}` } );
+// });
 
-// Proxy socket io
-// https://www.twilio.com/blog/node-js-proxy-server
+// Proxy socket
+// const SOCKET_PATH = '/socket.io';
+// app.use(`/${SOCKET_PATH}`, function ( req, res ) {
+// 	proxy.web( req, res, { target: `http://${FORWARDING_URL}/${SOCKET_PATH}` } );
+// });
+
+//old
+
+app.use('/socket.io', createProxyMiddleware({
+    target: FORWARDING_URL,
+    changeOrigin: true,
+    ws: true
+}));
+
 app.use('/auctionroom', createProxyMiddleware({
     target: FORWARDING_URL,
     changeOrigin: true,
     ws: true
 }));
 
+// app.on('upgrade', function (req, socket, head) {
+//     console.log("proxying upgrade request", req.url);
+//     proxy.ws(req, socket, head);
+//   });
+
+// Proxy upgrade
+// proxyServer.on('upgrade', function (req, socket, head) {
+//     console.log("proxying upgrade request", req.url);
+//     proxy.ws(req, socket, head);
+// });
+
+// proxyServer.listen( PORT, function (  ) {
+// 	console.log( `Proxy server listening on http://${HOST}:${PORT}`, '\n' );
+// });
 
 
 //// OTHER ENDPOINTS
@@ -87,13 +107,12 @@ app.use('/auctionroom', createProxyMiddleware({
 app.use('/api', createProxyMiddleware({
     target: FORWARDING_URL,
     changeOrigin: true,
-    ws: true // todo should the ws be for these requests too or accidently added?
 }));
 
 
 
 //// Start this aggregating, proxying node.js server
-app.listen(PORT, HOST, () => {
+proxyServer.listen(PORT, HOST, () => {
     console.log(`Starting nodejs server at ${HOST}:${PORT}`);
 });
  
