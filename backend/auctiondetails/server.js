@@ -1,12 +1,15 @@
 const express = require("express");
 // create express app
 const app = express();
+//import cors
+const cors = require('cors');
 // Setup server port
 const port = process.env.PORT || 4000;
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 // parse requests of content-type - application/json
 app.use(express.json());
+app.use(cors());
 // Configuring the database
 const dbConfig = require("./config/db.config.js");
 const mongoose = require("mongoose");

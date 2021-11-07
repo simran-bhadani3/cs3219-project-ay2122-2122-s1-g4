@@ -1,12 +1,22 @@
 const express = require('express')
+const multer = require('multer');
 const router = express.Router()
 const auctiondetailcontroller = require('./controllers/auctiondetailcontroller');
+//set up multer to get photos
+const storage = multer.memoryStorage();
+const uploadMiddleware = multer({ storage: storage }).single('file');
 
 // Retrieve all auctions
 router.get('/', auctiondetailcontroller.findAll);
 
 // Create a new auction
 router.post('/', auctiondetailcontroller.create);
+
+// Upload to firebase cloud
+router.post('/upload', uploadMiddleware, auctiondetailcontroller.uploadImage);
+
+//Get download URL
+router.get('/download/:id', auctiondetailcontroller.downloadImage);
 
 // Retrieve all auctions by price
 router.get('/pricerange', auctiondetailcontroller.findRange);
