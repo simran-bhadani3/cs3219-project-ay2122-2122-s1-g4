@@ -38,6 +38,11 @@ app.get('/agg/test2', (req, res) => {
     res.send('This is another test endpoint to trigger redployment.');
 });
 
+app.get('/agg/test3', (req, res) => {
+    res.send('Hopefully last test.');
+});
+
+
 // Aggregate endpoints
 app.use('/agg/userdetails', axiosCombiner);
  
