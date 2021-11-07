@@ -1,4 +1,5 @@
-const axiosCombiner = require('./axios');
+/** Calls individual apis related to user (currency, auctiondetails) and combining their responses into one. */
+const combinerForUserDetails = require('./combinerForUserDetails');
 const express = require('express');
 const morgan = require("morgan");
 const http = require('http');
@@ -39,7 +40,7 @@ app.get('/agg/test', (req, res) => {
 
 
 //// ENDPOINTS INVOLVING AGGREGATION FROM MULTIPLE APIS 
-app.use('/agg/userdetails', axiosCombiner);
+app.use('/agg/userdetails', combinerForUserDetails);
  
 
 
@@ -78,8 +79,11 @@ app.use('/auctionroom', createProxyMiddleware({
 
 //// OTHER ENDPOINTS
 
-// Forward exactly as received 
-// https://www.twilio.com/blog/node-js-proxy-server
+/**  
+ * Forward exactly as received. There's no processing or additional setup needed. 
+ * This http-proxy-middleware also helps forward the headers as received.
+ * https://www.twilio.com/blog/node-js-proxy-server
+*/
 app.use('/api', createProxyMiddleware({
     target: FORWARDING_URL,
     changeOrigin: true,
