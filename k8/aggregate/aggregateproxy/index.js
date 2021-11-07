@@ -34,6 +34,10 @@ app.get('/agg/test', (req, res) => {
     res.send('This is an aggregation and proxy endpoint. It seems to be up and running.');
 });
 
+app.get('/agg/test2', (req, res) => {
+    res.send('This is another test endpoint to trigger redployment.');
+});
+
 // Aggregate endpoints
 app.use('/agg/userdetails', axiosCombiner);
  
