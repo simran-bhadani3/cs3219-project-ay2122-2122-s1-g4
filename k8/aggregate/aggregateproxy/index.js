@@ -34,12 +34,16 @@ app.get('/agg/test', (req, res) => {
     res.send('This is an aggregation and proxy endpoint. It seems to be up and running.');
 });
 
-app.get('/agg/test2', (req, res) => {
-    res.send('This is another test endpoint to trigger redployment.');
-});
+// app.get('/agg/test2', (req, res) => {
+//     res.send('This is another test endpoint to trigger redployment.');
+// });
 
-app.get('/agg/test3', (req, res) => {
-    res.send('Hopefully last test.');
+// app.get('/agg/test3', (req, res) => {
+//     res.send('Hopefully last test.');
+// });
+
+app.get('/agg/test4', (req, res) => {
+    res.send('Testing after choosing cloudbuild.yaml file option.');
 });
 
 
