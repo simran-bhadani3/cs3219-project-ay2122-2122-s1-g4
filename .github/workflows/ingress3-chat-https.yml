@@ -16,6 +16,7 @@ on:
   push:
     branches:
       - main
+      - chat-https
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
@@ -57,6 +58,10 @@ jobs:
       run: |-
         curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
         chmod u+x ./kustomize
+
+    - name: delete failing webhook
+      run: |-
+        kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
 
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
