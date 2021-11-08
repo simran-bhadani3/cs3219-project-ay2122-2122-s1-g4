@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongoauctiondetails
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: mongoauctiondetails
+  name: mongoauctiondetails
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongoauctiondetails
+  template:
+    metadata:
+      labels:
+        app: mongoauctiondetails
+    spec:
+      containers:
+        - image: mongo
+          imagePullPolicy: Always
+          name: mongoauctiondetails
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - name: mongoauctiondetails
+              mountPath: /data/auctiondetails
+          resources:
+            limits:
+              cpu: 200m
+            requests:
+              cpu: 200m
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: mongoauctiondetails
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mongoauctiondetails
+  name: mongoauctiondetails
+  namespace: default
+spec:
+  ports:
+    - port: 27018
+      protocol: TCP
+      targetPort: 27017
+  selector:
+    app: mongoauctiondetails
+  type: ClusterIP
