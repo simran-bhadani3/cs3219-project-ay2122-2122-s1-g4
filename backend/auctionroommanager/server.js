@@ -6,6 +6,7 @@ const server = require("http").createServer();
 const axios = require('axios');
 
 var redis_cluster_url = process.env.redis_cluster_url
+// might not be needed
 var redis_follower_url = process.env.redis_follower_url
 console.log(redis_cluster_url);
 //internal urls within kubernetes cluster
@@ -15,30 +16,6 @@ const roomstorageurl = 'http://auctionroom.default.svc.cluster.local:8083/api/ro
 const authurl = 'http://useraccount.default.svc.cluster.local:8080/api/user/user'
 // const auctiondetailurl = 'http://localhost:30200/api/auctiondetails/'
 const auctiondetailurl = 'http://auctiondetails.default.svc.cluster.local:8081/api/auctiondetails/'
-// const redisClient = new Redis(
-// 	{
-// 		host: "localhost",
-// 		port: 6379,
-// 		enableOfflineQueue: false,
-// 	});
-
-//rate limit client
-//kubernetes cluster
-// const redisClient = new Redis(
-// 	{
-// 		host: "redis-leader.default.svc.cluster.local",
-// 		port: 6379,
-// 		enableOfflineQueue: false,
-// 	});
-
-
-//gke
-// const redisClient = new Redis(
-// 	{
-// 		host: "redis-cluster-redis-ha.default.svc.cluster.local",
-// 		port: 6379,
-// 		enableOfflineQueue: false,
-// 	});
 
 //get gke from env
 const redisClient = new Redis(
@@ -47,12 +24,6 @@ const redisClient = new Redis(
 		port: 6379,
 		enableOfflineQueue: false,
 	});
-// const redisClient = new Redis(
-// 	{
-// 		host: redis_cluster_url,
-// 		port: 6379,
-// 		enableOfflineQueue: false,
-// 	});
 
 const io = require("socket.io")(server, {
 	cors: {
@@ -61,41 +32,6 @@ const io = require("socket.io")(server, {
 	},
 });
 
-
-// docker redis
-// const pubClient = new Redis(
-// 	{
-// 		host: "localhost",
-// 		port: 6379,
-// 		enableOfflineQueue: false,
-// 		lazyConnect: true
-// 	});
-
-// kubernetes cluster
-// const pubClient = new Redis(
-// 	{
-// 		host: "redis-leader.default.svc.cluster.local",
-// 		port: 6379,
-// 		enableOfflineQueue: false,
-// 		lazyConnect: true
-// 	}
-// );
-
-//gke
-// const pubClient = new Redis(
-// 	[
-// 		{
-// 			host: `${redis_cluster_url}`,
-// 			port: 6379,
-// 			enableOfflineQueue: false,
-// 			lazyConnect: true
-// 		}, {
-// 			host: `${redis_follower_url}`,
-// 			port: 6379,
-// 			enableOfflineQueue: false,
-// 			lazyConnect: true
-// 		}]
-// );
 const pubClient = new Redis(
 		{
 			host: redis_cluster_url,
@@ -139,7 +75,9 @@ const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const NEW_BID_EVENT = "newBid";
 const END_AUCTION_EVENT = "endAuction";
 
+//
 const nsp = io.of("/auctionroom");
+// const nsp = io;
 
 nsp.on("connection", (socket) => {
 	console.log('new connection!');
@@ -244,10 +182,13 @@ nsp.on("connection", (socket) => {
 										.catch(function (error) {
 											console.log("Update endtime failed");
 										});
-									//TODO
-									//call end auction api in auction room
+									
+									// delete auction room instance from persistent storagfe
 									axios.delete(`${roomstorageurl}deleteroom/${roomId}`, data)
 										.then(response => {
+											if(response.status === 209) {
+												console.log(response.status)
+											}
 											console.log('Room deleted and transaction made');
 										})
 										.catch(function (error) {
