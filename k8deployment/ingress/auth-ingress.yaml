@@ -52,17 +52,17 @@ spec:
                   name: aggregatesvr
                   port:
                     number: 8085
-          - path: /auctionroom
-            pathType: Prefix
-            backend:
-                service:
-                  name: auctionroommanager
-                  port:
-                    number: 9000
-          - path: /socket.io
-            pathType: Prefix
-            backend:
-                service:
-                  name: auctionroommanager
-                  port:
-                    number: 9000
+          # - path: /auctionroom
+          #   pathType: Prefix
+          #   backend:
+          #       service:
+          #         name: auctionroommanager
+          #         port:
+          #           number: 9000
+          # - path: /socket.io
+          #   pathType: Prefix
+          #   backend:
+          #       service:
+          #         name: auctionroommanager
+          #         port:
+          #           number: 9000
