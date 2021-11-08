@@ -35,15 +35,15 @@ spec:
             - containerPort: 27017
               protocol: TCP
           volumeMounts:
-            - name: storage
-              mountPath: /data/db
+            - name: mongouseraccounts
+              mountPath: /data/useraccounts
           resources:
             limits:
               cpu: 200m
             requests:
               cpu: 200m
       volumes:
-        - name: storage
+        - name: mongouseraccounts
           persistentVolumeClaim:
             claimName: mongouseraccounts
 
