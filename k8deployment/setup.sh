@@ -2,14 +2,15 @@
 # run using ./k8/setup.sh
 
 # commands to get all our kube resources up 
-kubectl apply -f ./k8/services/1-frontend.yaml 
-kubectl apply -f ./k8/services/2-mongodb.yaml 
-kubectl apply -f ./k8/services/3-useraccount.yaml 
-kubectl apply -f ./k8/services/4-auctionroommanager.yaml 
-kubectl apply -f ./k8/services/5-auctiondetails.yaml
-kubectl apply -f ./k8/services/6-currencymanagement.yaml
-kubectl apply -f ./k8/ingress/unauth-ingress.yaml 
-kubectl apply -f ./k8/ingress/auth-ingress.yaml 
+kubectl apply -f ./k8deployment/services/1-frontend.yaml 
+kubectl apply -f ./k8deployment/services/2-mongouseraccounts.yaml; 
+kubectl apply -f ./k8deployment/services/10-mongoauctiondetails.yaml; 
+kubectl apply -f ./k8deployment/services/3-useraccount.yaml 
+kubectl apply -f ./k8deployment/services/4-auctionroommanager.yaml 
+kubectl apply -f ./k8deployment/services/5-auctiondetails.yaml
+kubectl apply -f ./k8deployment/services/6-currencymanagement.yaml
+kubectl apply -f ./k8deployment/ingress/unauth-ingress.yaml 
+kubectl apply -f ./k8deployment/ingress/auth-ingress.yaml 
 
 
 # clean up
