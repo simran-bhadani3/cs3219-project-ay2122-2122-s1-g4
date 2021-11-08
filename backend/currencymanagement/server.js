@@ -26,7 +26,7 @@ const cors = require("cors");
 app.use(cors());
 app.use("/api/currency", currencyManagement);
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3002; // 8080;
 
 app.listen(port, () => {
 	console.log(`currencymanagement server is listening on port ${port}`);

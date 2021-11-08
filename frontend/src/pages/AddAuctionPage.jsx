@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import { useTheme } from '@mui/material/styles';
+import { useHistory } from "react-router-dom";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { Grid, Typography } from '@mui/material';
-import { Form, Formik } from 'formik';
+import { Box, Grid, FormControl, InputLabel, MenuItem, Typography, TextField, Select } from '@mui/material';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DateTimePicker from '@mui/lab/DateTimePicker';
+import { useFormik } from 'formik';
 import * as yup from 'yup';
 import EButton from '../components/EButton';
-import FormElement from '../form/FormElement';
-import { textAlign } from '@mui/system';
+import { categoryList } from '../resources/constants';
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
     fullScreenHeight: {
@@ -39,45 +43,93 @@ const useStyles = makeStyles(theme => ({
 
 function AddAuctionPage() {
     const classes = useStyles();
-
+    // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
+    const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost'}/api/auctiondetails`;
+    const history = useHistory();
     const theme = useTheme();
     const atLeastScreenSmall = useMediaQuery(theme.breakpoints.up('sm'));
 
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [countdown, setCountdown] = useState(0);
 
-    const initialValues = { 
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: ""
+    useEffect(() => {
+        if (countdown > 0) {
+            setTimeout(() => setCountdown(countdown - 1), 1000);
+        }
+    });
+
+    const initialValues = {
+        room_display_name: "",
+        auction_item_name: "",
+        start_time: new Date(),
+        end_time: new Date(),
+        minbid: 0,
+        increment: 0,
+        category: "",
+        description: ""
     };
 
-    const onSubmit = (values) => {
-        // send to backend and save
+    async function onSubmit(values) {
+        const userId = JSON.parse(localStorage.getItem('userid'));
+        // console.log("userid:", userId);
+        const data = {
+            ...values,
+            owner_id: userId || '6177fd6569855c2c37d931f4' // dummy userId
+        }
+
+        // console.log("onSubmit: ", data);
+        // console.log("dockerAuctionDetailsServer", dockerAuctionDetailsServer);
+
+        await axios.post(dockerAuctionDetailsServer, data)
+            .then(response => {
+                setIsSubmitted(true);
+                setCountdown(5);
+                // redirect to home page in 5 seconds
+                setTimeout(function() {
+                    history.push("/all");
+                }, 5000);
+            })
+            .catch(function (error) {
+                console.log("error", error);
+            });
     };
 
-    const contactYupSchema = yup.object().shape({
-        firstName: yup.string()
+    const auctionYupSchema = yup.object().shape({
+        room_display_name: yup.string()
             .min(1, 'Too Short!')
-            .max(50, 'Too Long!')
-            .required('First name is required'),
-        lastName: yup.string()
-            .min(2, 'Too Short!')
-            .max(50, 'Too Long!')
-            .notRequired()
-            .nullable(),
-        email: yup.string().email('Invalid email').required('Email is required'),
-        phone: yup.string().notRequired().nullable(),
-        subject: yup.string()
+            .max(200, 'Too Long!')
+            .required('Room Display Name is required'),
+        auction_item_name: yup.string()
             .min(1, 'Too Short!')
-            .max(50, 'Too Long!')
-            .required('Subject is required'),
-        message: yup.string()
+            .max(200, 'Too Long!')
+            .required('Auction Item Name is required'),
+        start_time: yup.date()
+            .required('Start Time is required'),
+        end_time: yup.date()
+            .min(yup.ref('start_time'),  "End time can't be before Start time")
+            .required('End Time is required'),
+        minbid: yup.number()
+            .min(0)
+            .required('Starting Bid is required'),
+        increment: yup.number()
+            .min(0)
+            .required('Minimum Bid Increment is required'),
+        category: yup.string()
+            .oneOf(categoryList)
+            .required('Category is required'),
+        description: yup.string()
             .min(1, 'Too Short!')
             .max(500, 'Too Long!')
-            .required('Message is required'),
+            .notRequired()
+            .nullable()
+    });
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: auctionYupSchema,
+        onSubmit: async values => {
+            await onSubmit(values);
+        },
     });
 
     const renderHeader = (header) => {
@@ -90,66 +142,109 @@ function AddAuctionPage() {
         );
     };
 
-    const renderForm = formikBag => {
-        const { touched, errors } = formikBag;
+    const renderCountdown = () => {
         return (
-            <Form>
-                <Grid container justifyContent="center" alignItems="center">
-                    <Grid container item xs={11} sm={10} lg={8}>
-                        <Grid container item justifyContent="space-between">
-                            <Grid item xs={12} sm={6} className={atLeastScreenSmall && classes.pr1}>
-                                <FormElement 
-                                    name="auctionName" 
-                                    type="text" 
-                                    label="Auction Name"
-                                    hasError={touched.auctionName && errors.auctionName} 
-                                    required 
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} className={atLeastScreenSmall && classes.pl1}>
-                                <FormElement 
-                                    name="itemName" 
-                                    type="text" 
-                                    label="Item Name"
-                                    hasError={touched.itemName && errors.itemName} 
-                                    required 
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid container item justifyContent="space-between">
-                            <Grid item xs={12} sm={6} className={atLeastScreenSmall && classes.pr1}>
-                                <FormElement 
-                                    name="email" 
-                                    type="email" 
-                                    label="Email"
-                                    control="select"
-                                    options={[{ value: "idk", label: "idk man" }]}
-                                    hasError={touched.email && errors.email} 
-                                    required 
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} className={atLeastScreenSmall && classes.pl1}>
-                                <FormElement name="phone" label="Phone" />
-                            </Grid>
-                        </Grid>
-                        <Grid container item xs={12}>
-                            <Grid item xs={12}>
-                                <FormElement   
-                                    name="description" 
-                                    type="text" 
-                                    label="Description" 
-                                    control="textarea"
-                                    hasError={touched.description && errors.description} 
-                                    required 
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid container item justify={atLeastScreenSmall ? "flex-end": "center"} className={`${classes.mt2} ${classes.mb5}`}>
-                            <EButton content="Submit" type="submit" />
-                        </Grid>
+            <Typography>You will be redirected to the homepage in {countdown} seconds.</Typography>
+        )
+    };
+
+    const renderErrorMsg = id => {
+        return formik.errors[id] && (
+            <div style={{ color: theme.palette.error.main }}>{formik.errors[id]}</div> 
+        );
+    };
+
+    const renderTextField = (id, label, md=6, minRows=1, type="string", required=true) => {
+        return (
+            <Grid item xs={12} md={md}>
+                <TextField
+                    margin="normal"
+                    required={required}
+                    type={type}
+                    fullWidth
+                    multiline={minRows > 1}
+                    minRows={minRows}
+                    id={id}
+                    label={label}
+                    name={id}
+                    autoComplete={id}
+                    autoFocus
+                    onChange={formik.handleChange}
+                    value={formik.values[id]}
+                />
+                {renderErrorMsg(id)}
+            </Grid>
+        );
+    };
+
+    const renderDateTimeField = (id, label) => {
+        return (
+            <Grid item xs={12} sm={6} md={3}>
+                <DateTimePicker
+                    renderInput={(props) => <TextField {...props} />}
+                    required
+                    id={id}
+                    name={id}
+                    label={label}
+                    value={formik.values[id]}
+                    onChange={val => {
+                        formik.setFieldValue(id, val);
+                    }}
+                    minutesStep={5}
+                />
+                {renderErrorMsg(id)}
+            </Grid>
+        );
+    };
+
+    const renderDropdownField = (id, label, options) => {
+        return (
+            <Grid item xs={12} md={6}>
+                <FormControl fullWidth required>
+                    <InputLabel id={`${id}-label`}>{label}</InputLabel>
+                    <Select
+                        labelId={`${id}-label`}
+                        id={id}
+                        name={id}
+                        value={formik.values[id]}
+                        label={label}
+                        onChange={val => {
+                            console.log(val.target.value, val)
+                            formik.setFieldValue(id, val.target.value);
+                        }}
+                    >
+                        {options.map(cat => <MenuItem value={cat}>{cat}</MenuItem>)}
+                    </Select>
+                </FormControl>
+                {renderErrorMsg(id)}
+            </Grid>
+        );
+    }
+
+    const renderForm = () => {
+        return (
+            <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
+                <Grid container spacing={2}>
+                    {renderTextField("room_display_name", "Room Display Name")}
+                    {renderTextField("auction_item_name", "Auction Item Name")}
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        {renderDateTimeField("start_time", "Start Time")}
+                        {renderDateTimeField("end_time", "End Time")}
+                    </LocalizationProvider>
+                    {renderDropdownField("category", "Category", categoryList)}
+                    {renderTextField("minbid", "Starting Bid", 6, 1, "number")}
+                    {renderTextField("increment", "Minimum Bid Increment", 6, 1, "number")}
+                    {renderTextField("description", "Description", 12, 3, "string", false)}
+                    <Grid item xs={12}>
+                        <EButton
+                            type="submit"
+                            variant="contained"
+                            className={classes.mt2}
+                            content="Add Auction"
+                        />
                     </Grid>
                 </Grid>
-            </Form>
+            </Box>
         );
     };
 
@@ -158,15 +253,14 @@ function AddAuctionPage() {
             {isSubmitted ? (
                 <Grid container item xs={11} justifyContent="center" alignItems="center" className={classes.textAlignCenter}>
                     {renderHeader("Auction has been successfully added!")}
+                    {renderCountdown()}
                 </Grid>
             ) : (
                 <Grid container item xs={11} justifyContent="center" alignItems="center" className={classes.textAlignCenter}>
                     <Grid container>
-                        {renderHeader("Create a new auction")}
+                        {renderHeader("Create a New Auction")}
                         <Grid item xs={12} className={atLeastScreenSmall ? classes.mt5 : classes.mt2}>
-                            <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={contactYupSchema}>
-                                {formikBag => renderForm(formikBag)}
-                            </Formik>
+                            {renderForm()}
                         </Grid>
                     </Grid>
                 </Grid>

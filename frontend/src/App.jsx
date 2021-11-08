@@ -5,8 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { theme } from './theme';
 import HomePage from './pages/HomePage';
 import AddAuctionPage from './pages/AddAuctionPage';
-import AuctionsPage from './pages/AuctionsPage';
-import BidsPage from './pages/BidsPage';
+import ProfilePage from './pages/ProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
@@ -31,8 +30,9 @@ function App() {
   }
   useEffect(() => {
     const storedData = localStorage.getItem('user');
+    // console.log('user: ', storedData);
     login(storedData);
-    console.log(storedData);
+    // console.log(storedData);
   }, [login]);
 
   return (
@@ -47,8 +47,7 @@ function App() {
               <Switch>
                 <Route exact path="/all" component={HomePage} />
                 <Route exact path="/new" component={AddAuctionPage} />
-                <Route exact path="/myauctions" component={AuctionsPage} />
-                <Route exact path="/mybids" component={BidsPage} />
+                <Route exact path="/profile" component={ProfilePage} />
                 <Route exact path="/" component={HomePage} />
                 <Route exact path="/auction/:id" component={AuctionRoomPage} />
                 <Route exact path="/login" component={HomePage} />
@@ -56,8 +55,8 @@ function App() {
               </Switch>
             ) : (
               <Switch>
-                <Route exact path="/signup" component={SignUpPage} />
-                <Route exact path="/*" component={LoginPage} />
+                <Route exact path="/signup" component={SignUpPage} /> {/* SignUpPage */}
+                <Route exact path="/*" component={LoginPage} /> {/* LoginPage */}
               </Switch>
             )}
 

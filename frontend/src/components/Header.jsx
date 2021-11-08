@@ -69,7 +69,7 @@ function Header({ pages }) {
 
     const logout = () => {
         // perform log out
-        console.log(JSON.parse(localStorage.getItem('user')));
+        // console.log(JSON.parse(localStorage.getItem('user')));
         localStorage.removeItem("user");
         authContext.logout();
         localStorage.removeItem("userid");
@@ -78,7 +78,7 @@ function Header({ pages }) {
 
 
     const renderLinks = (isMobile = false) => {
-        console.log("pages", pages);
+        // console.log("pages", pages);
         return pages.map(({ href, label, isButton, icon }) => {
             if (icon) {
                 return <IconButton color="textPrimary" onClick={logout}>{icon}</IconButton>;
