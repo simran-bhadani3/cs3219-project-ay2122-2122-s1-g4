@@ -69,7 +69,7 @@ app.use('/agg/userdetails', combinerForUserDetails);
 // }));
 
 app.use('/auctionroom', createProxyMiddleware({
-    target: FORWARDING_URL,
+    target: `${FORWARDING_URL}/auctionroom`,
     changeOrigin: true,
     // ws: true
 }));
@@ -79,7 +79,7 @@ app.use('/auctionroom', createProxyMiddleware({
  * Configure proxy middleware
  */
 const wsProxy = createProxyMiddleware('/socket.io', {
-    target: FORWARDING_URL,
+    target: `${FORWARDING_URL}/socket.io`,
     changeOrigin: true, // for vhosted sites, changes host header to match to target's host
     ws: true, // enable websocket proxy
     logLevel: 'debug',
