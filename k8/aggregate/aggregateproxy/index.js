@@ -22,8 +22,8 @@ const PORT = process.env.PORT || 8085;
 const HOST = "0.0.0.0";
 
 // Configuring api gateway location for the proxy middleware
-const LOCAL_URL = "http://localhost"; // need http://
-// const LOCAL_URL = "http://34.126.147.222";
+// const LOCAL_URL = "http://localhost"; // need http://
+const LOCAL_URL = "http://34.126.147.222";
 const DEPLOYED_URL = process.env.API_GATEWAY_URL; // need http://
 const FORWARDING_URL = (process.env.NODE_ENV === "production" && process.env.API_GATEWAY_URL) 
     ? DEPLOYED_URL 
@@ -47,13 +47,6 @@ app.use('/agg/userdetails', combinerForUserDetails);
 
 //// WEBSOCKET RELATED
 
-// todo should be renamed to chatRoomProxy or something after integrating the example 
-const proxy = httpProxy.createProxyServer({
-	target : `http://${FORWARDING_URL}`, // the target is to the backend, not the frontend (im guessing its the socket.io path in the apigateway)
-	// target : `http://${HOST}:${API_PORT}`, // todo help, this is the example target given. i'm not sure if its correct
-    // ws     : true,
-});
-const proxyServer = http.createServer(app);
 
 
 // Proxy polling
@@ -68,18 +61,32 @@ const proxyServer = http.createServer(app);
 // });
 
 //old
-
-app.use('/socket.io', createProxyMiddleware({
-    target: FORWARDING_URL,
-    changeOrigin: true,
-    ws: true
-}));
+//** 
+// app.use('/socket.io', createProxyMiddleware({
+//     target: FORWARDING_URL,
+//     changeOrigin: true,
+//     ws: true
+// }));
 
 app.use('/auctionroom', createProxyMiddleware({
     target: FORWARDING_URL,
     changeOrigin: true,
     // ws: true
 }));
+
+
+/**
+ * Configure proxy middleware
+ */
+const wsProxy = createProxyMiddleware('/socket.io', {
+    target: FORWARDING_URL,
+    changeOrigin: true, // for vhosted sites, changes host header to match to target's host
+    ws: true, // enable websocket proxy
+    logLevel: 'debug',
+  });
+  
+app.use(wsProxy);
+
 
 // app.on('upgrade', function (req, socket, head) {
 //     console.log("proxying upgrade request", req.url);
@@ -112,8 +119,9 @@ app.use('/api', createProxyMiddleware({
 
 
 //// Start this aggregating, proxying node.js server
-proxyServer.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
     console.log(`Starting nodejs server at ${HOST}:${PORT}`);
 });
  
+server.on('upgrade', wsProxy.upgrade);
 
