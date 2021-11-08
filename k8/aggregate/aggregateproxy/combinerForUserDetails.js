@@ -51,6 +51,12 @@ router.get("/:userId", async (req, res) => {
 	}
 })
 
+/**
+ * Helper function to call individual apis and return a formatted json response {data, status, message}
+ * @param {*} instance - axios instance
+ * @param {*} url - url for axios to call
+ * @returns 
+ */
 async function getApi(instance, url) {    
     console.log(`url to get from: ${url}`)
     const apiRes = await instance({

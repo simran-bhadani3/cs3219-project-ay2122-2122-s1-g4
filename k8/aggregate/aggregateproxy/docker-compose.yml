@@ -11,4 +11,7 @@ services:
         PORT: "8085"
         # set on cloud run's UI 
         # NODE_ENV: "production"
-        # API_GATEWAY_URL: "" # both production and apigatewayURL needs to be set for this.
+        # API_GATEWAY_URL: "http://34.126.147.222/" # needs http://
+        # both production and apigatewayURL needs to be set to use the deployed version
+
+# remember to rebuild image after making changes

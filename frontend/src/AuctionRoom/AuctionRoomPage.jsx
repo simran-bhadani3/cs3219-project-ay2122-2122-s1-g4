@@ -119,12 +119,12 @@ export default function AuctionRoomDisplay(props) {
     }
 
     // external auctiondetails url
-    const auctiondetailurl = `https://${process.env.REACT_APP_dockerauctiondetailsserver || 'localhost/api/auctiondetails/'}`;
+    const auctiondetailurl = `${process.env.REACT_APP_dockerauctiondetailsserver || 'http://localhost/api/auctiondetails/'}`;
 
     // external currency url
-    const currencyurl = `https://${process.env.REACT_APP_dockercurrencymanagementserver || 'localhost/api/currency/'}`;
+    const currencyurl = `${process.env.REACT_APP_dockercurrencymanagementserver || 'http://localhost/api/currency/'}`;
     // external bid url
-    const bidurl = `https://${process.env.REACT_APP_dockerauctionroomserver || 'localhost/api/room/'}`;
+    const bidurl = `${process.env.REACT_APP_dockerauctionroomserver || 'http://localhost/api/room/'}`;
     //redirect to home page if auction ends
     useEffect(() => {
         if (!status) {
@@ -162,9 +162,9 @@ export default function AuctionRoomDisplay(props) {
 
         //call api sethighestbid
         // setHighestBid()
-        axios.get(`${bidurl}/gethighest/${roomId}`, config)
+        axios.get(`${bidurl}gethighest/${roomId}`, config)
             .then(response => {
-                setHighestBid({highest : parseInt(response['data'].bid), username : response['data'].username})
+                setHighestBid({ highest: parseInt(response['data'].bid), username: response['data'].username })
                 console.log(response['data'].bid);
             })
             .catch(function (error) {
@@ -179,7 +179,7 @@ export default function AuctionRoomDisplay(props) {
     };
 
     const validateAndSend = () => {
-        var min =  parseInt(highestBid['highest']) + parseInt(auctiondetails['increment']);
+        var min = parseInt(highestBid['highest']) + parseInt(auctiondetails['increment']);
         console.log(min)
         // non-numerical input
         if (!/^[0-9\b]+$/i.test(newBid)) {
@@ -248,6 +248,15 @@ export default function AuctionRoomDisplay(props) {
                                     <ListItem disablePadding>
                                         <ListItemButton>
                                             <ListItemText
+                                                primary="Category"
+                                                secondary={`${auctiondetails['category']}`}
+                                            />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <Divider />
+                                    <ListItem disablePadding>
+                                        <ListItemButton>
+                                            <ListItemText
                                                 primary="Description"
                                                 secondary={`${auctiondetails['description']}`}
                                             />
@@ -271,6 +280,14 @@ export default function AuctionRoomDisplay(props) {
                                         <ListItemButton component="a" href="#simple-list">
                                             <ListItemText primary="Minimum Bid"
                                                 secondary={`${auctiondetails['minbid']}`}
+                                            />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <Divider />
+                                    <ListItem disablePadding>
+                                        <ListItemButton component="a" href="#simple-list">
+                                            <ListItemText primary="Auction end time"
+                                                secondary={`${new Date(auctiondetails['end_time']).toLocaleTimeString()}`}
                                             />
                                         </ListItemButton>
                                     </ListItem>
@@ -301,9 +318,20 @@ export default function AuctionRoomDisplay(props) {
                             <DialogTitle>{"Auction closed!"}</DialogTitle>
                             <DialogContent>
                                 <DialogContentText id="alert-dialog-description">
-                                    Winner : {highestBid['username']} 
-                                    Sold For : {highestBid['highest']} 
-                                    Thank you for joining this auction!
+                                    {isOwner ? (
+                                        
+                                        [
+                                        (typeof highestBid['highest'] == 'undefined'
+                                            ? 'Looks like no one dropped by :('
+                                            : 'Congrats, your item has been sold!'
+                                        ),
+                                        <div key='1'>body</div>
+                                        ]
+                                    ) : `Winner : ${highestBid['username']}
+                                    Sold For : ${highestBid['highest']}
+                                    Thank you for joining this auction!`
+                                    }
+
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
@@ -324,10 +352,17 @@ export default function AuctionRoomDisplay(props) {
             <Grid item container xs={6} spacing={0} border={1}>
                 <Grid container direction="column">
                     <Grid item xs={1} >
-                        <Typography variant="h5" className="header-message" textAlign="center">Item Details</Typography>
-                    </Grid>
-                    <Grid container item xs={10} >
+                        <Typography variant="h5" className="header-message" textAlign="center">Auction : {auctiondetails['room_display_name']}</Typography>
                         <Typography variant="h5" className="header-message" textAlign="center">Highest Bid: ${highestBid['highest']}</Typography>
+                    </Grid>
+                    <Grid container item xs={10} alignItems="center" direction="column" justifyContent="center">
+                        <Grid item xs={10}>
+                            <img
+                                src={auctiondetailurl + 'download/' + auctiondetails['_id']}
+                                // src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
+                                alt="new"
+                            />
+                        </Grid>
                     </Grid>
                     <Grid container item xs={1}>
                         <Grid item xs={10}>
