@@ -5,8 +5,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useHistory } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Avatar, Card, CardActions, CardActionArea, CardContent, CardHeader, CardMedia, Chip, Collapse, Dialog, DialogActions, DialogTitle, DialogContent, DialogContentText, Grid, IconButton, Typography } from '@mui/material';
-import EButton from '../components/EButton';
+import { Avatar, Card, CardActions, CardActionArea, CardContent, CardHeader, CardMedia, Chip, Collapse, Grid, IconButton, Typography } from '@mui/material';
+import AuctionCardDialog from '../components/AuctionCardDialog';
+import AuctionCardSettings from '../components/AuctionCardSettings';
 
 const useStyles = makeStyles(theme => ({
     px1: {
@@ -53,18 +54,18 @@ const ExpandMore = styled((props) => {
             }),
   }));
 
-function AuctionCard({ item }) {
+function AuctionCard({ item, updateAuctions, isEditDelete=false }) {
     const classes = useStyles();
     const theme = useTheme();
     const history = useHistory();
     // console.log("item", item);
 
-    const imageUrl = "https://miro.medium.com/max/1000/1*9NKHGyn5hJGkDTgIT166xA.jpeg";
+    const imageUrl = "https://miro.medium.com/max/1000/1*9NKHGyn5hJGkDTgIT166xA.jpeg"; // useEffect to get link
     const auctioneerName = "Name";
     const {
         room_display_name,
         auction_item_name,
-        owner_id,
+        owner_id, // get name to use in avatar
         start_time,
         end_time,
         minbid,
@@ -121,49 +122,6 @@ function AuctionCard({ item }) {
         history.push(href);
     };
 
-    const handleCloseNotStartedDialog = () => {
-        setOpenNotStartedDialog(false);
-    };
-
-    const renderNotStartedDialog = () => {
-        return (
-            <Dialog open={openNotStartedDialog} onClose={handleCloseNotStartedDialog} maxWidth="lg">
-                <DialogTitle>Auction Room has not started</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        The auction room "{room_display_name}" for the item "{auction_item_name}" will start at <b>{formatDate(start_time)}</b>.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <EButton content="Okay" onClick={handleCloseNotStartedDialog} />
-                </DialogActions>
-            </Dialog>
-        );
-    }
-
-    const handleCloseHasEndedDialog = () => {
-        setOpenHasEndedDialog(false);
-    };
-
-    const renderHasEndedDialog = () => {
-        return (
-            <Dialog open={openHasEndedDialog} onClose={handleCloseHasEndedDialog} maxWidth="lg">
-                <DialogTitle>Auction Room has ended</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        The auction room "{room_display_name}" for the item "{auction_item_name}" has ended at {formatDate(end_time)}.
-                    </DialogContentText>
-                    <DialogContentText>
-                        Thank you for your interest in the auction!
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <EButton content="Okay" onClick={handleCloseHasEndedDialog} />
-                </DialogActions>
-            </Dialog>
-        );
-    }
-
     const onClickAuctionRoom = () => {
         const { isOngoing, hasEnded } = getIsOngoingOrEnded();
         if (isOngoing) {
@@ -178,7 +136,7 @@ function AuctionCard({ item }) {
     const renderCategory = () => {
         const { isOngoing, hasEnded } = getIsOngoingOrEnded();
         return (
-            <Grid className={classes.m2}>
+            <Grid className={!isEditDelete && classes.m2}>
                 <Chip 
                     className={`${isOngoing && classes.chipOngoing} ${hasEnded && classes.chipEnded}`} 
                     label={<Typography className={classes.chip}>{category}</Typography>} c
@@ -189,6 +147,47 @@ function AuctionCard({ item }) {
             
         );
     }
+
+    const renderCardHeader = () => {
+        const { hasEnded } = getIsOngoingOrEnded();
+        return (
+            <Grid container className={classes.px1} alignItems="center" justifyContent="space-between">
+                <Grid xs={isEditDelete ? 12 : "auto"} className={classes.px1} alignItems="center" justifyContent="space-between">
+                    <CardHeader
+                        avatar={!isEditDelete && (
+                            <Avatar sx={{ bgcolor: `${hasEnded ? theme.palette.text.hint : theme.palette.primary.main}` }} aria-label={auctioneerName}>
+                                {auctioneerName.substring(0, 1).toUpperCase()}
+                            </Avatar>
+                        )}
+                        title={isEditDelete ? renderCategory() : auctioneerName}
+                        action={isEditDelete && <AuctionCardSettings auction={item} updateAuctions={updateAuctions} />}
+                    />
+                </Grid>
+                {!isEditDelete && renderCategory()}
+            </Grid>
+        );
+    };
+
+    const renderCardActionArea = () => {
+        return (
+            <CardActionArea onClick={onClickAuctionRoom}>
+                <CardMedia
+                    component="img"
+                    sx={{ width: "100%", height: "100%" }}
+                    image={imageUrl}
+                    alt={auction_item_name}
+                />
+                <CardContent>
+                    <Grid container className={classes.px1} justifyContent="space-between">
+                        <Grid>
+                            <Typography gutterBottom variant="h5" color="primary">{room_display_name}</Typography>
+                            <Typography variant="h6" color="textPrimary">{auction_item_name}</Typography>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </CardActionArea>
+        );
+    };
 
     const renderExpandMoreSection = () => {
         return (
@@ -225,52 +224,24 @@ function AuctionCard({ item }) {
         );
     };
 
-    const renderCardHeader = () => {
-        const { hasEnded } = getIsOngoingOrEnded();
-        return (
-            <Grid container className={classes.px1} alignItems="center" justifyContent="space-between">
-                <CardHeader
-                    avatar={
-                        <Avatar sx={{ bgcolor: `${hasEnded ? theme.palette.text.hint : theme.palette.primary.main}` }} aria-label={auctioneerName}>
-                            {auctioneerName.substring(0, 1).toUpperCase()}
-                        </Avatar>
-                    }
-                    title={auctioneerName}
-                />
-                {renderCategory()}
-            </Grid>
-        );
-    };
-
-    const renderCardActionArea = () => {
-        return (
-            <CardActionArea onClick={onClickAuctionRoom}>
-                <CardMedia
-                    component="img"
-                    sx={{ width: "100%", height: "100%" }}
-                    image={imageUrl}
-                    alt={auction_item_name}
-                />
-                <CardContent>
-                    <Grid container className={classes.px1} justifyContent="space-between">
-                        <Grid>
-                            <Typography gutterBottom variant="h5" color="primary">{room_display_name}</Typography>
-                            <Typography variant="h6" color="textPrimary">{auction_item_name}</Typography>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </CardActionArea>
-        );
-    };
-
     return (
         <Grid item xs={12} sm={6} md={6} lg={4} xl={3} className={`${classes.px2} ${classes.pb4}`}>
             <Card>
                 {renderCardHeader()}
                 {renderCardActionArea()}
                 {renderExpandMoreSection()}
-                {renderNotStartedDialog()}
-                {renderHasEndedDialog()}
+                <AuctionCardDialog 
+                    title="Auction Room has not started"
+                    description={`The auction room "${room_display_name}" for the item "${auction_item_name}" will start at <b>${formatDate(start_time)}</b>.`}
+                    open={openNotStartedDialog}
+                    onClose={() => setOpenNotStartedDialog(false)}
+                />
+                <AuctionCardDialog 
+                    title="Auction Room has ended"
+                    description={`The auction room "${room_display_name}" for the item "${auction_item_name}" has ended at ${formatDate(end_time)}.<br />Thank you for your interest in the auction!`}
+                    open={openHasEndedDialog}
+                    onClose={() => setOpenHasEndedDialog(false)}
+                />
             </Card>
         </Grid>
     );

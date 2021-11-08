@@ -3,9 +3,9 @@ import { makeStyles } from '@mui/styles';
 import { useHistory } from "react-router-dom";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Link, Typography, Paper, TextField } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Typography, Paper, TextField } from '@mui/material';
 import EButton from '../components/EButton';
-import AuctionCard from '../components/AuctionCard';
+import ProfileAuctions from '../components/ProfileAuctions';
 import { pagesLoggedIn } from '../resources/constants';
 import axios from 'axios';
 
@@ -33,9 +33,6 @@ const useStyles = makeStyles(theme => ({
     pb4: {
         paddingBottom: theme.spacing(4)
     },
-    pt5: {
-        paddingTop: theme.spacing(5)
-    },
     pt8: {
         paddingTop: theme.spacing(8)
     },
@@ -57,13 +54,19 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+
+
 function ProfilePage() {
     const classes = useStyles();
     const theme = useTheme();
     const history = useHistory();
     const atLeastMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
-    // const dockerUserServer = 'http://localhost:8080/api/user/user';
-    const dockerUserServer = `https://${process.env.REACT_APP_dockerauthserver||'localhost'}/api/user/user`;
+
+    const dockerUserServer = 'http://localhost:8080/api/user/user';
+    // const dockerUserServer = `https://${process.env.REACT_APP_dockerauthserver||'localhost'}/api/user/user`;
+    const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/user/${JSON.parse(localStorage.getItem('userid'))}`;
+    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost'}/api/auctiondetails`;
+
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [currency, setCurrency] = useState(0);
@@ -71,8 +74,10 @@ function ProfilePage() {
     const [auctions, setAuctions] = useState([]);
     const [bids, setBids] = useState([]);
 
+
     useEffect(() => {
         getProfile();
+        getAuctions();
     }, [openAddValueDialog]);
 
     const getProfile = () => {
@@ -94,6 +99,17 @@ function ProfilePage() {
                 console.log("error", error);
             });
     };
+
+    const getAuctions = () => {
+        axios.get(dockerAuctionDetailsServer)
+            .then(res => {
+                console.log("auction response", res);
+                setAuctions(res.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+    }
 
     const renderValueLabel = (value, label) => {
         return (
@@ -139,7 +155,7 @@ function ProfilePage() {
                 </DialogActions>
             </Dialog>
         );
-    }
+    };
 
     const renderPagesButton = () => {
         return (
@@ -203,30 +219,9 @@ function ProfilePage() {
                 </Grid>
                 {atLeastMediumScreen && renderPagesButton()}
             </Grid> 
-
-            <Grid item container xs={12} alignItems="flex-start" className={`${classes.pb4} ${classes.pt5}`}>  
-                <Typography variant="h2" color="primary">Auctions I created</Typography>
-            </Grid> 
-            <Grid container alignItems="flex-start">
-                {auctions.length === 0 ? (
-                        <Typography variant="h4">No auctions created currently. <Link href="/new">Create one now!</Link></Typography>
-                    ) : (
-                        auctions.map(item => <AuctionCard item={item} />)
-                )}
-            </Grid> 
-
-            <Grid item container xs={12} alignItems="flex-start" className={`${classes.pb4} ${classes.pt8}`}>  
-                <Typography variant="h2" color="primary">My Successful Bids</Typography>
-            </Grid> 
-            <Grid container alignItems="flex-start">
-                {bids.length === 0 ? (
-                        <Typography variant="h4">No successful bid currently. <Link href="/all">View all auctions now!</Link></Typography>
-                    ) : (
-                        bids.map(item => <AuctionCard item={item} />)
-                )}
-            </Grid> 
+            {<ProfileAuctions auctions={auctions} bids={bids} updateAuctions={getAuctions} />}
         </Grid>
-    )
+    );
 }
 
 export default ProfilePage;

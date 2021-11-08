@@ -54,13 +54,16 @@ function AuctionsPage() {
     const theme = useTheme();
     const atLeastMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
 
-    // const dockerUserServer = 'http://localhost:4000/api/auctiondetails';
-    const dockerUserServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost'}/api/auctiondetails`;
-    
+    const [isGetAll, setIsGetAll] = useState([]);
     const [auctions, setAuctions] = useState([]);
 
+    const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
+    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost'}/api/auctiondetails`;
+    
+    
+
     useEffect(() => {
-        axios.get(dockerUserServer)
+        axios.get(dockerAuctionDetailsServer)
             .then(res => {
                 // console.log("response", res);
                 setAuctions(res.data);
