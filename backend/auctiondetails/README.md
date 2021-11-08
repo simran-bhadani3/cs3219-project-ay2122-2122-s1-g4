@@ -20,7 +20,7 @@ run `npm test`
 ### Filter functions
 1. GET /api/auctiondetails/category/:category Retrieve all auctions by category
 2. GET /api/auctiondetails/user/:userid Retrieve all auctions with user id
-3. GET /api/auctiondetails/pricerange Retrieve all auctions by price(Add querys strings e.g. /api/auctiondetails/pricerange?lowerbound=100&upperbound=200)
+3. GET /api/auctiondetails/pricerange Retrieve all auctions by price (Add querys strings e.g. /api/auctiondetails/pricerange?lowerbound=100&upperbound=200)
 4. GET /api/auctiondetails/notover Retrieve all auctions that are not over
 
 

@@ -42,6 +42,7 @@ function AddAuctionPage() {
 
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [countdown, setCountdown] = useState(0);
+    const [image, setImage] = useState("");
 
     useEffect(() => {
         if (countdown > 0) {
@@ -54,13 +55,31 @@ function AddAuctionPage() {
         const data = {
             ...values,
             owner_id: userId
-        }
-
-        // console.log("onSubmit: ", data);
-        // console.log("dockerAuctionDetailsServer", dockerAuctionDetailsServer);
+        };
+        let auctionId = "";
 
         await axios.post(dockerAuctionDetailsServer, data)
+            .then(res => {
+                auctionId = res.data._id;
+                console.log("form added successfully", res);
+            })
+            .catch(function (error) {
+                console.log("error", error);
+            });
+
+        const imgBodyFormData = new FormData();
+        imgBodyFormData.append('id', auctionId);
+        imgBodyFormData.append('file', image);
+        // await axios({
+        //     method: "post",
+        //     url: `${dockerAuctionDetailsServer}/upload/`,
+        //     data: imgBodyFormData,
+        //     headers: { "Content-Type": "multipart/form-data" },
+        // })
+        // this function takes very long to load, need to check!
+        axios.post(`${dockerAuctionDetailsServer}/upload/`, imgBodyFormData)
             .then(response => {
+                console.log("image uploaded successfully", response);
                 setIsSubmitted(true);
                 setCountdown(5);
                 // redirect to home page in 5 seconds
@@ -69,8 +88,15 @@ function AddAuctionPage() {
                 }, 5000);
             })
             .catch(function (error) {
-                console.log("error", error);
+                console.log("image upload error", error);
             });
+
+        setIsSubmitted(true);
+        setCountdown(5);
+        // redirect to home page in 5 seconds
+        setTimeout(function() {
+            history.push("/all");
+        }, 5000);
     };
 
     const renderHeader = (header) => {
@@ -101,7 +127,7 @@ function AddAuctionPage() {
                     <Grid container>
                         {renderHeader("Create a New Auction")}
                         <Grid item xs={12} className={atLeastScreenSmall ? classes.mt5 : classes.mt2}>
-                            <AuctionForm onSubmit={onSubmit} />
+                            <AuctionForm onSubmit={onSubmit} updateImage={setImage} />
                         </Grid>
                     </Grid>
                 </Grid>

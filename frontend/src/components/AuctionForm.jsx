@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import { Box, Grid, FormControl, InputLabel, MenuItem, TextField, Select } from '@mui/material';
@@ -8,6 +8,7 @@ import DateTimePicker from '@mui/lab/DateTimePicker';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import EButton from '../components/EButton';
+import ImageCropper from '../components/ImageCropper';
 import { categoryList } from '../resources/constants';
 
 const useStyles = makeStyles(theme => ({
@@ -16,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function AuctionForm({ onSubmit, isEdit=false, currValues={} }) {
+function AuctionForm({ onSubmit, updateImage, isEdit=false, currValues={} }) {
     const classes = useStyles();
     const theme = useTheme();
 
@@ -68,6 +69,14 @@ function AuctionForm({ onSubmit, isEdit=false, currValues={} }) {
             await onSubmit(values);
         },
     });
+
+    const renderImageField = () => {
+        return (
+            <Grid item xs={12}>
+                <ImageCropper imageUrl={currValues?.img} updateImage={updateImage}/>
+            </Grid>
+        );
+    };
 
     const renderErrorMsg = id => {
         return formik.errors[id] && (
@@ -130,7 +139,7 @@ function AuctionForm({ onSubmit, isEdit=false, currValues={} }) {
                         value={formik.values[id]}
                         label={label}
                         onChange={val => {
-                            console.log(val.target.value, val)
+                            // console.log(val.target.value, val)
                             formik.setFieldValue(id, val.target.value);
                         }}
                     >
@@ -155,6 +164,7 @@ function AuctionForm({ onSubmit, isEdit=false, currValues={} }) {
                 {renderTextField("minbid", "Starting Bid", 6, 1, "number")}
                 {renderTextField("increment", "Minimum Bid Increment", 6, 1, "number")}
                 {renderTextField("description", "Description", 12, 3, "string", false)}
+                {renderImageField()}
                 <Grid item xs={12}>
                     <EButton
                         type="submit"
