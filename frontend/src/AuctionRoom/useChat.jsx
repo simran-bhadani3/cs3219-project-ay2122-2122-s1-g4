@@ -8,7 +8,10 @@ const END_AUCTION_EVENT = "endAuction";
 //kubernetes nodeport
 // const SOCKET_SERVER_URL = `https://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:30199'}`;
 //chat ingress
-const SOCKET_SERVER_URL = `https://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost/auctionroom'}`;
+// https://
+// const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || '34.126.147.222/auctionroom'}`;
+const SOCKET_SERVER_URL = `${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:8085/auctionroom'}`;
+// const SOCKET_SERVER_URL = `${process.env.REACT_APP_dockerauctionmanagerserver || 'https://cs3219-project-ay2122-2122-s1-g4-x6yyb7nmgq-as.a.run.app/auctionroom/'}`;
 const useChat = (roomId) => {
     const [messages, setMessages] = useState([]);
     const [bids, setBids] = useState([]);
@@ -22,8 +25,9 @@ const useChat = (roomId) => {
                 Authorization: JSON.parse(localStorage.getItem('user'))
             },
             transport: ['websocket'],
+            protocols: ["http"],
             query: { roomid: roomId, token: JSON.parse(localStorage.getItem('user')) }
-        
+
         });
 
         //new message
@@ -36,15 +40,6 @@ const useChat = (roomId) => {
             setMessages((messages) => [...messages, incomingMessage]);
         });
 
-        //new bid
-        // socketRef.current.on(NEW_BID_EVENT, (bid) => {
-        //     console.log(bid);
-        //     const incomingBid = {
-        //         ...bid,
-        //         ownedByCurrentUser: bid.senderId === socketRef.current.id,
-        //     };
-        //     setBids((bids) => [...bids, incomingBid]);
-        // });
         socketRef.current.on(NEW_BID_EVENT, (bid) => {
             console.log(bid);
             setHighestBid({ highest: bid.bid, username: bid.username });
