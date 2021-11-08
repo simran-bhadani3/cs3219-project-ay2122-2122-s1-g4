@@ -22,8 +22,8 @@ const PORT = process.env.PORT || 8085;
 const HOST = "0.0.0.0";
 
 // Configuring api gateway location for the proxy middleware
-// const LOCAL_URL = "http://localhost"; // need http://
-const LOCAL_URL = "http://34.126.147.222";
+const LOCAL_URL = "http://localhost"; // need http://
+// const LOCAL_URL = "http://34.126.147.222";
 const DEPLOYED_URL = process.env.API_GATEWAY_URL; // need http://
 const FORWARDING_URL = (process.env.NODE_ENV === "production" && process.env.API_GATEWAY_URL) 
     ? DEPLOYED_URL 
@@ -78,7 +78,7 @@ app.use('/socket.io', createProxyMiddleware({
 app.use('/auctionroom', createProxyMiddleware({
     target: FORWARDING_URL,
     changeOrigin: true,
-    ws: true
+    // ws: true
 }));
 
 // app.on('upgrade', function (req, socket, head) {
