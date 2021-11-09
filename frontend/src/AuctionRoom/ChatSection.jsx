@@ -104,24 +104,24 @@ function ChatSection(props) {
   };
 
   return (
-    <Grid container item xs={3}>
-      <Grid container direction="column">
-        <Grid item xs={1} >
+    <Grid container item xs={3} border={1}>
+      <Grid container direction="column" justifyContent="space-between">
+        <Grid item>
           <Typography variant="h5" className="header-message" textAlign="center">Chat</Typography>
         </Grid>
-        <Grid container item xs={10} name="chat section" >
+        <Grid container item name="chat section" >
           <List className={classes.messageArea}>
             {messages.map((message, i) => (
               <MessageCard key={i} data={message} index={i} />
             ))}
           </List>
         </Grid>
-        <Grid container item xs={1}>
-          <Grid container item xs={10} >
+        <Grid container item>
+          <Grid container item xs={10}>
             <TextField value={newMessage} sx={{ ml:1, mr: 1}}
               onChange={handleNewMessageChange} onKeyPress={handleKeyPress} id="message" label="Type Something" fullWidth autoComplete='off' />
           </Grid>
-          <Grid item xs={1}>
+          <Grid item xs={2}>
             <Fab margin = {0} onClick={handleSendMessage} color="primary" aria-label="add"><SendIcon /></Fab>
           </Grid>
         </Grid>

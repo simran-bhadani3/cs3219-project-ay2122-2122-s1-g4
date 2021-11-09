@@ -76,6 +76,7 @@ function AddAuctionPage() {
                 console.log("error", error);
             });
 
+        // @david: if the upload image is working, move that code before the creating of new room post.
         // Create auction room
         const roomData = { roomname: auctionId, owner: userId };
         await axios.post(`${getBidUrl()}newroom`, roomData,  getAuthConfig())
@@ -103,11 +104,6 @@ function AddAuctionPage() {
         })
             .then(response => {
                 console.log("image uploaded successfully", response);
-                setIsSubmitted(true);
-                setCountdown(5);
-                setTimeout(function() {
-                    history.push("/all");
-                }, 5000);
             })
             .catch(function (error) {
                 console.log("image upload error", error);
