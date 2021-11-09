@@ -8,11 +8,11 @@ services:
        # need to embed variables during build
        # can change this to change url when running frontend in docker-desktop container
        # change to aggregator url or ingress url
-        - REACT_APP_dockerauthserver=localhost/api/user/login/
-        - REACT_APP_dockerauctionmanagerserver=localhost/auctionroom/
-        - REACT_APP_dockerauctiondetailsserver=localhost/api/auctiondetails/
-        - REACT_APP_dockercurrencymanagementserver=localhost/api/currency/
-        - REACT_APP_dockerauctionroomserver=localhost/api/room/
+        - REACT_APP_dockerauthserver=http://localhost/api/user/
+        - REACT_APP_dockerauctionmanagerserver=http://localhost/auctionroom/
+        - REACT_APP_dockerauctiondetailsserver=http://localhost/api/auctiondetails/
+        - REACT_APP_dockercurrencymanagementserver=http://localhost/api/currency/
+        - REACT_APP_dockerauctionroomserver=http://localhost/api/room/
     image: auctionfrontend
     ports:
       - "80:3000"
