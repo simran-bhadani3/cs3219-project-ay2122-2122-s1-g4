@@ -137,7 +137,7 @@ function AuctionCardSettings({ auction, updateAuctions }) {
                 message={snackbarMessage}
             />
         )
-    }
+    };
 
     return (
         <div>

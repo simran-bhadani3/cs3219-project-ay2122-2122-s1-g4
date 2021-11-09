@@ -128,13 +128,14 @@ function ProfilePage() {
     };
 
     const onSubmitAddValue = async values => {
-        // process add currency
-        const dockerCurrencyServer = `http://localhost:3003/api/currency/add/${userId}`;
-        // const dockerCurrencyServer = `https://${process.env.REACT_APP_dockercurrencymanagementserver||'localhost/api/currency/'}add/${userId}`;
-        console.log("onSubmitAddValue", values, userId);
-        await axios.put(dockerCurrencyServer, values)
+        const dockerCurrencyServer = `http://localhost:3003/api/currency/add`;
+        // const dockerCurrencyServer = `https://${process.env.REACT_APP_dockercurrencymanagementserver||'localhost/api/currency/'}add`;
+        const data = { ...values, userid: userId };
+        console.log("onSubmitAddValue", data);
+        await axios.post(dockerCurrencyServer, data)
             .then(res => {
                 console.log("currency updated successfully", res);
+                getProfile();
             })
             .catch(err => {
                 console.log("error", err);
