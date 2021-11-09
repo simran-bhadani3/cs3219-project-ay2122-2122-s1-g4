@@ -1,6 +1,6 @@
 # run redis container for redis adapter
 # docker run --name my-redis -p 6379:6379 -d redis
-FROM node:14
+FROM node:14.5.0-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
