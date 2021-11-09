@@ -25,10 +25,9 @@ export function getCurrencyUrl() {
     return currencyurl;
 }
 
-
+//this is also the auctionroom url
 // external bid url
 export function getBidUrl() {
     const bidurl = `${process.env.REACT_APP_dockerauctionroomserver || 'http://localhost/api/room/'}`;
     return bidurl;
 }
-

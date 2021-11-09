@@ -6,7 +6,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Grid, Typography } from '@mui/material';
 import AuctionForm from '../components/AuctionForm';
 import axios from 'axios';
-import {getAuthConfig} from '../actions.js';
+import {getAuthConfig,getAuctionDetailsUrl, getBidUrl} from '../actions.js';
 
 const useStyles = makeStyles(theme => ({
     fullScreenHeight: {
@@ -67,7 +67,7 @@ function AddAuctionPage() {
         //        "Authorization": jwt.substr(1, jwt.length - 2)
         //     }
         // };
-        await axios.post(dockerAuctionDetailsServer, formData, getAuthConfig())
+        await axios.post(getAuctionDetailsUrl(), formData, getAuthConfig())
             .then(res => {
                 auctionId = res.data._id;
                 console.log("form added successfully", res);
@@ -78,7 +78,7 @@ function AddAuctionPage() {
 
         // Create auction room
         const roomData = { roomname: auctionId, owner: userId };
-        await axios.post(dockerAuctionRoomServer, roomData,  getAuthConfig())
+        await axios.post(`${getBidUrl()}newroom`, roomData,  getAuthConfig())
             .then(res => {
                 console.log("auction room created successfully", res);
                 setIsSubmitted(true);
