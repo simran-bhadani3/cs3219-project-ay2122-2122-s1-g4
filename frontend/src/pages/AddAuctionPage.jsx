@@ -6,6 +6,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Grid, Typography } from '@mui/material';
 import AuctionForm from '../components/AuctionForm';
 import axios from 'axios';
+import {getAuthConfig,getAuctionDetailsUrl, getBidUrl} from '../actions.js';
 
 const useStyles = makeStyles(theme => ({
     fullScreenHeight: {
@@ -51,16 +52,22 @@ function AddAuctionPage() {
 
     async function onSubmit(values) {
         // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-        const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails'}`;
+        const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
         // const dockerAuctionRoomServer = 'http://localhost:3003/api/room/newroom';
-        const dockerAuctionRoomServer = `https://${process.env.REACT_APP_dockerauctionroomserver||'localhost/api/room/newroom'}`;
+        const dockerAuctionRoomServer = `${process.env.REACT_APP_dockerauctionroomserver||'http://localhost/api/room/newroom'}`;
 
         let auctionId = "";
         const userId = JSON.parse(localStorage.getItem('userid'));
 
         // Upload details (exclude images)
         const formData = { ...values, owner_id: userId };
-        await axios.post(dockerAuctionDetailsServer, formData)
+        // const jwt = getCurrentUser();
+        // const userConfig = {
+        //     headers: {
+        //        "Authorization": jwt.substr(1, jwt.length - 2)
+        //     }
+        // };
+        await axios.post(getAuctionDetailsUrl(), formData, getAuthConfig())
             .then(res => {
                 auctionId = res.data._id;
                 console.log("form added successfully", res);
@@ -71,7 +78,7 @@ function AddAuctionPage() {
 
         // Create auction room
         const roomData = { roomname: auctionId, owner: userId };
-        await axios.post(dockerAuctionRoomServer, roomData)
+        await axios.post(`${getBidUrl()}newroom`, roomData,  getAuthConfig())
             .then(res => {
                 console.log("auction room created successfully", res);
                 setIsSubmitted(true);
@@ -85,26 +92,26 @@ function AddAuctionPage() {
             });
 
         // unable to upload images: the function below takes very long to load, need to check!
-        // const imgBodyFormData = new FormData();
-        // imgBodyFormData.append('id', auctionId);
-        // imgBodyFormData.append('file', image);
-        // await axios({
-        //     method: "post",
-        //     url: `${dockerAuctionDetailsServer}/upload/`,
-        //     data: imgBodyFormData,
-        //     headers: { "Content-Type": "multipart/form-data" },
-        // })
-        //     .then(response => {
-        //         console.log("image uploaded successfully", response);
-        //         setIsSubmitted(true);
-        //         setCountdown(5);
-        //         setTimeout(function() {
-        //             history.push("/all");
-        //         }, 5000);
-        //     })
-        //     .catch(function (error) {
-        //         console.log("image upload error", error);
-        //     });
+        const imgBodyFormData = new FormData();
+        imgBodyFormData.append('id', auctionId);
+        imgBodyFormData.append('file', image);
+        await axios({
+            method: "post",
+            url: `${dockerAuctionDetailsServer}/upload/`,
+            data: imgBodyFormData,
+            headers: { "Content-Type": "multipart/form-data", "Authorization": getAuthConfig()},  
+        })
+            .then(response => {
+                console.log("image uploaded successfully", response);
+                setIsSubmitted(true);
+                setCountdown(5);
+                setTimeout(function() {
+                    history.push("/all");
+                }, 5000);
+            })
+            .catch(function (error) {
+                console.log("image upload error", error);
+            });
     };
 
     const renderHeader = (header) => {

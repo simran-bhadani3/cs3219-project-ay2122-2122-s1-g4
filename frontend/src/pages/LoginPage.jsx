@@ -20,6 +20,7 @@ import { AuthContext } from "../AuthContext";
 import { useHistory } from "react-router-dom";
 import { ClassNames } from '@emotion/react';
 import axios from 'axios';
+import {getAuthConfig, getAuctionDetailsUrl, getCurrencyUrl, getBidUrl} from '../actions.js';
 
 const useStyles = makeStyles(theme => ({
   submitButtonStyle: {
@@ -27,20 +28,6 @@ const useStyles = makeStyles(theme => ({
       marginBottom: theme.spacing(2)
   }
 }));
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="e-Auction">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
 
 function logout() {
   localStorage.removeItem("user");
@@ -172,7 +159,6 @@ export default function LoginPage() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
   );
 }

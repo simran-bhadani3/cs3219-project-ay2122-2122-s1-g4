@@ -8,6 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Card, CardActions, CardActionArea, CardContent, CardHeader, CardMedia, Chip, Collapse, Grid, IconButton, Typography } from '@mui/material';
 import AuctionCardDialog from '../components/AuctionCardDialog';
 import AuctionCardSettings from '../components/AuctionCardSettings';
+import {getAuthConfig, getAuctionDetailsUrl} from '../actions.js';
 import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
@@ -76,9 +77,9 @@ function AuctionCard({ item, updateAuctions, isEditDelete=false }) {
 
     const getImage = () => {
         // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-        const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails'}`;
+        const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
         
-        axios.get(`${dockerAuctionDetailsServer}/download/${auctionId}`)
+        axios.get(`${getAuctionDetailsUrl()}/download/${auctionId}`, getAuthConfig())
             .then(res => {
                 console.log("response", res);
                 setImageUrl(res.data);

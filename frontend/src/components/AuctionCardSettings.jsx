@@ -7,6 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {AppBar, Dialog, Grid, IconButton, Menu, MenuItem, Slide, Snackbar, Toolbar, Typography} from '@mui/material';
 import AuctionForm from '../components/AuctionForm';
+import {getAuthConfig, getAuctionDetailsUrl} from '../actions.js';
 import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
@@ -42,7 +43,7 @@ function AuctionCardSettings({ auction, updateAuctions }) {
     const [anchorEl, setAnchorEl] = useState();
     const open = Boolean(anchorEl);
     // const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/${auction?._id}`;
-    const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails'}/${auction?._id}`;
+    const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}${auction?._id}`;
     
     const onClickSetting = (event) => {
         setAnchorEl(event.currentTarget);
@@ -64,7 +65,7 @@ function AuctionCardSettings({ auction, updateAuctions }) {
             owner_id: userId
         }
 
-        await axios.put(dockerAuctionDetailsServer, data)
+        await axios.put(`${getAuctionDetailsUrl() + auction?._id}`, data, getAuthConfig())
             .then(res => {
                 // console.log("res:", res);
                 handleCloseEditFormDialog();
@@ -112,7 +113,7 @@ function AuctionCardSettings({ auction, updateAuctions }) {
     };
 
     const deleteAuction = () => {
-        axios.delete(dockerAuctionDetailsServer)
+        axios.delete(`${getAuctionDetailsUrl() + auction?._id}`, getAuthConfig())
             .then(res => {
                 updateAuctions();
                 setSnackbarMessage("Auction has been deleted.");

@@ -2,7 +2,8 @@ const express = require("express");
 
 const app = express();
 
-const port = process.env.PORT || 3003; // 8080;
+//changed to 3003 to prevent overlapping
+const port = process.env.PORT || 3003; // originally 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

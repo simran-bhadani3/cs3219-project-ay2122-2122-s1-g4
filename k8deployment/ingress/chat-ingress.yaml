@@ -8,8 +8,7 @@ metadata:
     nginx.org/websocket-services: "auctionroommanager"
     # enable cors
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost, https://cs3219-project-ay2122-2122-s1-g4-frontend-bsyylql4ka-as.a.run.app, https://aggproxy-bsyylql4ka-as.a.run.app, http://34.124.176.116/, http://34.124.176.116/, http://34.126.147.222/auctionroom" 
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     # sticky session to enable chatroom scaling
     nginx.ingress.kubernetes.io/affinity: "cookie"

@@ -20,7 +20,7 @@ spec:
           imagePullPolicy: Never
           name: auctionbackend-auctionroom
           ports:
-          - containerPort: 8080
+          - containerPort: 3003
             protocol: TCP
           resources:
             requests:
@@ -38,7 +38,7 @@ spec:
   - nodePort: 30202
     port: 8083
     protocol: TCP
-    targetPort: 8080
+    targetPort: 3003
   selector:
     app: auctionroom
   type: NodePort
