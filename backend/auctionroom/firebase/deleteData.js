@@ -36,7 +36,8 @@ module.exports = {
 						receiver: receiver,
 						currency: currency,
 					});
-					await firebase
+					if (response.status == 200) {
+						await firebase
 						.database()
 						.ref("rooms/" + req.params.roomname)
 						.remove()
@@ -46,6 +47,10 @@ module.exports = {
 						.catch((err) => {
 							console.log(err);
 						});
+					} else {
+						res.status(500).json({ error: response.data})
+					};
+					
 				} else {
 					res.status(400).send({ err: "No such room exists" });
 				}
