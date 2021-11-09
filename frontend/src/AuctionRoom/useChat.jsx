@@ -9,9 +9,10 @@ const END_AUCTION_EVENT = "endAuction";
 // const SOCKET_SERVER_URL = `https://${process.env.REACT_APP_dockerauctionmanagerserver || 'localhost:30199'}`;
 //chat ingress
 // https://
-const SOCKET_SERVER_URL = `http://${process.env.REACT_APP_dockerauctionmanagerserver || '34.126.147.222/auctionroom'}`;
+const SOCKET_SERVER_URL = `${process.env.REACT_APP_dockerauctionmanagerserver || 'http://34.126.147.222/auctionroom/'}`;
 // const SOCKET_SERVER_URL = `${process.env.REACT_APP_dockerauctionmanagerserver || 'http://localhost:8085/auctionroom'}`;
 // const SOCKET_SERVER_URL = `${process.env.REACT_APP_dockerauctionmanagerserver || 'http://34.124.176.116/auctionroom/'}`;
+// const SOCKET_SERVER_URL = `${process.env.REACT_APP_dockerauctionmanagerserver || 'http://34.124.164.87/auctionroom/'}`;
 const useChat = (roomId) => {
     const [messages, setMessages] = useState([]);
     const [bids, setBids] = useState([]);
