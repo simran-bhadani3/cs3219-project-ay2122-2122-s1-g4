@@ -1,59 +1,57 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mongo-pvc
+  name: mongouseraccounts
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 256Mi
+      storage: 1Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
   labels:
-    app: mongodb
-  name: mongodb
+    app: mongouseraccounts
+  name: mongouseraccounts
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongodb
+      app: mongouseraccounts
   template:
     metadata:
       labels:
-        app: mongodb
+        app: mongouseraccounts
     spec:
       containers:
         - image: mongo
           imagePullPolicy: Always
-          name: mongo
+          name: mongouseraccounts
           ports:
             - containerPort: 27017
               protocol: TCP
           volumeMounts:
-            - name: storage
-              mountPath: /data/db
+            - name: mongouseraccounts
+              mountPath: /data/useraccounts
           resources:
-            limits:
-              cpu: 200m
             requests:
-              cpu: 200m
+              cpu: 100m
       volumes:
-        - name: storage
+        - name: mongouseraccounts
           persistentVolumeClaim:
-            claimName: mongo-pvc
+            claimName: mongouseraccounts
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: mongodb
-  name: mongodb
+    app: mongouseraccounts
+  name: mongouseraccounts
   namespace: default
 spec:
   ports:
@@ -61,5 +59,21 @@ spec:
       protocol: TCP
       targetPort: 27017
   selector:
-    app: mongodb
+    app: mongouseraccounts
   type: ClusterIP
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mongouseraccounts
+  namespace: default
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mongouseraccounts
+  targetCPUUtilizationPercentage: 80

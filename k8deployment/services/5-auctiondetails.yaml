@@ -20,18 +20,16 @@ spec:
           - name: PORT
             value: "8080"
           - name: backend
-            value: mongodb://mongodb:27017/auctiondetails
+            value: mongodb://mongoauctiondetails:27018/auctiondetails
           image: gcr.io/graphical-mile-329010/auctionbackend-auctiondetails:1.0
           imagePullPolicy: Always
           name: auctionbackend-auctiondetails
           ports:
           - containerPort: 8080
             protocol: TCP
-          # resources:
-          #   limits:
-          #     cpu: 50m
-          #   requests:
-          #     cpu: 50m
+          resources:
+            requests:
+              cpu: 100m
 ---
 apiVersion: v1
 kind: Service
@@ -49,3 +47,17 @@ spec:
   selector:
     app: auctiondetails
   type: NodePort
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: auctiondetails
+  namespace: default
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: auctiondetails
+  targetCPUUtilizationPercentage: 80

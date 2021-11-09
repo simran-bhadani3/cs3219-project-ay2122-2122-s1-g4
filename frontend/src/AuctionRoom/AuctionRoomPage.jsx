@@ -162,7 +162,7 @@ export default function AuctionRoomDisplay(props) {
 
         //call api sethighestbid
         // setHighestBid()
-        axios.get(`${bidurl}/gethighest/${roomId}`, config)
+        axios.get(`${bidurl}gethighest/${roomId}`, config)
             .then(response => {
                 setHighestBid({ highest: parseInt(response['data'].bid), username: response['data'].username })
                 console.log(response['data'].bid);
@@ -318,9 +318,20 @@ export default function AuctionRoomDisplay(props) {
                             <DialogTitle>{"Auction closed!"}</DialogTitle>
                             <DialogContent>
                                 <DialogContentText id="alert-dialog-description">
-                                    Winner : {highestBid['username']}
-                                    Sold For : {highestBid['highest']}
-                                    Thank you for joining this auction!
+                                    {isOwner ? (
+                                        
+                                        [
+                                        (typeof highestBid['highest'] == 'undefined'
+                                            ? 'Looks like no one dropped by :('
+                                            : 'Congrats, your item has been sold!'
+                                        ),
+                                        <div key='1'>body</div>
+                                        ]
+                                    ) : `Winner : ${highestBid['username']}
+                                    Sold For : ${highestBid['highest']}
+                                    Thank you for joining this auction!`
+                                    }
+
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
@@ -341,13 +352,14 @@ export default function AuctionRoomDisplay(props) {
             <Grid item container xs={6} spacing={0} border={1}>
                 <Grid container direction="column">
                     <Grid item xs={1} >
-                        <Typography variant="h5" className="header-message" textAlign="center">Item Details</Typography>
+                        <Typography variant="h5" className="header-message" textAlign="center">Auction : {auctiondetails['room_display_name']}</Typography>
                         <Typography variant="h5" className="header-message" textAlign="center">Highest Bid: ${highestBid['highest']}</Typography>
                     </Grid>
                     <Grid container item xs={10} alignItems="center" direction="column" justifyContent="center">
                         <Grid item xs={10}>
                             <img
-                                src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
+                                src={auctiondetailurl + 'download/' + auctiondetails['_id']}
+                                // src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
                                 alt="new"
                             />
                         </Grid>
