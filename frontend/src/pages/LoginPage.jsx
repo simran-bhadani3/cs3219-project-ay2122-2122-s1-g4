@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import { makeStyles } from '@mui/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -12,13 +11,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { theme } from '../theme';
-import { ThemeProvider } from '@mui/material/styles';
 import { useFormik } from 'formik';
 import EButton from '../components/EButton';
 import { AuthContext } from "../AuthContext";
 import { useHistory } from "react-router-dom";
-import { ClassNames } from '@emotion/react';
 import axios from 'axios';
 import {getAuthConfig, getAuctionDetailsUrl, getCurrencyUrl, getBidUrl} from '../actions.js';
 
