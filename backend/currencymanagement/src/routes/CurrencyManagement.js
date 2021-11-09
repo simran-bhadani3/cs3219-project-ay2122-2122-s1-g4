@@ -26,6 +26,42 @@ router.get("/:userid", (req, res) => {
 		});
 });
 
+router.post("/add", (req, res) => {
+	userid = req.body.userid;
+	User.findOne({ _id: userid })
+		.then((user) => {
+			if (user) {
+				User.updateOne(
+					{ _id: userid },
+					{
+						$inc: {
+							currency: req.body.currency,
+						},
+					}
+				)
+					.then(() => {
+						res.status(200).json({
+							currency: "currency updated",
+						});
+					})
+					.catch((err) => {
+						res.status(500).json({
+							status: "error",
+							error: err,
+						});
+					});
+			} else {
+				res.status(400).send("user does not exist");
+			}
+		})
+		.catch((err) => {
+			res.status(500).json({
+				status: "error",
+				error: err,
+			});
+		});
+});
+
 router.post("/transaction", async (req, res) => {
 	const session = await User.startSession();
 	await session
