@@ -20,11 +20,12 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function EButton({ content, onClick, icon, size = "large", variant = "contained", disabled = false, type = "button", color = "primary", className }) {
+function EButton({ content, onClick, icon, size = "large", variant = "contained", disabled = false, type = "button", color = "primary", fullWidth = false, className }) {
     const classes = useStyles();
 
     return (
         <Button
+            fullWidth={fullWidth}
             color={color}
             disabled={disabled}
             variant={variant}

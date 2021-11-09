@@ -132,6 +132,49 @@ exports.findFuture = (req, res) => {
 		});
 };
 
+// Retrieve all auctions by minbid / category / search by name
+exports.filterAndSearch = (req, res) => {
+	const query = req.query;
+	const data = {};
+	if (query.room_display_name) {
+		data.room_display_name = new RegExp(query.room_display_name, "i");
+	}
+	if (!query.showAll || query.showAll === "false") {
+		const now = new Date();
+		data.end_time = { $gt: now };
+	}
+	if (query.auction_item_name) {
+		data.auction_item_name = new RegExp(query.auction_item_name, "i");
+	}
+	if (query.lowerbound || query.upperbound) {
+		data.minbid = {};
+		if (query.lowerbound) {
+			data.minbid["$gte"] = req.query.lowerbound;
+		}
+		if (query.upperbound) {
+			data.minbid["$lte"] = req.query.upperbound;
+		}
+	}
+	if (query.category) {
+		data.category = req.query.category;
+	}
+	Auctiondetail.find(data)
+		.then((auctiondetail) => {
+			if (!auctiondetail) {
+				return res.status(204).send({
+					message: "No auctions found" + console.log(req.query.lowerbound),
+				});
+			}
+			res.send(auctiondetail);
+		})
+		.catch((err) => {
+			console.log("err", err);
+			return res.status(500).send({
+				message: "Error getting auctiondetails",
+			});
+		});
+};
+
 // Retrieve all auctions by minbid
 exports.findRange = (req, res) => {
 	Auctiondetail.find({

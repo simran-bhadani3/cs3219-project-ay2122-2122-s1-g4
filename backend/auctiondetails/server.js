@@ -1,8 +1,7 @@
 const express = require("express");
+const cors = require('cors') // import cors
 // create express app
 const app = express();
-//import cors
-const cors = require('cors');
 // Setup server port
 const port = process.env.PORT || 4000;
 // parse requests of content-type - application/x-www-form-urlencoded

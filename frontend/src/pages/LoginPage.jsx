@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import { makeStyles } from '@mui/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -14,9 +15,18 @@ import Container from '@mui/material/Container';
 import { theme } from '../theme';
 import { ThemeProvider } from '@mui/material/styles';
 import { useFormik } from 'formik';
+import EButton from '../components/EButton';
 import { AuthContext } from "../AuthContext";
 import { useHistory } from "react-router-dom";
-const axios = require('axios');
+import { ClassNames } from '@emotion/react';
+import axios from 'axios';
+
+const useStyles = makeStyles(theme => ({
+  submitButtonStyle: {
+      marginTop: theme.spacing(3),
+      marginBottom: theme.spacing(2)
+  }
+}));
 
 function Copyright(props) {
   return (
@@ -43,9 +53,12 @@ function getCurrentUser() {
 }
 
 export default function LoginPage() {
+  const classes = useStyles();
   const authContext = useContext(AuthContext);
   const dockerauthserver = `${process.env.REACT_APP_dockerauthserver||'http://localhost/api/user/'}login`;
+  // const dockerauthserver = 'http://localhost:8080/api/user/login';
   let history = useHistory();
+
   async function login(values) {
     await axios.post(dockerauthserver, values)
       .then(response => {
@@ -55,7 +68,7 @@ export default function LoginPage() {
           localStorage.setItem("user", JSON.stringify(response.data['jwtToken']));
           localStorage.setItem("userid", JSON.stringify(response.data['id']));
           localStorage.setItem("username", response.data['username']);
-          console.log(response.data['id']);
+          // console.log(response.data['id']);
           authContext.login(response.data['jwtToken']);
         }
         // redirect to home page
@@ -91,8 +104,6 @@ export default function LoginPage() {
     },
   });
 
-
-
   return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -122,7 +133,6 @@ export default function LoginPage() {
               autoFocus
               onChange={formik.handleChange}
               value={formik.values.email}
-
             />
             {formik.errors.email ? <div>{formik.errors.email}</div> : null}
             <TextField
@@ -141,14 +151,13 @@ export default function LoginPage() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Button
+            <EButton
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Login
-            </Button>
+              className={classes.submitButtonStyle}
+              content="Login"
+            />
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
