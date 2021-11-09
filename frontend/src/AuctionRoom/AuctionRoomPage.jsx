@@ -249,7 +249,7 @@ export default function AuctionRoomDisplay(props) {
                                     <ListItem disablePadding>
                                         <ListItemButton component="a" href="#simple-list">
                                             <ListItemText primary="Auction end time"
-                                                secondary={`${new Date(auctiondetails['end_time']).toLocaleTimeString()}`}
+                                                secondary={`${new Date(auctiondetails['end_time']).toLocaleString()}`}
                                             />
                                         </ListItemButton>
                                     </ListItem>
