@@ -2,48 +2,64 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: currencymanagement
-  name: currencymanagement
+    app: useraccount
+  name: useraccount
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: currencymanagement
+      app: useraccount
   template:
     metadata:
       labels:
-        app: currencymanagement
+        app: useraccount
     spec:
       containers:
         - env:
           - name: backend
             value: mongodb://mongouseraccounts:27017/useraccounts
-          image: gcr.io/graphical-mile-329010/auctionbackend-currencymanagement:1.0
+          image: gcr.io/graphical-mile-329010/auctionbackend-useraccount:1.0
           imagePullPolicy: Always
-          name: auctionbackend-currencymanagement
+          name: auctionbackend-useraccount
           ports:
           - containerPort: 8080
             protocol: TCP
           # resources:
           #   limits:
-          #     cpu: 50m
+          #     cpu: 200m
           #   requests:
-          #     cpu: 50m
+          #     cpu: 200m
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: currencymanagement
-  name: currencymanagement
+    app: useraccount
+  name: useraccount
   namespace: default
 spec:
   ports:
-  - nodePort: 30201
-    port: 8082
+  - nodePort: 30198
+    port: 8080
     protocol: TCP
     targetPort: 8080
   selector:
-    app: currencymanagement
+    app: useraccount
   type: NodePort
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: useraccount
+  namespace: default
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: useraccount
+  targetCPUUtilizationPercentage: 80

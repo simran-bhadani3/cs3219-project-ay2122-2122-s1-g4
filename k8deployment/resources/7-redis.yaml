@@ -52,6 +52,23 @@ spec:
   type: NodePort
 
 ---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: redis-leader
+  namespace: default
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: redis-leader
+  targetCPUUtilizationPercentage: 80
+
+---
+
 # Followers
 apiVersion: apps/v1
 kind: Deployment
@@ -101,3 +118,19 @@ spec:
     app: redis
     role: follower
     tier: backend
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: redis-follower
+  namespace: default
+spec:
+  maxReplicas: 10
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: redis-follower
+  targetCPUUtilizationPercentage: 80
