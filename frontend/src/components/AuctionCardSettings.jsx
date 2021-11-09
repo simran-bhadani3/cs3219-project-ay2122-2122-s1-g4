@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {AppBar, Dialog, Grid, IconButton, Menu, MenuItem, Slide, Snackbar, Toolbar, Typography} from '@mui/material';
+import {AppBar, Dialog, Grid, IconButton, Menu, MenuItem, Snackbar, Toolbar, Popover, Typography} from '@mui/material';
 import AuctionForm from '../components/AuctionForm';
 import {getAuthConfig, getAuctionDetailsUrl} from '../actions.js';
 import axios from 'axios';
@@ -34,17 +33,26 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function AuctionCardSettings({ auction, updateAuctions }) {
+function AuctionCardSettings({ auction, updateAuctions, isOngoingHasEnded }) {
     const classes = useStyles();
-    const history = useHistory();
+    const [ongoing, setOngoing] = useState(false);
+    const [ended, setEnded] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [anchorEl, setAnchorEl] = useState();
     const open = Boolean(anchorEl);
     // const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/${auction?._id}`;
-    const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}${auction?._id}`;
-    
+    // const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}${auction?._id}`;
+
+    useEffect(() => {
+        if (isOngoingHasEnded) {
+            const {isOngoing, hasEnded} = isOngoingHasEnded();
+            setOngoing(isOngoing);
+            setEnded(hasEnded);
+        }
+    }, []);
+
     const onClickSetting = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -58,7 +66,6 @@ function AuctionCardSettings({ auction, updateAuctions }) {
     };
 
     async function onEditSubmit(values) {
-        
         const userId = JSON.parse(localStorage.getItem('userid'));
         const data = {
             ...values,
@@ -152,7 +159,7 @@ function AuctionCardSettings({ auction, updateAuctions }) {
                 <MoreVertIcon />
             </IconButton>
 
-            <Menu
+            {!(ongoing || ended) && (<Menu
                 id="settingsMenu"
                 anchorEl={anchorEl}
                 open={open}
@@ -167,19 +174,44 @@ function AuctionCardSettings({ auction, updateAuctions }) {
                     horizontal: 'center',
                 }}
             >
-                <MenuItem onClick={onClickEdit}>
-                    <Grid container className={classes.p1}>
-                        <EditIcon />
-                        <Typography className={classes.ml1}>Edit</Typography>
-                    </Grid>
-                </MenuItem>
-                <MenuItem onClick={onClickDelete}>
-                    <Grid container className={`${classes.deleteStyle} ${classes.p1}`}>
-                        <DeleteIcon color="error" />
-                        <Typography color="error" className={classes.ml1}>Delete</Typography>
-                    </Grid>
-                </MenuItem>
+                <div>
+                    <MenuItem onClick={onClickEdit}>
+                        <Grid container className={classes.p1}>
+                            <EditIcon />
+                            <Typography className={classes.ml1}>Edit</Typography>
+                        </Grid>
+                    </MenuItem>
+                    <MenuItem onClick={onClickDelete}>
+                        <Grid container className={`${classes.deleteStyle} ${classes.p1}`}>
+                            <DeleteIcon color="error" />
+                            <Typography color="error" className={classes.ml1}>Delete</Typography>
+                        </Grid>
+                    </MenuItem>
+                </div>
             </Menu>
+            )}
+
+            {(ongoing || ended) && (
+                <Popover
+                    id="settingsMenu"
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handleCloseSettingsPopup}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
+                >
+                    <Grid className={classes.p1}>
+                        <Typography>Unable to edit or delete.</Typography>
+                        <Typography>Auction {ongoing ? "is ongoing. Click into auction to end it." : "has ended."}</Typography>
+                    </Grid>
+                </Popover>
+            )}
             
             {renderEditDialog()}
             {renderSnackbar()}

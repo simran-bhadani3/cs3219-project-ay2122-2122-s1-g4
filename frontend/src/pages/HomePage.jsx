@@ -63,7 +63,7 @@ function AuctionsPage() {
     const [searchValue, setSearchValue] = useState("");
 
     // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-    const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
+    // const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
     
     const getAllFutureAuctions = () => {
         axios.get(`${getAuctionDetailsUrl()}/notover`, getAuthConfig())
@@ -74,7 +74,7 @@ function AuctionsPage() {
             .catch(error => {
                 console.log("error", error);
             });
-    }
+    };
 
     const serialize = function(obj) {
         const str = [];
@@ -101,7 +101,7 @@ function AuctionsPage() {
         // const val = { category: "", upperbound: 90, lowerbound: 0, showAll: false, room_display_name: "" };
         axios.get(`${getAuctionDetailsUrl()}/filterandsearch?${serialize(values)}`, getAuthConfig())
             .then(res => {
-                console.log("response", res);
+                // console.log("response", res);
                 setAuctions(res.data);
             })
             .catch(error => {
