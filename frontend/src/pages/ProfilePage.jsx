@@ -63,10 +63,10 @@ function ProfilePage() {
     const atLeastMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
 
     const userId = JSON.parse(localStorage.getItem('userid'));
-    const dockerUserServer = 'http://localhost:8080/api/user/user';
-    // const dockerUserServer = `https://${process.env.REACT_APP_dockerauthserver||'localhost'}/api/user/user`;
-    const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/user/${userId}`;
-    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails/'}user/${userId}`;
+    // const dockerUserServer = 'http://localhost:8080/api/user/user';
+    const dockerUserServer = `https://${process.env.REACT_APP_dockerauthserver||'localhost/api/user'}/user`;
+    // const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/user/${userId}`;
+    const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails/'}user/${userId}`;
 
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");

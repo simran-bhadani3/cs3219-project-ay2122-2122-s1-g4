@@ -29,7 +29,7 @@ run `npm test`
 2. GET /api/auctiondetails/user/:userid Retrieve all auctions with user id
 3. GET /api/auctiondetails/pricerange Retrieve all auctions by price (Add querys strings e.g. /api/auctiondetails/pricerange?lowerbound=100&upperbound=200)
 4. GET /api/auctiondetails/notover Retrieve all auctions that are not over
-5. GET /api/auctiondetails/filter Retrieve all auctions that are not over and filter by category and price (Add querys strings e.g. /api/auctiondetails/filter?lowerbound=10&upperbound=200&category=Books)
+5. GET /api/auctiondetails/filterandsearch Retrieve all auctions that are not over and filter by category and price (Add querys strings e.g. /api/auctiondetails/filterandsearch?lowerbound=10&upperbound=200&category=Books)
 
 ## Date time format
 

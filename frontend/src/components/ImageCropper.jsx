@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
-import { Button, Grid, Slider, Typography } from '@mui/material';
+import { Button, Card, CardContent, CardMedia, Grid, Slider, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { getOrientation } from 'get-orientation/browser';
@@ -50,8 +50,8 @@ const useStyles = makeStyles(theme => ({
         },
     },
     img: {
-        maxWidth: '50%',
-        maxHeight: '50%',
+        maxWidth: '90%',
+        maxHeight: '90%'
     },
     mt2: {
         marginTop: theme.spacing(2)
@@ -101,11 +101,6 @@ const ImageCropper = ({ updateImage, imageUrl=null }) => {
         }
     }, [imageSrc, croppedAreaPixels, rotation]);
 
-    // const onClosePreview = useCallback(() => {
-    //     setCroppedImage(null);
-    //     setIsConfirmed(false);
-    // }, []);
-
     const onFileChange = async (e) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
@@ -124,7 +119,7 @@ const ImageCropper = ({ updateImage, imageUrl=null }) => {
     const renderSelectFile = () => {
         return (
             <Button variant="outlined" component="label" startIcon={<FileUploadIcon/>}>
-                Upload Image
+                {imageSrc ? "Choose another Image" : "Upload Image"}
                 <input type="file" onChange={onFileChange} accept="image/*" hidden />
             </Button>
         );
@@ -132,7 +127,7 @@ const ImageCropper = ({ updateImage, imageUrl=null }) => {
 
     const renderImageCrop = () => {
         return (
-            <div className={classes.mt2}>
+            <Grid container item xs={12} md={8} justifyContent="center">
                 <div className={classes.cropContainer}>
                     <Cropper
                         image={imageSrc}
@@ -184,23 +179,39 @@ const ImageCropper = ({ updateImage, imageUrl=null }) => {
                         Confirm Image
                     </Button>
                 </div>
-            </div>
+            </Grid>
         );
     };
 
     const renderImagePreview = () => {
-        return (
-            <div className={classes.imgContainer}>
-                <img src={croppedImage} alt="Cropped" className={classes.img} />
-            </div>
+        return croppedImage ? (
+            <Grid item container xs={12} md={4} justifyContent="center">
+                <Card sx={{ maxWidth: "80%" }}>
+                    <CardMedia
+                        component="img"
+                        width="90%"
+                        image={croppedImage}
+                        alt="image"
+                    />
+                    <CardContent>
+                        <Typography variant="h4">Preview Image</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+        ) : (
+            <Grid item container xs={12} md={4} justifyContent="center">
+                <Typography>Kindly confirm the image to be uploaded.</Typography>
+            </Grid>
         );
     };
 
     return (
-        <Grid item xs={12}>
-            {renderSelectFile()}
-            {imageSrc && renderImageCrop()}
-            {imageSrc && isConfirmed && renderImagePreview()}
+        <Grid container>
+            <Grid item xs={12}>{renderSelectFile()}</Grid>
+            <Grid container className={classes.mt2}>
+                {imageSrc && renderImageCrop()}
+                {imageSrc && isConfirmed && renderImagePreview()}
+            </Grid>
         </Grid>
     );
 }

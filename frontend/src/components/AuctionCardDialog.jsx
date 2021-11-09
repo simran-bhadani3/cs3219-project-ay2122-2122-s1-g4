@@ -4,7 +4,7 @@ import EButton from '../components/EButton';
 
 function AuctionCardDialog({ title, description, open, onClose }) {
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="lg">
+        <Dialog open={open} onClose={onClose} maxWidth="md">
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
                 <DialogContentText>{description}</DialogContentText>

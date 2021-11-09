@@ -9,7 +9,8 @@ import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
     fullScreenHeight: {
-        minHeight: "90vh"
+        minHeight: "90vh",
+        paddingBottom: theme.spacing(6)
     },
     headerStyle: {
         textAlign: "center",
@@ -49,10 +50,10 @@ function AddAuctionPage() {
     });
 
     async function onSubmit(values) {
-        const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-        // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails'}`;
-        const dockerAuctionRoomServer = 'http://localhost:3003/api/room/newroom';
-        // const dockerAuctionRoomServer = `https://${process.env.REACT_APP_dockerauctionroomserver||'localhost/api/room/newroom'}`;
+        // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
+        const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails'}`;
+        // const dockerAuctionRoomServer = 'http://localhost:3003/api/room/newroom';
+        const dockerAuctionRoomServer = `https://${process.env.REACT_APP_dockerauctionroomserver||'localhost/api/room/newroom'}`;
 
         let auctionId = "";
         const userId = JSON.parse(localStorage.getItem('userid'));

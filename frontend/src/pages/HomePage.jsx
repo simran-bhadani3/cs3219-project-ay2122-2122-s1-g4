@@ -61,8 +61,8 @@ function AuctionsPage() {
     const [filterSearchOptions, setFilterSearchOptions] = useState({});
     const [searchValue, setSearchValue] = useState("");
 
-    const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails`'};
+    // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
+    const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails'}`;
     
     const getAllFutureAuctions = () => {
         axios.get(`${dockerAuctionDetailsServer}/notover`)
@@ -196,7 +196,15 @@ function AuctionsPage() {
                 {renderTopBar()}
                 <Grid container justifyContent={auctions.length === 0 ? "center" : "flex-start"}>
                     {auctions.length === 0 ? renderEmptyAuctionList() : (
-                        auctions.map(item => <AuctionCard item={item} />)
+                        auctions.map(item => {
+                            return (
+                                <AuctionCard 
+                                    item={item} 
+                                    isEditDelete={item.owner_id === JSON.parse(localStorage.getItem('userid'))} 
+                                    updateAuctions={() => getFilteredAndSearchAuctions(searchValue)} 
+                                />
+                            );
+                        })
                     )}
                 </Grid>
             </Grid>

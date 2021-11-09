@@ -55,8 +55,8 @@ function getCurrentUser() {
 export default function LoginPage() {
   const classes = useStyles();
   const authContext = useContext(AuthContext);
-  // const dockerauthserver = `${process.env.REACT_APP_dockerauthserver||'http://localhost/api/user/'}login`;
-  const dockerauthserver = 'http://localhost:8080/api/user/login';
+  const dockerauthserver = `${process.env.REACT_APP_dockerauthserver||'http://localhost/api/user/'}login`;
+  // const dockerauthserver = 'http://localhost:8080/api/user/login';
   let history = useHistory();
 
   async function login(values) {

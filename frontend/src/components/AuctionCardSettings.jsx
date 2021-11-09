@@ -41,8 +41,8 @@ function AuctionCardSettings({ auction, updateAuctions }) {
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [anchorEl, setAnchorEl] = useState();
     const open = Boolean(anchorEl);
-    const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/${auction?._id}`;
-    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost'}/api/auctiondetails/${auction?._id}`;
+    // const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/${auction?._id}`;
+    const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails'}/${auction?._id}`;
     
     const onClickSetting = (event) => {
         setAnchorEl(event.currentTarget);
