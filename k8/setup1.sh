@@ -18,7 +18,7 @@ kubectl apply -f ./k8/services/9-auctionroom.yaml
 # comment this out if first time running auctiondocker container(doesn't exists)
 docker rm auctiondocker;
 # run this if frontend container has not been built(if the first time running this script)
-docker run -d --publish 8080:3000 --name auctiondocker -i  -t auctionfrontend:latest  
+docker run -d --publish 3000:3000 --name auctiondocker -i  -t auctionfrontend:latest  
 # docker container start auctiondocker
 # wait for redis to start first
 sleep 20s
