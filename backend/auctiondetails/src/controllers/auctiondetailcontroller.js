@@ -136,26 +136,26 @@ exports.findFuture = (req, res) => {
 exports.filterAndSearch = (req, res) => {
 	const query = req.query;
 	const data = {};
-	if (query?.room_display_name) {
-		data.room_display_name = new RegExp(query?.room_display_name, "i");
+	if (query.room_display_name) {
+		data.room_display_name = new RegExp(query.room_display_name, "i");
 	}
-	if (!query?.showAll || query?.showAll === "false") {
+	if (!query.showAll || query.showAll === "false") {
 		const now = new Date();
 		data.end_time = { $gt: now };
 	}
-	if (query?.auction_item_name) {
-		data.auction_item_name = new RegExp(query?.auction_item_name, "i");
+	if (query.auction_item_name) {
+		data.auction_item_name = new RegExp(query.auction_item_name, "i");
 	}
-	if (query?.lowerbound || query?.upperbound) {
+	if (query.lowerbound || query.upperbound) {
 		data.minbid = {};
-		if (query?.lowerbound) {
+		if (query.lowerbound) {
 			data.minbid["$gte"] = req.query.lowerbound;
 		}
-		if (query?.upperbound) {
+		if (query.upperbound) {
 			data.minbid["$lte"] = req.query.upperbound;
 		}
 	}
-	if (query?.category) {
+	if (query.category) {
 		data.category = req.query.category;
 	}
 	Auctiondetail.find(data)
