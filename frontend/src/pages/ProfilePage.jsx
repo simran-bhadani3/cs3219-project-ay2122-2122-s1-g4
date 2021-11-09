@@ -64,9 +64,9 @@ function ProfilePage() {
 
     const userId = JSON.parse(localStorage.getItem('userid'));
     // const dockerUserServer = 'http://localhost:8080/api/user/user';
-    const dockerUserServer = `https://${process.env.REACT_APP_dockerauthserver||'localhost/api/user'}/user`;
+    const dockerUserServer = `${process.env.REACT_APP_dockerauthserver||'http://localhost/api/user'}/user`;
     // const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/user/${userId}`;
-    const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails/'}user/${userId}`;
+    const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails/'}user/${userId}`;
 
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
@@ -128,8 +128,8 @@ function ProfilePage() {
     };
 
     const onSubmitAddValue = async values => {
-        const dockerCurrencyServer = `http://localhost:3003/api/currency/add`;
-        // const dockerCurrencyServer = `https://${process.env.REACT_APP_dockercurrencymanagementserver||'localhost/api/currency/'}add`;
+        // const dockerCurrencyServer = `http://localhost:3003/api/currency/add`;
+        const dockerCurrencyServer = `${process.env.REACT_APP_dockercurrencymanagementserver||'http://localhost/api/currency/'}add`;
         const data = { ...values, userid: userId };
         console.log("onSubmitAddValue", data);
         await axios.post(dockerCurrencyServer, data)

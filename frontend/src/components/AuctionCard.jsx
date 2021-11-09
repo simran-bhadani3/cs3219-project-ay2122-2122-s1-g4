@@ -76,7 +76,7 @@ function AuctionCard({ item, updateAuctions, isEditDelete=false }) {
 
     const getImage = () => {
         // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-        const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails'}`;
+        const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
         
         axios.get(`${dockerAuctionDetailsServer}/download/${auctionId}`)
             .then(res => {
