@@ -29,6 +29,10 @@ mongoose
 		process.exit();
 	});
 
+app.options('/', cors()) // enable pre-flight request for DELETE request
+app.delete('/', cors(), function (req, res, next) {
+	res.json({ msg: 'This is CORS-enabled for all origins!' })
+})
 // define a root/default route
 app.get("/", (req, res) => {
 	res.json({ message: "Hello World" });
