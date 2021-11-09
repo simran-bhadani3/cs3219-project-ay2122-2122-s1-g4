@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 import { makeStyles } from '@mui/styles';
 import { useHistory } from "react-router-dom";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Typography, Paper, TextField } from '@mui/material';
+import { Box, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Typography, Paper, TextField } from '@mui/material';
 import EButton from '../components/EButton';
 import ProfileAuctions from '../components/ProfileAuctions';
 import { pagesLoggedIn } from '../resources/constants';
@@ -54,26 +56,23 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-
-
 function ProfilePage() {
     const classes = useStyles();
     const theme = useTheme();
     const history = useHistory();
     const atLeastMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
 
+    const userId = JSON.parse(localStorage.getItem('userid'));
     const dockerUserServer = 'http://localhost:8080/api/user/user';
     // const dockerUserServer = `https://${process.env.REACT_APP_dockerauthserver||'localhost'}/api/user/user`;
-    const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/user/${JSON.parse(localStorage.getItem('userid'))}`;
-    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost'}/api/auctiondetails`;
+    const dockerAuctionDetailsServer = `http://localhost:4000/api/auctiondetails/user/${userId}`;
+    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails/'}user/${userId}`;
 
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [currency, setCurrency] = useState(0);
     const [openAddValueDialog, setOpenAddValueDialog] = useState(false);
     const [auctions, setAuctions] = useState([]);
-    const [bids, setBids] = useState([]);
-
 
     useEffect(() => {
         getProfile();
@@ -128,31 +127,63 @@ function ProfilePage() {
         setOpenAddValueDialog(false);
     };
 
-    const onConfirmAddValue = e => {
+    const onSubmitAddValue = async values => {
         // process add currency
-        console.log(e);
+        const dockerCurrencyServer = `http://localhost:3003/api/currency/add/${userId}`;
+        // const dockerCurrencyServer = `https://${process.env.REACT_APP_dockercurrencymanagementserver||'localhost/api/currency/'}add/${userId}`;
+        console.log("onSubmitAddValue", values, userId);
+        await axios.put(dockerCurrencyServer, values)
+            .then(res => {
+                console.log("currency updated successfully", res);
+            })
+            .catch(err => {
+                console.log("error", err);
+            });
+        formik.setFieldValue("currency", null);
         handleCloseAddValueDialog();
     }
+
+    const initialValues = { currency: null };
+    const currencyYupSchema = yup.object().shape({
+        currency: yup.number()
+            .min(0)
+            .required('Currency is required')
+    });
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: currencyYupSchema,
+        onSubmit: async values => {
+            await onSubmitAddValue(values);
+        },
+    });
 
     const renderAddValueDialog = () => {
         return (
             <Dialog open={openAddValueDialog} onClose={handleCloseAddValueDialog} maxWidth="lg">
-                <DialogTitle>Add Amount</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>Input the amout that you would like to add into your account.</DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="amount"
-                        label="Amount"
-                        type="number"
-                        fullWidth
-                        variant="outlined"
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <EButton content="Confirm" onClick={onConfirmAddValue} />
-                </DialogActions>
+                <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <DialogTitle>Add Amount</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={classes.pb2}>
+                            Input the amout that you would like to add into your account.
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            required
+                            margin="dense"
+                            id="currency"
+                            name="currency"
+                            label="Amount"
+                            type="number"
+                            fullWidth
+                            variant="outlined"
+                            onChange={formik.handleChange}
+                            value={formik.values.currency}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <EButton content="Confirm" type="submit" />
+                    </DialogActions>
+                </Box>
             </Dialog>
         );
     };
@@ -219,7 +250,7 @@ function ProfilePage() {
                 </Grid>
                 {atLeastMediumScreen && renderPagesButton()}
             </Grid> 
-            {<ProfileAuctions auctions={auctions} bids={bids} updateAuctions={getAuctions} />}
+            {<ProfileAuctions auctions={auctions} updateAuctions={getAuctions} />}
         </Grid>
     );
 }

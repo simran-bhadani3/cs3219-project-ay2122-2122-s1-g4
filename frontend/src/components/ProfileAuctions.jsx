@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function ProfileAuctions({ auctions, bids, updateAuctions, className }) {
+function ProfileAuctions({ auctions, updateAuctions, className }) {
     const classes = useStyles();
 
     return (

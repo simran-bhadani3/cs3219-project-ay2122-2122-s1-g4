@@ -34,8 +34,6 @@ const useStyles = makeStyles(theme => ({
 
 function AddAuctionPage() {
     const classes = useStyles();
-    const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost'}/api/auctiondetails`;
     const history = useHistory();
     const theme = useTheme();
     const atLeastScreenSmall = useMediaQuery(theme.breakpoints.up('sm'));
@@ -51,14 +49,17 @@ function AddAuctionPage() {
     });
 
     async function onSubmit(values) {
-        const userId = JSON.parse(localStorage.getItem('userid'));
-        const data = {
-            ...values,
-            owner_id: userId
-        };
-        let auctionId = "";
+        const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
+        // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails'}`;
+        const dockerAuctionRoomServer = 'http://localhost:3003/api/room/newroom';
+        // const dockerAuctionRoomServer = `https://${process.env.REACT_APP_dockerauctionroomserver||'localhost/api/room/newroom'}`;
 
-        await axios.post(dockerAuctionDetailsServer, data)
+        let auctionId = "";
+        const userId = JSON.parse(localStorage.getItem('userid'));
+
+        // Upload details (exclude images)
+        const formData = { ...values, owner_id: userId };
+        await axios.post(dockerAuctionDetailsServer, formData)
             .then(res => {
                 auctionId = res.data._id;
                 console.log("form added successfully", res);
@@ -67,36 +68,42 @@ function AddAuctionPage() {
                 console.log("error", error);
             });
 
-        const imgBodyFormData = new FormData();
-        imgBodyFormData.append('id', auctionId);
-        imgBodyFormData.append('file', image);
+        // Create auction room
+        const roomData = { roomname: auctionId, owner: userId };
+        await axios.post(dockerAuctionRoomServer, roomData)
+            .then(res => {
+                console.log("auction room created successfully", res);
+                setIsSubmitted(true);
+                setCountdown(5);
+                setTimeout(function() {
+                    history.push("/all");
+                }, 5000);
+            })
+            .catch(err => {
+                console.log("error", err, roomData);
+            });
+
+        // unable to upload images: the function below takes very long to load, need to check!
+        // const imgBodyFormData = new FormData();
+        // imgBodyFormData.append('id', auctionId);
+        // imgBodyFormData.append('file', image);
         // await axios({
         //     method: "post",
         //     url: `${dockerAuctionDetailsServer}/upload/`,
         //     data: imgBodyFormData,
         //     headers: { "Content-Type": "multipart/form-data" },
         // })
-        // this function takes very long to load, need to check!
-        axios.post(`${dockerAuctionDetailsServer}/upload/`, imgBodyFormData)
-            .then(response => {
-                console.log("image uploaded successfully", response);
-                setIsSubmitted(true);
-                setCountdown(5);
-                // redirect to home page in 5 seconds
-                setTimeout(function() {
-                    history.push("/all");
-                }, 5000);
-            })
-            .catch(function (error) {
-                console.log("image upload error", error);
-            });
-
-        setIsSubmitted(true);
-        setCountdown(5);
-        // redirect to home page in 5 seconds
-        setTimeout(function() {
-            history.push("/all");
-        }, 5000);
+        //     .then(response => {
+        //         console.log("image uploaded successfully", response);
+        //         setIsSubmitted(true);
+        //         setCountdown(5);
+        //         setTimeout(function() {
+        //             history.push("/all");
+        //         }, 5000);
+        //     })
+        //     .catch(function (error) {
+        //         console.log("image upload error", error);
+        //     });
     };
 
     const renderHeader = (header) => {

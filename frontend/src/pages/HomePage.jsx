@@ -53,17 +53,13 @@ function AuctionsPage() {
     const history = useHistory();
     const theme = useTheme();
     const atLeastMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
-
-    const [isGetAll, setIsGetAll] = useState([]);
     const [auctions, setAuctions] = useState([]);
 
     const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost'}/api/auctiondetails`;
+    // const dockerAuctionDetailsServer = `https://${process.env.REACT_APP_dockerauctiondetailsserver||'localhost/api/auctiondetails`'};
     
-    
-
-    useEffect(() => {
-        axios.get(dockerAuctionDetailsServer)
+    const getAllFutureAuctions = () => {
+        axios.get(`${dockerAuctionDetailsServer}/notover`)
             .then(res => {
                 // console.log("response", res);
                 setAuctions(res.data);
@@ -71,6 +67,34 @@ function AuctionsPage() {
             .catch(error => {
                 console.log("error", error);
             });
+    }
+
+    const serialize = function(obj) {
+        const str = [];
+        for (const p in obj) {
+            if (obj.hasOwnProperty(p)) {
+                if (obj[p].toString().length > 0) {
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                }
+            }
+        }
+        return str.join("&");
+    };
+
+    const getFilteredAuctions = values => {
+        // const val = { category: "Books", upperbound: 900000000, lowerbound: 0, showAll: false };
+        axios.get(`${dockerAuctionDetailsServer}/filter?${serialize(values)}`)
+            .then(res => {
+                console.log("response", res);
+                setAuctions(res.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+    }
+
+    useEffect(() => {
+        getAllFutureAuctions();
     }, []);
 
     const onSearch = name => {
@@ -80,7 +104,7 @@ function AuctionsPage() {
 
     const onFilter = values => {
         ///////////////////////////////////
-        console.log("to filter", values);
+        getFilteredAuctions(values);
     };
 
 

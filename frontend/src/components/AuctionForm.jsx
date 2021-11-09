@@ -9,6 +9,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import EButton from '../components/EButton';
 import ImageCropper from '../components/ImageCropper';
+import DropdownField from '../components/DropdownField';
 import { categoryList } from '../resources/constants';
 
 const useStyles = makeStyles(theme => ({
@@ -127,30 +128,6 @@ function AuctionForm({ onSubmit, updateImage, isEdit=false, currValues={} }) {
         );
     };
 
-    const renderDropdownField = (id, label, options) => {
-        return (
-            <Grid item xs={12} md={6}>
-                <FormControl fullWidth required>
-                    <InputLabel id={`${id}-label`}>{label}</InputLabel>
-                    <Select
-                        labelId={`${id}-label`}
-                        id={id}
-                        name={id}
-                        value={formik.values[id]}
-                        label={label}
-                        onChange={val => {
-                            // console.log(val.target.value, val)
-                            formik.setFieldValue(id, val.target.value);
-                        }}
-                    >
-                        {options.map(cat => <MenuItem value={cat}>{cat}</MenuItem>)}
-                    </Select>
-                </FormControl>
-                {renderErrorMsg(id)}
-            </Grid>
-        );
-    }
-
     return (
         <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
             <Grid container spacing={2}>
@@ -160,7 +137,13 @@ function AuctionForm({ onSubmit, updateImage, isEdit=false, currValues={} }) {
                     {renderDateTimeField("start_time", "Start Time")}
                     {renderDateTimeField("end_time", "End Time")}
                 </LocalizationProvider>
-                {renderDropdownField("category", "Category", categoryList)}
+                <DropdownField 
+                    id="category" 
+                    label="Category" 
+                    options={categoryList} 
+                    renderError={renderErrorMsg}
+                    formik={formik}
+                />
                 {renderTextField("minbid", "Starting Bid", 6, 1, "number")}
                 {renderTextField("increment", "Minimum Bid Increment", 6, 1, "number")}
                 {renderTextField("description", "Description", 12, 3, "string", false)}
