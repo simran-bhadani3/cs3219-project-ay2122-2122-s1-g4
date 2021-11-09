@@ -3,12 +3,15 @@ config:
   socketio:
     transports: ["websocket"]
   phases:
-    - duration: 20
-      arrivalCount: 100
+    - duration: 60
+      arrivalCount: 30
 scenarios:
   - engine: "socketio"
     flow:
-      - emit:
-          channel: "newChatMessage"
-          data: "Hello! {{ $randomString() }}"
+      - loop:
+        - emit:
+            channel: "newChatMessage"
+            data: "Hello! {{ $randomString() }}"
+            think: 
+        count: 5
       - think: 5 # do nothing for 5 seconds, then disconnect
