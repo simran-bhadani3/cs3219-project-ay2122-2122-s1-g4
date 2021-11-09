@@ -134,28 +134,28 @@ exports.findFuture = (req, res) => {
 
 // Retrieve all auctions by minbid / category / search by name
 exports.filterAndSearch = (req, res) => {
+	const query = req.query;
 	const data = {};
-	if (req?.query?.room_display_name) {
-		data.room_display_name = new RegExp(req?.query?.room_display_name, "i");
+	if (query?.room_display_name) {
+		data.room_display_name = new RegExp(query?.room_display_name, "i");
 	}
-	if (!req?.query?.showAll || req?.query?.showAll === "false") {
-		console.log("req?.query?.showAll === false");
+	if (!query?.showAll || query?.showAll === "false") {
 		const now = new Date();
 		data.end_time = { $gt: now };
 	}
-	if (req?.query?.auction_item_name) {
-		data.auction_item_name = new RegExp(req?.query?.auction_item_name, "i");
+	if (query?.auction_item_name) {
+		data.auction_item_name = new RegExp(query?.auction_item_name, "i");
 	}
-	if (req?.query?.lowerbound || req?.query?.upperbound) {
+	if (query?.lowerbound || query?.upperbound) {
 		data.minbid = {};
-		if (req?.query?.lowerbound) {
+		if (query?.lowerbound) {
 			data.minbid["$gte"] = req.query.lowerbound;
 		}
-		if (req?.query?.upperbound) {
+		if (query?.upperbound) {
 			data.minbid["$lte"] = req.query.upperbound;
 		}
 	}
-	if (req?.query?.category) {
+	if (query?.category) {
 		data.category = req.query.category;
 	}
 	Auctiondetail.find(data)
