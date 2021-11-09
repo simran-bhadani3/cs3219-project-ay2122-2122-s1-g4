@@ -19,3 +19,4 @@ app.listen(port, function (err, data) {
 	}
 });
 
+module.exports.app = app;
