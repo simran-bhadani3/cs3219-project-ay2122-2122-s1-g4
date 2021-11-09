@@ -17,19 +17,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import { useHistory } from "react-router-dom";
 const axios = require('axios');
 
-function Copyright(props) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                e-Auction
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
-
 // A custom validation function. This must return an object
 // which keys are symmetrical to our values/initialValues
 const validate = values => {
@@ -184,7 +171,6 @@ export default function SignUp() {
                         </Grid>
                     </Box>
                 </Box>
-                <Copyright sx={{ mt: 5 }} />
             </Container>
     );
 }
