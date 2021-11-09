@@ -39,7 +39,7 @@ spec:
               mountPath: /data/auctiondetails
           resources:
             requests:
-              cpu: 500m
+              cpu: 100m
       volumes:
         - name: mongoauctiondetails
           persistentVolumeClaim:
