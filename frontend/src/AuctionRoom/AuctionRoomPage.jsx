@@ -1,63 +1,32 @@
 import { useEffect, useState } from "react";
 import * as React from 'react';
 import { useHistory } from "react-router-dom";
-import { useFormik } from 'formik';
-import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
-import FilledInput from '@mui/material/FilledInput';
 import Button from '@mui/material/Button';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Link from '@mui/material/Link';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItem from '@mui/material/ListItem';
 import Grid from '@mui/material/Grid';
-import Item from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { theme } from '../theme';
-import { ThemeProvider } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
-import clsx from "clsx";
-import { textAlign } from "@mui/system";
-import Paper from '@mui/material/Paper';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
-import Fab from '@mui/material/Fab';
-import SendIcon from '@mui/icons-material/Send';
 import ChatSection from './ChatSection';
 import useChat from "./useChat";
-import BidCard from './chat/BidCard';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
+import {getAuthConfig,getAuctionDetailsUrl, getCurrencyUrl, getBidUrl} from '../actions.js';
 const axios = require('axios');
 
-
-function Copyright(props) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                e-Auction
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -118,13 +87,6 @@ export default function AuctionRoomDisplay(props) {
         return JSON.parse(localStorage.getItem('userid'));
     }
 
-    // external auctiondetails url
-    const auctiondetailurl = `${process.env.REACT_APP_dockerauctiondetailsserver || 'http://localhost/api/auctiondetails/'}`;
-
-    // external currency url
-    const currencyurl = `${process.env.REACT_APP_dockercurrencymanagementserver || 'http://localhost/api/currency/'}`;
-    // external bid url
-    const bidurl = `${process.env.REACT_APP_dockerauctionroomserver || 'http://localhost/api/room/'}`;
     //redirect to home page if auction ends
     useEffect(() => {
         if (!status) {
@@ -138,7 +100,7 @@ export default function AuctionRoomDisplay(props) {
             headers: { Authorization: JSON.parse(localStorage.getItem('user')) }
         };
 
-        axios.get(`${auctiondetailurl + roomId}`, config)
+        axios.get(`${getAuctionDetailsUrl() + roomId}`, getAuthConfig())
             .then(response => {
                 console.log(response);
                 setDetails(response.data)
@@ -151,7 +113,7 @@ export default function AuctionRoomDisplay(props) {
             });
 
         //get money
-        axios.get(`${currencyurl + getCurrentUser()}`, config)
+        axios.get(`${getCurrencyUrl() + getCurrentUser()}`, getAuthConfig())
             .then(response => {
                 console.log(response);
                 setCurrency(response.data['currency'])
@@ -162,7 +124,7 @@ export default function AuctionRoomDisplay(props) {
 
         //call api sethighestbid
         // setHighestBid()
-        axios.get(`${bidurl}gethighest/${roomId}`, config)
+        axios.get(`${getBidUrl()}gethighest/${roomId}`, getAuthConfig())
             .then(response => {
                 setHighestBid({ highest: parseInt(response['data'].bid), username: response['data'].username })
                 console.log(response['data'].bid);
@@ -358,7 +320,7 @@ export default function AuctionRoomDisplay(props) {
                     <Grid container item xs={10} alignItems="center" direction="column" justifyContent="center">
                         <Grid item xs={10}>
                             <img
-                                src={auctiondetailurl + 'download/' + auctiondetails['_id']}
+                                src={getAuctionDetailsUrl() + 'download/' + auctiondetails['_id']}
                                 // src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
                                 alt="new"
                             />

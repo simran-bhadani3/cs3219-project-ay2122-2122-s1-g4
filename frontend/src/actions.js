@@ -12,3 +12,23 @@ export function getAuthConfig() {
     };
     return userConfig;
 }
+
+// external auctiondetails url
+export function getAuctionDetailsUrl() {
+    const auctiondetailurl = `${process.env.REACT_APP_dockerauctiondetailsserver || 'http://localhost/api/auctiondetails/'}`;
+    return auctiondetailurl;
+}
+
+// external currency url
+export function getCurrencyUrl() {
+    const currencyurl = `${process.env.REACT_APP_dockercurrencymanagementserver || 'http://localhost/api/currency/'}`;
+    return currencyurl;
+}
+
+
+// external bid url
+export function getBidUrl() {
+    const bidurl = `${process.env.REACT_APP_dockerauctionroomserver || 'http://localhost/api/room/'}`;
+    return bidurl;
+}
+

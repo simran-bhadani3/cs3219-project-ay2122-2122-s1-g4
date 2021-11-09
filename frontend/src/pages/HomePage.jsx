@@ -8,6 +8,7 @@ import SearchBar from '../components/SearchBar';
 import AuctionCard from '../components/AuctionCard';
 import AuctionFilter from '../components/AuctionFilter';
 import EButton from '../components/EButton';
+import {getAuthConfig, getAuctionDetailsUrl, getCurrencyUrl, getBidUrl} from '../actions.js';
 import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
@@ -65,7 +66,7 @@ function AuctionsPage() {
     const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
     
     const getAllFutureAuctions = () => {
-        axios.get(`${dockerAuctionDetailsServer}/notover`)
+        axios.get(`${getAuctionDetailsUrl()}/notover`, getAuthConfig())
             .then(res => {
                 // console.log("response", res);
                 setAuctions(res.data);
@@ -98,7 +99,7 @@ function AuctionsPage() {
 
     const getFilteredAndSearchAuctions = values => {
         // const val = { category: "", upperbound: 90, lowerbound: 0, showAll: false, room_display_name: "" };
-        axios.get(`${dockerAuctionDetailsServer}/filterandsearch?${serialize(values)}`)
+        axios.get(`${getAuctionDetailsUrl()}/filterandsearch?${serialize(values)}`, getAuthConfig())
             .then(res => {
                 console.log("response", res);
                 setAuctions(res.data);

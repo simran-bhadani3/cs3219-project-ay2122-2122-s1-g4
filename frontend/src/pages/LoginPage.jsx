@@ -20,6 +20,7 @@ import { AuthContext } from "../AuthContext";
 import { useHistory } from "react-router-dom";
 import { ClassNames } from '@emotion/react';
 import axios from 'axios';
+import {getAuthConfig, getAuctionDetailsUrl, getCurrencyUrl, getBidUrl} from '../actions.js';
 
 const useStyles = makeStyles(theme => ({
   submitButtonStyle: {
