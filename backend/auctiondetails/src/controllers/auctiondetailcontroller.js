@@ -176,42 +176,42 @@ exports.filterAndSearch = (req, res) => {
 };
 
 // Retrieve all auctions by minbid
-// exports.findRange = (req, res) => {
-// 	Auctiondetail.find({
-// 		minbid: { $gte: req.query.lowerbound, $lte: req.query.upperbound },
-// 	})
-// 		.then((auctiondetail) => {
-// 			if (!auctiondetail) {
-// 				return res.status(204).send({
-// 					message: "No auctions found" + console.log(req.query.lowerbound),
-// 				});
-// 			}
-// 			res.send(auctiondetail);
-// 		})
-// 		.catch((err) => {
-// 			return res.status(500).send({
-// 				message: "Error getting auctiondetails",
-// 			});
-// 		});
-// };
+exports.findRange = (req, res) => {
+	Auctiondetail.find({
+		minbid: { $gte: req.query.lowerbound, $lte: req.query.upperbound },
+	})
+		.then((auctiondetail) => {
+			if (!auctiondetail) {
+				return res.status(204).send({
+					message: "No auctions found" + console.log(req.query.lowerbound),
+				});
+			}
+			res.send(auctiondetail);
+		})
+		.catch((err) => {
+			return res.status(500).send({
+				message: "Error getting auctiondetails",
+			});
+		});
+};
 
 // Retrieve all auctions by category
-// exports.findCategory = (req, res) => {
-// 	Auctiondetail.find({ category: req.params.category })
-// 		.then((auctiondetail) => {
-// 			if (!auctiondetail) {
-// 				return res.status(204).send({
-// 					message: "No auctions found",
-// 				});
-// 			}
-// 			res.send(auctiondetail);
-// 		})
-// 		.catch((err) => {
-// 			return res.status(500).send({
-// 				message: "Error getting auctiondetails",
-// 			});
-// 		});
-// };
+exports.findCategory = (req, res) => {
+	Auctiondetail.find({ category: req.params.category })
+		.then((auctiondetail) => {
+			if (!auctiondetail) {
+				return res.status(204).send({
+					message: "No auctions found",
+				});
+			}
+			res.send(auctiondetail);
+		})
+		.catch((err) => {
+			return res.status(500).send({
+				message: "Error getting auctiondetails",
+			});
+		});
+};
 
 // Find a single Auctiondetail with a id
 exports.findOne = (req, res) => {
