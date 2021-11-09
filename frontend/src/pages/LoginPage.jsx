@@ -22,6 +22,9 @@ const useStyles = makeStyles(theme => ({
   submitButtonStyle: {
       marginTop: theme.spacing(3),
       marginBottom: theme.spacing(2)
+  },
+  fullScreenHeight: {
+    minHeight: "85vh"
   }
 }));
 
@@ -88,7 +91,7 @@ export default function LoginPage() {
   });
 
   return (
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" className={classes.fullScreenHeight}>
         <CssBaseline />
         <Box
           sx={{
