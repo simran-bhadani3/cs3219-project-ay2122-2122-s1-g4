@@ -23,10 +23,8 @@ spec:
           - containerPort: 8085
             protocol: TCP
           resources:
-            limits:
-              cpu: 50m
             requests:
-              cpu: 50m
+              cpu: 500m
 ---
 apiVersion: v1
 kind: Service

@@ -7,7 +7,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 256Mi
+      storage: 1Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -38,10 +38,8 @@ spec:
             - name: mongouseraccounts
               mountPath: /data/useraccounts
           resources:
-            limits:
-              cpu: 200m
             requests:
-              cpu: 200m
+              cpu: 500m
       volumes:
         - name: mongouseraccounts
           persistentVolumeClaim:
