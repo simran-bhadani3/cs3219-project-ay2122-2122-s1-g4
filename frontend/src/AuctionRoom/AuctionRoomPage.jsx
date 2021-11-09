@@ -286,8 +286,7 @@ export default function AuctionRoomDisplay(props) {
                                         (typeof highestBid['highest'] == 'undefined'
                                             ? 'Looks like no one dropped by :('
                                             : 'Congrats, your item has been sold!'
-                                        ),
-                                        <div key='1'>body</div>
+                                        )
                                         ]
                                     ) : `Winner : ${highestBid['username']}
                                     Sold For : ${highestBid['highest']}
