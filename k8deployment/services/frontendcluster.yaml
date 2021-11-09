@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontendcluster
+  name: frontendcluster
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: frontendcluster
+  template:
+    metadata:
+      labels:
+        app: frontendcluster
+    spec:
+      containers:
+      - env:
+        - name: REACT_APP_dockerauctiondetailsserver
+          valueFrom:
+            configMapKeyRef:
+              key: REACT_APP_dockerauctiondetailsserver
+              name: frontend-config-poxr
+        - name: REACT_APP_dockerauctionmanagerserver
+          valueFrom:
+            configMapKeyRef:
+              key: REACT_APP_dockerauctionmanagerserver
+              name: frontend-config-poxr
+        - name: REACT_APP_dockerauctionroomserver
+          valueFrom:
+            configMapKeyRef:
+              key: REACT_APP_dockerauctionroomserver
+              name: frontend-config-poxr
+        - name: REACT_APP_dockerauthserver
+          valueFrom:
+            configMapKeyRef:
+              key: REACT_APP_dockerauthserver
+              name: frontend-config-poxr
+        - name: REACT_APP_dockercurrencymanagementserver
+          valueFrom:
+            configMapKeyRef:
+              key: REACT_APP_dockercurrencymanagementserver
+              name: frontend-config-poxr
+        - image: gcr.io/graphical-mile-329010/frontendcluster:1.0
+          imagePullPolicy: Always
+          name: frontendcluster
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontendcluster
+  name: frontendcluster
+  namespace: default
+spec:
+  ports:
+  - nodePort: 30955
+    port: 80
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: frontendcluster
+  type: LoadBalancer
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontendcluster
+  namespace: default
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontendcluster
+  targetCPUUtilizationPercentage: 80
