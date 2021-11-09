@@ -18,18 +18,16 @@ spec:
       containers:
         - env:
           - name: backend
-            value: mongodb://mongodb:27017/useraccounts
+            value: mongodb://mongouseraccounts:27017/useraccounts
           image: auctionbackend-useraccount:latest
           imagePullPolicy: Never
           name: auctionbackend-useraccount
           ports:
           - containerPort: 8080
             protocol: TCP
-          # resources:
-          #   limits:
-          #     cpu: 200m
-          #   requests:
-          #     cpu: 200m
+          resources:
+            requests:
+              cpu: 100m
 ---
 apiVersion: v1
 kind: Service

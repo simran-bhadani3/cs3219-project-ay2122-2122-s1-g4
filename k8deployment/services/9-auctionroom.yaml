@@ -46,7 +46,7 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: auctionroommanager
+  name: auctionroom
   namespace: default
 spec:
   maxReplicas: 10
@@ -54,5 +54,5 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: auctionroommanager
+    name: auctionroom
   targetCPUUtilizationPercentage: 80
