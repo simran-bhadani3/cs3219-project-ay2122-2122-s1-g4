@@ -36,11 +36,11 @@ function AuctionForm({ onSubmit, updateImage, isEdit=false, currValues={} }) {
     const auctionYupSchema = yup.object().shape({
         room_display_name: yup.string()
             .min(1, 'Too Short!')
-            .max(200, 'Too Long!')
+            .max(200, 'Too Long! (Maximum 200 characters)')
             .required('Room Display Name is required'),
         auction_item_name: yup.string()
             .min(1, 'Too Short!')
-            .max(200, 'Too Long!')
+            .max(200, 'Too Long! (Maximum 200 characters)')
             .required('Auction Item Name is required'),
         start_time: yup.date()
             .required('Start Time is required'),
@@ -48,17 +48,17 @@ function AuctionForm({ onSubmit, updateImage, isEdit=false, currValues={} }) {
             .min(yup.ref('start_time'),  "End time can't be before Start time")
             .required('End Time is required'),
         minbid: yup.number()
-            .min(0)
+            .min(0, "Starting Bid cannot be negative.")
             .required('Starting Bid is required'),
         increment: yup.number()
-            .min(0)
+            .min(0, "Increment amount cannot be negative.")
             .required('Minimum Bid Increment is required'),
         category: yup.string()
             .oneOf(categoryList)
             .required('Category is required'),
         description: yup.string()
             .min(1, 'Too Short!')
-            .max(500, 'Too Long!')
+            .max(500, 'Too Long! (Maximum 500 characters)')
             .notRequired()
             .nullable()
     });
