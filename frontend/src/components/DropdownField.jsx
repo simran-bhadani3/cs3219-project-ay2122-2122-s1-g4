@@ -1,10 +1,10 @@
 import React from 'react';
 import { Grid, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-function DropdownField({ id, label, options, renderError, formik, md=6, className }) {
+function DropdownField({ id, label, options, renderError, formik, md=6, className, isRequired=true }) {
     return (
         <Grid item xs={12} md={md} className={className}>
-            <FormControl fullWidth required>
+            <FormControl fullWidth required={isRequired}>
                 <InputLabel id={`${id}-label`}>{label}</InputLabel>
                 <Select
                     labelId={`${id}-label`}

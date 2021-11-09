@@ -18,8 +18,8 @@ router.post('/upload', uploadMiddleware, auctiondetailcontroller.uploadImage);
 //Get download URL
 router.get('/download/:id', auctiondetailcontroller.downloadImage);
 
-// Retrieve all auctions by category and price
-router.get('/filter', auctiondetailcontroller.findRangeAndCategory);
+// Retrieve all auctions by category and price or search by name
+router.get('/filterandsearch', auctiondetailcontroller.filterAndSearch);
 // Retrieve all auctions by price
 // router.get('/pricerange', auctiondetailcontroller.findRange);
 // Retrieve all auctions that are not over

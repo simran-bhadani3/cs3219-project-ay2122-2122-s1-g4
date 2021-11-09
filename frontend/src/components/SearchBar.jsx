@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@mui/styles';
 import { FormControl, IconButton, InputLabel, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -7,8 +7,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-function SearchBar({ newValue="", onSearch }) {
-    const [currValue, setCurrValue] = useState("");
+function SearchBar({ searchValue, setSearchValue, onSearch }) {
 
     const enterKeyPress = e => {
         if (e.keyCode === 13) {
@@ -24,15 +23,15 @@ function SearchBar({ newValue="", onSearch }) {
             </InputLabel>
             <OutlinedInput
                 id="outlined-adornment-search"
-                value={currValue}
-                onChange={e => setCurrValue(e.target.value)}
+                value={searchValue}
+                onChange={e => setSearchValue(e.target.value)}
                 onKeyDown={enterKeyPress}
                 endAdornment={
                     <InputAdornment position="end">
                     <IconButton
                         aria-label="search auction"
-                        onClick={() => onSearch(currValue)}
-                        onMouseDown={() => onSearch(currValue)}
+                        onClick={() => onSearch(searchValue)}
+                        onMouseDown={() => onSearch(searchValue)}
                         edge="end"
                     >
                         <SearchIcon fontSize="large" />

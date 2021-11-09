@@ -132,16 +132,19 @@ exports.findFuture = (req, res) => {
 		});
 };
 
-// Retrieve all auctions by minbid and category
-exports.findRangeAndCategory = (req, res) => {
+// Retrieve all auctions by minbid / category / search by name
+exports.filterAndSearch = (req, res) => {
 	const data = {};
-	if (req?.query?.showAll === "false") {
+	if (req?.query?.room_display_name) {
+		data.room_display_name = new RegExp(req?.query?.room_display_name, "i");
+	}
+	if (!req?.query?.showAll || req?.query?.showAll === "false") {
 		console.log("req?.query?.showAll === false");
 		const now = new Date();
 		data.end_time = { $gt: now };
 	}
-	if (req?.query?.category) {
-		data.category = req.query.category;
+	if (req?.query?.auction_item_name) {
+		data.auction_item_name = new RegExp(req?.query?.auction_item_name, "i");
 	}
 	if (req?.query?.lowerbound || req?.query?.upperbound) {
 		data.minbid = {};
@@ -151,6 +154,9 @@ exports.findRangeAndCategory = (req, res) => {
 		if (req?.query?.upperbound) {
 			data.minbid["$lte"] = req.query.upperbound;
 		}
+	}
+	if (req?.query?.category) {
+		data.category = req.query.category;
 	}
 	Auctiondetail.find(data)
 		.then((auctiondetail) => {
