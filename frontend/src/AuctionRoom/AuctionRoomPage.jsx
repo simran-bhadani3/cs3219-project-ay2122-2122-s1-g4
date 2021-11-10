@@ -24,6 +24,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
+import NumberFormat from 'react-number-format';
 import { getAuthConfig, getAuctionDetailsUrl, getCurrencyUrl, getBidUrl } from '../actions.js';
 const axios = require('axios');
 
@@ -66,6 +67,7 @@ export default function AuctionRoomDisplay(props) {
     const [auctiondetails, setDetails] = useState({});
     const [currency, setCurrency] = useState(0);
     const [picture, setPicture] = useState('');
+    const [dialog, setDialog] = useState('');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -95,6 +97,7 @@ export default function AuctionRoomDisplay(props) {
             // history.push("/all");
         };
     });
+
     useEffect(() => {
         //check whether client is room owner, then show end auction button
         const config = {
@@ -108,6 +111,17 @@ export default function AuctionRoomDisplay(props) {
                 if (getCurrentUser() == response.data['owner_id']) {
                     setOwner(true);
                 }
+
+                //get picture url
+                axios.get(`${getAuctionDetailsUrl()}download/${response.data._id}`, getAuthConfig())
+                    .then(res => {
+                        console.log("response", res.data);
+                        console.log("response", res.data.url);
+                        setPicture(res.data.url);
+                    })
+                    .catch(err => {
+                        console.log("error", err);
+                    });
 
             })
             .catch(function (error) {
@@ -128,22 +142,14 @@ export default function AuctionRoomDisplay(props) {
         // setHighestBid()
         axios.get(`${getBidUrl()}gethighest/${roomId}`, getAuthConfig())
             .then(response => {
-                setHighestBid({ highest: parseInt(response['data'].bid), username: response['data'].username })
+                setHighestBid({ highest: parseFloat(response['data'].bid), username: response['data'].username })
                 console.log(response['data'].bid);
             })
             .catch(function (error) {
                 console.log(error);
             });
 
-        //get picture url
-        axios.get(`${getAuctionDetailsUrl()}download/${auctiondetails['_id']}`, getAuthConfig())
-            .then(res => {
-                console.log("response", res.data.url);
-                setPicture(res.data.url);
-            })
-            .catch(err => {
-                console.log("error", err);
-            });
+
 
 
     }, []);
@@ -154,17 +160,19 @@ export default function AuctionRoomDisplay(props) {
     };
 
     const validateAndSend = () => {
-        var min = parseInt(highestBid['highest']) + parseInt(auctiondetails['increment']);
+        var min = Math.max(parseFloat(highestBid['highest']) + parseFloat(auctiondetails['increment']), parseFloat(auctiondetails['minbid']));
         console.log(min)
         // non-numerical input
-        if (!/^[0-9\b]+$/i.test(newBid)) {
+        if (!/^[0-9]+(\.[0-9][0-9]?)?$/i.test(newBid)) {
             console.log('Please enter a valid bid!');
+            setDialog('Please enter a valid numerical bid!')
             handleClickOpen();
         }
         // bid does not satisfy minimum bid
-        else if (newBid < parseInt(auctiondetails['minbid']) && newBid < min) {
+        else if (newBid < min) {
             // console.log('Bid does not satisfy minimum bid ' + auctiondetails['minbid']);
             console.log('Bid does not satisfy minimum bid or increment');
+            setDialog('Bid does not satisfy minimum bid or increment');
             handleClickOpen();
         }
         // // bid does not satisfy increment
@@ -175,6 +183,7 @@ export default function AuctionRoomDisplay(props) {
         // insufficient currency
         else if (currency < newBid) {
             console.log('Insufficient currency');
+            setDialog('Insufficient currency');
             handleClickOpen();
         }
         else {
@@ -202,8 +211,11 @@ export default function AuctionRoomDisplay(props) {
     };
 
     const formatCurrency = amount => {
-        if (amount) {
+        if (amount || amount === 0) {
+            console.log(typeof amount)
+            console.log(amount)
             return parseFloat(amount || 0)?.toFixed(2);
+            // return (amount || 0)?.toFixed(2);
         }
     };
 
@@ -218,9 +230,10 @@ export default function AuctionRoomDisplay(props) {
                     <Grid container item alignItems="center" direction="column" justifyContent="center">
                         <Grid item xs={10}>
                             <img
-                                src={getAuctionDetailsUrl() + 'download/' + auctiondetails['_id']}
-                                // src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
-                                alt="new"
+                                // src='https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350'
+
+                                src={picture}
+                            // alt="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
                             />
                         </Grid>
                     </Grid>
@@ -231,7 +244,7 @@ export default function AuctionRoomDisplay(props) {
                                 <OutlinedInput onKeyPress={handleKeyPress}
                                     name="bid"
                                     label="bid"
-                                    type="bid"
+                                    type="number"
                                     id="bid"
                                     value={newBid}
                                     onChange={handleNewBidChange}
@@ -266,7 +279,7 @@ export default function AuctionRoomDisplay(props) {
                                         <ListItemButton>
                                             <ListItemText
                                                 primary="Item Name"
-                                                secondary={`${auctiondetails['auction_item_name']}`}
+                                                secondary={<Typography noWrap> {`${auctiondetails['auction_item_name']}`}</Typography>}
                                             />
                                         </ListItemButton>
                                     </ListItem>
@@ -297,6 +310,7 @@ export default function AuctionRoomDisplay(props) {
                                         <ListItemButton>
                                             <ListItemText
                                                 primary="Minimum Increment"
+                                                // secondary={`$${formatCurrency(auctiondetails['increment'])}`}
                                                 secondary={`$${formatCurrency(auctiondetails['increment'])}`}
                                             />
                                         </ListItemButton>
@@ -306,6 +320,7 @@ export default function AuctionRoomDisplay(props) {
                                         <ListItemButton component="a" href="#simple-list">
                                             <ListItemText
                                                 primary="Minimum Bid"
+                                                // secondary={`$${formatCurrency((auctiondetails['minbid']))}`}
                                                 secondary={`$${formatCurrency(auctiondetails['minbid'])}`}
                                             />
                                         </ListItemButton>
@@ -328,7 +343,7 @@ export default function AuctionRoomDisplay(props) {
                             onClose={handleClose}
                             aria-describedby="alert-dialog-slide-description"
                         >
-                            <DialogTitle>{"Please enter a valid bid!"}</DialogTitle>
+                            <DialogTitle>{dialog}</DialogTitle>
                             <DialogContent>
                             </DialogContent>
                             <DialogActions>
@@ -348,7 +363,7 @@ export default function AuctionRoomDisplay(props) {
                                     {isOwner ? (
 
                                         [
-                                            (typeof highestBid['highest'] == 'undefined'
+                                            (highestBid['highest'] == 0
                                                 ? 'Looks like no one dropped by :('
                                                 : 'Congrats, your item has been sold!'
                                             )

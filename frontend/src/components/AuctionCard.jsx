@@ -81,6 +81,7 @@ function AuctionCard({ item, updateAuctions, isEditDelete=false }) {
         axios.get(`${getAuctionDetailsUrl()}download/${auctionId}`, getAuthConfig())
             .then(res => {
                 console.log("response", res);
+                console.log(res.data.url);
                 setImageUrl(res.data.url);
             })
             .catch(err => {

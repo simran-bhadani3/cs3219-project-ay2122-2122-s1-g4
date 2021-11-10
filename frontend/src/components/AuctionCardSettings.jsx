@@ -159,7 +159,7 @@ function AuctionCardSettings({ auction, updateAuctions, isOngoingHasEnded }) {
                 <MoreVertIcon />
             </IconButton>
 
-            {!(ongoing || ended) && (<Menu
+            {!ongoing && (<Menu
                 id="settingsMenu"
                 anchorEl={anchorEl}
                 open={open}
@@ -191,7 +191,7 @@ function AuctionCardSettings({ auction, updateAuctions, isOngoingHasEnded }) {
             </Menu>
             )}
 
-            {(ongoing || ended) && (
+            {(ongoing) && (
                 <Popover
                     id="settingsMenu"
                     open={open}
