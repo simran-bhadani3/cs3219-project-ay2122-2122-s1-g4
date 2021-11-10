@@ -4,7 +4,7 @@
 
 Hi auctioneer, welcome to the github repo of the e_auction website! 
 
-Head over to our auction homepage to get started with your auction: https://cs3219-project-ay2122-2122-s1-g4-frontend-bsyylql4ka-as.a.run.app/signup
+Head over to our auction homepage to get started with your auction: http://34.124.196.146/
 
 # For developers 
 
