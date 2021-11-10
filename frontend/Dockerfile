@@ -29,7 +29,7 @@ RUN yarn build --ignore-engines
 # COPY . ./
 
 # start app
-# CMD ["yarn", "start"]
+CMD ["yarn", "start"]
 
-FROM nginx:1.19-alpine AS server
-COPY --from=builder ./app/build /usr/share/nginx/html
+# FROM nginx:1.19-alpine AS server
+# COPY --from=builder ./app/build /usr/share/nginx/html
