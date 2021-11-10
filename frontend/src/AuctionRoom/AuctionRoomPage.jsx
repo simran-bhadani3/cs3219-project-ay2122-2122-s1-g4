@@ -24,7 +24,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import {getAuthConfig,getAuctionDetailsUrl, getCurrencyUrl, getBidUrl} from '../actions.js';
+import { getAuthConfig, getAuctionDetailsUrl, getCurrencyUrl, getBidUrl } from '../actions.js';
 const axios = require('axios');
 
 
@@ -65,6 +65,7 @@ export default function AuctionRoomDisplay(props) {
     const [auctionclose, setAuctionclose] = React.useState(false);
     const [auctiondetails, setDetails] = useState({});
     const [currency, setCurrency] = useState(0);
+    const [picture, setPicture] = useState('');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -107,6 +108,7 @@ export default function AuctionRoomDisplay(props) {
                 if (getCurrentUser() == response.data['owner_id']) {
                     setOwner(true);
                 }
+
             })
             .catch(function (error) {
                 console.log(error);
@@ -133,6 +135,17 @@ export default function AuctionRoomDisplay(props) {
                 console.log(error);
             });
 
+        //get picture url
+        axios.get(`${getAuctionDetailsUrl()}download/${auctiondetails['_id']}`, getAuthConfig())
+            .then(res => {
+                console.log("response", res);
+                setPicture(res.data);
+            })
+            .catch(err => {
+                console.log("error", err);
+            });
+
+
     }, []);
 
 
@@ -149,15 +162,16 @@ export default function AuctionRoomDisplay(props) {
             handleClickOpen();
         }
         // bid does not satisfy minimum bid
-        else if (newBid < parseInt(auctiondetails['minbid'])) {
-            console.log('Bid does not satisfy minimum bid ' + auctiondetails['minbid']);
+        else if (newBid < parseInt(auctiondetails['minbid']) && newBid < min) {
+            // console.log('Bid does not satisfy minimum bid ' + auctiondetails['minbid']);
+            console.log('Bid does not satisfy minimum bid or increment');
             handleClickOpen();
         }
-        // bid does not satisfy increment
-        else if (newBid < min) {
-            console.log('Bid does not satisfy increment' + min);
-            handleClickOpen();
-        }
+        // // bid does not satisfy increment
+        // else if (newBid < min) {
+        //     console.log('Bid does not satisfy increment' + min);
+        //     handleClickOpen();
+        // }
         // insufficient currency
         else if (currency < newBid) {
             console.log('Insufficient currency');
@@ -281,12 +295,12 @@ export default function AuctionRoomDisplay(props) {
                             <DialogContent>
                                 <DialogContentText id="alert-dialog-description">
                                     {isOwner ? (
-                                        
+
                                         [
-                                        (typeof highestBid['highest'] == 'undefined'
-                                            ? 'Looks like no one dropped by :('
-                                            : 'Congrats, your item has been sold!'
-                                        )
+                                            (typeof highestBid['highest'] == 'undefined'
+                                                ? 'Looks like no one dropped by :('
+                                                : 'Congrats, your item has been sold!'
+                                            )
                                         ]
                                     ) : `Winner : ${highestBid['username']}
                                     Sold For : ${highestBid['highest']}
@@ -319,7 +333,7 @@ export default function AuctionRoomDisplay(props) {
                     <Grid container item xs={10} alignItems="center" direction="column" justifyContent="center">
                         <Grid item xs={10}>
                             <img
-                                src={getAuctionDetailsUrl() + 'download/' + auctiondetails['_id']}
+                                src={picture + 'download/' + auctiondetails['_id']}
                                 // src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
                                 alt="new"
                             />
