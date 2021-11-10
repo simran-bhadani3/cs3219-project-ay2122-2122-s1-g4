@@ -22,9 +22,9 @@ Assuming the repo has been cloned locally and docker desktop with kubernetes ena
 
 
 4. Make sure the `./k8/setup.sh` and `./k8/teardown.sh` files are in LF mode for End of line sequence
-Then from a wsl/linux terminal, run `./k8/setup.sh` . This will ensure that the backend microservices are running in the docker-desktop Kubernetes cluster and are exposed through the Ingresses we configured.
-5. To run the frontend, go to the ./frontend directory from the root folder.
-6. Run yarn add all to install the necessary node modules.
-7. Finally, run yarn start to run the frontend. The frontend client should be running on [http://localhost:3000/](http://localhost:3000/)
+5. Then from a wsl/linux terminal, run `./k8/setup.sh` . This will ensure that the backend microservices are running in the docker-desktop Kubernetes cluster and are exposed through the Ingresses we configured.
+6. To run the frontend, go to the ./frontend directory from the root folder.
+7. Run yarn add all to install the necessary node modules.
+8. Finally, run yarn start to run the frontend. The frontend client should be running on [http://localhost:3000/](http://localhost:3000/)
 
 
