@@ -238,20 +238,25 @@ export default function AuctionRoomDisplay(props) {
                     </Grid>
                     <Grid container item>
                         <Grid item xs={10}>
-                            <FormControl fullWidth sx={{ ml: 1, mr: 1 }}>
-                                <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
-                                <OutlinedInput onKeyPress={handleKeyPress}
-                                    name="bid"
-                                    label="bid"
-                                    type="number"
-                                    id="bid"
-                                    value={newBid}
-                                    onChange={handleNewBidChange}
-                                    startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                    label="Amount"
-                                    autoComplete='off'
-                                />
-                            </FormControl>
+                            {isOwner ? (
+                                <FormControl fullWidth sx={{ ml: 1, mr: 1 }}>
+                                    <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
+                                    <OutlinedInput onKeyPress={handleKeyPress}
+                                        name="bid"
+                                        label="bid"
+                                        type="number"
+                                        id="bid"
+                                        value={newBid}
+                                        onChange={handleNewBidChange}
+                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                        label="Amount"
+                                        autoComplete='off'
+                                    />
+                                </FormControl>
+                            ) : (
+                                null
+                            )}
+
                         </Grid>
                         <Grid container item xs={2} >
                             <Button sx={{ ml: 1, mr: 1, mb: 1 }} onClick={handleSendBid} variant="contained" color={'success'} fullWidth>Bid</Button>

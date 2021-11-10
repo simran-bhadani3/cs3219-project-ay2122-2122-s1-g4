@@ -16,12 +16,12 @@ import EButton from '../components/EButton';
 import { AuthContext } from "../AuthContext";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
-import {getAuthConfig, getAuctionDetailsUrl, getCurrencyUrl, getBidUrl} from '../actions.js';
+import { getAuthConfig, getAuctionDetailsUrl, getCurrencyUrl, getBidUrl } from '../actions.js';
 
 const useStyles = makeStyles(theme => ({
   submitButtonStyle: {
-      marginTop: theme.spacing(3),
-      marginBottom: theme.spacing(2)
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(2)
   },
   fullScreenHeight: {
     minHeight: "85vh"
@@ -41,7 +41,7 @@ function getCurrentUser() {
 export default function LoginPage() {
   const classes = useStyles();
   const authContext = useContext(AuthContext);
-  const dockerauthserver = `${process.env.REACT_APP_dockerauthserver||'http://localhost/api/user/'}login`;
+  const dockerauthserver = `${process.env.REACT_APP_dockerauthserver || 'http://localhost/api/user/'}login`;
   // const dockerauthserver = 'http://localhost:8080/api/user/login';
   let history = useHistory();
 
@@ -91,73 +91,64 @@ export default function LoginPage() {
   });
 
   return (
-      <Container component="main" maxWidth="xs" className={classes.fullScreenHeight}>
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Login
-          </Typography>
-          <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              onChange={formik.handleChange}
-              value={formik.values.email}
-            />
-            {formik.errors.email ? <div>{formik.errors.email}</div> : null}
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={formik.handleChange}
-              value={formik.values.password}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <EButton
-              type="submit"
-              fullWidth
-              variant="contained"
-              className={classes.submitButtonStyle}
-              content="Login"
-            />
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="signup" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
+    <Container component="main" maxWidth="xs" className={classes.fullScreenHeight}>
+      <CssBaseline />
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Login
+        </Typography>
+        <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            onChange={formik.handleChange}
+            value={formik.values.email}
+          />
+          {formik.errors.email ? <div>{formik.errors.email}</div> : null}
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={formik.handleChange}
+            value={formik.values.password}
+          />
+          <EButton
+            type="submit"
+            fullWidth
+            variant="contained"
+            className={classes.submitButtonStyle}
+            content="Login"
+          />
+          <Grid container>
+            <Grid item>
+              <Link href="signup" variant="body2" >
+                {"Don't have an account? Sign Up"}
+              </Link>
             </Grid>
-          </Box>
+          </Grid>
         </Box>
-      </Container>
+      </Box>
+    </Container>
   );
 }
