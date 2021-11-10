@@ -21,12 +21,13 @@ const useStyles = makeStyles(theme => ({
 function AuctionForm({ onSubmit, updateImage, isEdit=false, currValues={} }) {
     const classes = useStyles();
     const theme = useTheme();
-
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
     const initialValues = {
         room_display_name: "",
         auction_item_name: "",
         start_time: new Date(),
-        end_time: new Date(),
+        end_time: tomorrow,
         minbid: 0,
         increment: 0,
         category: "",
