@@ -24,18 +24,20 @@ const validate = values => {
     const errors = {};
     if (!values.username) {
         errors.username = 'Required';
-    } else if (values.username.length > 15) {
-        errors.username = 'Must be 15 characters or less';
+    } else if ((values.username.length > 30) || (values.username.length < 6)) {
+        errors.username = 'Must be between 30 and 6 characters long';
     }
 
     if (!values.email) {
         errors.email = 'Required';
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-        errors.email = 'Invalid email address';
+    } else if (!/e[0-9]{7}@u.nus.edu/gi.test(values.email)) {
+        errors.email = 'NUS email address required';
     }
-
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
     if (!values.password) {
         errors.password = 'Required';
+    } else if (!regex.test(values.password)) { 
+        errors.password = 'Password must be at least 8 characters long and contain a number, symbol, uppercase character and lowercase character.';
     }
 
     if (!values.confirmpassword) {
