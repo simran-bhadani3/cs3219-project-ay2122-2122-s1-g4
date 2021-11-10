@@ -1,48 +1,23 @@
 # CS3219: e_Auction Website
 
-# FRONTEND
+# To our users
 
-## To run the frontend:
+Hi auctioneer, welcome to the github repo of the e_auction website! 
 
-```
-cd frontend
-yarn start
-```
+Head over to our auction homepage to get started with your auction: https://cs3219-project-ay2122-2122-s1-g4-frontend-bsyylql4ka-as.a.run.app/signup
 
-## To add packages:
+# For developers 
 
-```
-yarn add all
-```
+If you want to manually setup the entire project and run everything locally, here are the steps.
 
-or
+Assuming the repo has been cloned locally and docker desktop with kubernetes enabled is available, 
 
-```
-yarn add {PACKAGE_NAME}, e.g. yarn add formik
-```
+1. Go to the root folder and run 'docker-compose build' to build images. 
+2. To run the metrics server for the HPA to work run `kubectl apply -f ./k8/hpametrics-server.yaml` from the root folder.
+3. Make sure the `./k8/setup.sh` and `./k8/teardown.sh` files are in LF mode for End of line sequence
+4. Then from a wsl/linux terminal, run `./k8/setup.sh` . This will ensure that the backend microservices are running in the docker-desktop Kubernetes cluster and are exposed through the Ingresses we configured.
+4. To run the frontend, go to the `./frontend` directory from the root folder.
+5. Run yarn add all to install the necessary node modules.
+6. Finally, run yarn start to run the frontend. The frontend client should be running on [http://localhost:3000/](http://localhost:3000/)
 
-## Chat functionality
 
-Open http://localhost/auction/{any room name} to join or create a new auction room
-This is a crude implementation of chat
-Works without authentication for now
-
-## Run mvp using shell script
-
-Go to root folder and run 'docker-compose build' to build images
-Then from wsl/linux terminal, run ./k8/teardown.sh && ./k8/setup1.sh
-Change sh files to CLRF for windows, LF for unix
-
-## Testing app
-
-1. Register account
-2. Login
-   (Steps 3-4 has to be done manually using postman for now since Michelle is still working on the auction creation pages)
-3. Create auction using user's unique \_id
-4. Create auction instance in fire base using auction's unique \_id and user's \_id using the auctionroom api
-5. Go the the auction room instance http://localhost:8080/auction/:auctionid
-6. Once inside, end auction button should show if you are the owner, other users will not see it.
-7. You can chat using the chatbox, but there is a rate limit of 5 messages in 10 seconds
-8. Bid must be higher than minimum or highest + 20, whichever is higher
-9. End auction will make the auction room non-functional and process the transaction between winner and owner
-10. Known bugs: Do not start bid with 0 e.g 0100
