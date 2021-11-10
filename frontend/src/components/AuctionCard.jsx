@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+// import { useTheme } from '@mui/material/styles';
 import { useHistory } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -58,7 +57,7 @@ const ExpandMore = styled((props) => {
 
 function AuctionCard({ item, updateAuctions, isEditDelete=false }) {
     const classes = useStyles();
-    const theme = useTheme();
+    // const theme = useTheme();
     const history = useHistory();
     const [imageUrl, setImageUrl] = useState("");
     // console.log("item", item);
@@ -77,7 +76,7 @@ function AuctionCard({ item, updateAuctions, isEditDelete=false }) {
 
     const getImage = () => {
         // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-        const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
+        // const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
         
         axios.get(`${getAuctionDetailsUrl()}download/${auctionId}`, getAuthConfig())
             .then(res => {
@@ -170,7 +169,13 @@ function AuctionCard({ item, updateAuctions, isEditDelete=false }) {
             <Grid className={classes.px1} alignItems="center" justifyContent="space-between">
                 <CardHeader
                     title={renderCategory()}
-                    action={isEditDelete && <AuctionCardSettings auction={item} updateAuctions={updateAuctions} />}
+                    action={isEditDelete && (
+                        <AuctionCardSettings 
+                            auction={item}
+                            updateAuctions={updateAuctions} 
+                            isOngoingHasEnded={getIsOngoingOrEnded} 
+                        />
+                    )}
                 />
             </Grid>
         );

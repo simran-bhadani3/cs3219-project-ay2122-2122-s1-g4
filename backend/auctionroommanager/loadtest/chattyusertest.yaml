@@ -1,0 +1,17 @@
+config:
+  target: "http://34.124.164.87/"
+  socketio:
+    transports: ["websocket"]
+  phases:
+    - duration: 60
+      arrivalCount: 30
+scenarios:
+  - engine: "socketio"
+    flow:
+      - loop:
+        - emit:
+            channel: "newChatMessage"
+            data: "Hello! {{ $randomString() }}"
+            think: 
+        count: 5
+      - think: 5 # do nothing for 5 seconds, then disconnect

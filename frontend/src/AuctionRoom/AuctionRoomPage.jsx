@@ -201,14 +201,64 @@ export default function AuctionRoomDisplay(props) {
         endAuction(newBid);
     };
 
+    const formatCurrency = amount => {
+        if (amount) {
+            return parseFloat(amount || 0)?.toFixed(2);
+        }
+    };
+
+    const renderMiddleSection = () => {
+        return (
+            <Grid item container xs={6} spacing={0} border={1}>
+                <Grid container direction="column" justifyContent="space-between">
+                    <Grid item>
+                        <Typography variant="h5" className="header-message" textAlign="center">Auction : {auctiondetails['room_display_name']}</Typography>
+                        <Typography variant="h5" className="header-message" textAlign="center">Highest Bid: ${formatCurrency(highestBid['highest'])}</Typography>
+                    </Grid>
+                    <Grid container item alignItems="center" direction="column" justifyContent="center">
+                        <Grid item xs={10}>
+                            <img
+                                src={getAuctionDetailsUrl() + 'download/' + auctiondetails['_id']}
+                                // src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
+                                alt="new"
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container item>
+                        <Grid item xs={10}>
+                            <FormControl fullWidth sx={{ ml: 1, mr: 1 }}>
+                                <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
+                                <OutlinedInput onKeyPress={handleKeyPress}
+                                    name="bid"
+                                    label="bid"
+                                    type="bid"
+                                    id="bid"
+                                    value={newBid}
+                                    onChange={handleNewBidChange}
+                                    startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                    label="Amount"
+                                    autoComplete='off'
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid container item xs={2} >
+                            <Button sx={{ ml: 1, mr: 1, mb: 1 }} onClick={handleSendBid} variant="contained" color={'success'} fullWidth>Bid</Button>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
+            </Grid>
+        );
+    };
+
     return (
         <Grid container direction="row" spacing={0} container style={{ height: '84vh', }}>
             <Grid container item xs={3} border={1}>
-                <Grid container direction="column">
-                    <Grid item xs={1} >
+                <Grid container direction="column" justifyContent={isOwner ? "space-between" : "flex-start"}>
+                    <Grid item>
                         <Typography variant="h5" className="header-message" textAlign="center">Item Details</Typography>
                     </Grid>
-                    <Grid container item xs={10} >
+                    <Grid container item>
                         <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
                             <nav aria-label="main mailbox folders">
                                 <List>
@@ -247,15 +297,18 @@ export default function AuctionRoomDisplay(props) {
                                         <ListItemButton>
                                             <ListItemText
                                                 primary="Minimum Increment"
-                                                secondary={`${auctiondetails['increment']}`}
+                                                secondary={`$${formatCurrency(auctiondetails['increment'])}`}
                                             />
                                         </ListItemButton>
                                     </ListItem>
                                     <Divider />
                                     <ListItem disablePadding>
                                         <ListItemButton component="a" href="#simple-list">
-                                            <ListItemText primary="Minimum Bid"
-                                                secondary={`${auctiondetails['minbid']}`}
+                                            <ListItemText
+                                                primary="Minimum Bid"
+                                                secondary={`$${formatCurrency(auctiondetails['minbid'])}`}
+                                            // primary="Minimum Bid"
+                                            // secondary={`$${formatCurrencyauctiondetails['minbid'])}`}
                                             />
                                         </ListItemButton>
                                     </ListItem>
@@ -315,7 +368,7 @@ export default function AuctionRoomDisplay(props) {
                         </Dialog>
                     </Grid>
                     {isOwner ? (
-                        <Grid container item xs={1}>
+                        <Grid container item>
                             <Button onClick={handleEndAuction} variant="contained" color="warning" fullWidth sx={{ margin: 1 }}>End Auction</Button>
                         </Grid>
                     ) : (
@@ -324,45 +377,7 @@ export default function AuctionRoomDisplay(props) {
 
                 </Grid>
             </Grid>
-            <Grid item container xs={6} spacing={0} border={1}>
-                <Grid container direction="column">
-                    <Grid item xs={1} >
-                        <Typography variant="h5" className="header-message" textAlign="center">Auction : {auctiondetails['room_display_name']}</Typography>
-                        <Typography variant="h5" className="header-message" textAlign="center">Highest Bid: ${highestBid['highest']}</Typography>
-                    </Grid>
-                    <Grid container item xs={10} alignItems="center" direction="column" justifyContent="center">
-                        <Grid item xs={10}>
-                            <img
-                                src={picture}
-                                // src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
-                                alt="new"
-                            />
-                        </Grid>
-                    </Grid>
-                    <Grid container item xs={1}>
-                        <Grid item xs={10}>
-                            <FormControl fullWidth sx={{ ml: 1, mr: 1 }}>
-                                <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
-                                <OutlinedInput onKeyPress={handleKeyPress}
-                                    name="bid"
-                                    label="bid"
-                                    type="bid"
-                                    id="bid"
-                                    value={newBid}
-                                    onChange={handleNewBidChange}
-                                    startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                    label="Amount"
-                                    autoComplete='off'
-                                />
-                            </FormControl>
-                        </Grid>
-                        <Grid container item xs={2} >
-                            <Button sx={{ ml: 1, mr: 1, mb: 1 }} onClick={handleSendBid} variant="contained" color={'success'} fullWidth>Bid</Button>
-                        </Grid>
-                    </Grid>
-
-                </Grid>
-            </Grid>
+            {renderMiddleSection()}
             <ChatSection roomId={roomId} messages={messages} sendMessage={sendMessage} />
         </Grid>
     );

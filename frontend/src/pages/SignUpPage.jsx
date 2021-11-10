@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useFormik } from 'formik';
+import { makeStyles } from '@mui/styles';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -48,8 +49,14 @@ const validate = values => {
     return errors;
 };
 
-export default function SignUp() {
+const useStyles = makeStyles(theme => ({
+    fullScreenHeight: {
+        minHeight: "85vh"
+    }
+}));
 
+export default function SignUp() {
+    const classes = useStyles();
     // Pass the useFormik() hook initial form values, a validate function that will be called when
     // form values change or fields are blurred, and a submit function that will
     // be called when the form is submitted
@@ -77,7 +84,7 @@ export default function SignUp() {
     });
 
     return (
-            <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="xs" className={classes.fullScreenHeight}>
                 <CssBaseline />
                 <Box
                     sx={{
