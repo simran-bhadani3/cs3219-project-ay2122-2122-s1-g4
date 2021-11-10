@@ -24,7 +24,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import NumberFormat from 'react-number-format';
 import { getAuthConfig, getAuctionDetailsUrl, getCurrencyUrl, getBidUrl } from '../actions.js';
 const axios = require('axios');
 
