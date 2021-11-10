@@ -307,8 +307,6 @@ export default function AuctionRoomDisplay(props) {
                                             <ListItemText
                                                 primary="Minimum Bid"
                                                 secondary={`$${formatCurrency(auctiondetails['minbid'])}`}
-                                            // primary="Minimum Bid"
-                                            // secondary={`$${formatCurrencyauctiondetails['minbid'])}`}
                                             />
                                         </ListItemButton>
                                     </ListItem>

@@ -1,5 +1,5 @@
 # pull official base image
-FROM node:13.12.0-alpine
+FROM node:14-alpine AS builder
 
 # set working directory
 WORKDIR /app
@@ -21,13 +21,15 @@ ENV REACT_APP_dockerauctionroomserver $REACT_APP_dockerauctionroomserver
 # install app dependencies
 COPY package.json yarn.lock ./
 COPY package.json ./
-RUN yarn --ignore-engines
+RUN yarn install --frozen-lockfile --ignore-engines
 COPY . ./
 RUN yarn build --ignore-engines
 
 # add app
-COPY . ./
+# COPY . ./
 
-EXPOSE 8080
 # start app
-CMD ["yarn", "start"]
+# CMD ["yarn", "start"]
+
+FROM nginx:1.19-alpine AS server
+COPY --from=builder ./app/build /usr/share/nginx/html
