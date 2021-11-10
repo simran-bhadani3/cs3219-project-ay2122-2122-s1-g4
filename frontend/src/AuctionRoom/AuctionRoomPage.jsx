@@ -103,7 +103,7 @@ export default function AuctionRoomDisplay(props) {
 
         axios.get(`${getAuctionDetailsUrl() + roomId}`, getAuthConfig())
             .then(response => {
-                console.log(response);
+                console.log(response.data);
                 setDetails(response.data)
                 if (getCurrentUser() == response.data['owner_id']) {
                     setOwner(true);
@@ -138,8 +138,8 @@ export default function AuctionRoomDisplay(props) {
         //get picture url
         axios.get(`${getAuctionDetailsUrl()}download/${auctiondetails['_id']}`, getAuthConfig())
             .then(res => {
-                console.log("response", res);
-                setPicture(res.data);
+                console.log("response", res.data.url);
+                setPicture(res.data.url);
             })
             .catch(err => {
                 console.log("error", err);
@@ -333,7 +333,7 @@ export default function AuctionRoomDisplay(props) {
                     <Grid container item xs={10} alignItems="center" direction="column" justifyContent="center">
                         <Grid item xs={10}>
                             <img
-                                src={picture + 'download/' + auctiondetails['_id']}
+                                src={picture}
                                 // src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
                                 alt="new"
                             />

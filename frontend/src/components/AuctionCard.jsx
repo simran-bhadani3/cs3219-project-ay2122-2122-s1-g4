@@ -82,7 +82,7 @@ function AuctionCard({ item, updateAuctions, isEditDelete=false }) {
         axios.get(`${getAuctionDetailsUrl()}download/${auctionId}`, getAuthConfig())
             .then(res => {
                 console.log("response", res);
-                setImageUrl(res.data);
+                setImageUrl(res.data.url);
             })
             .catch(err => {
                 console.log("error", err);

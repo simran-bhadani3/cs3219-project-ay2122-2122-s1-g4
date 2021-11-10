@@ -88,7 +88,8 @@ exports.uploadImage = async (req, res) => {
 };
 
 exports.downloadImage = async (req, res) => {
-	const filename = req.params.id + ".jpeg";
+	// const filename = req.params.id + ".jpeg";
+	const filename = req.params.id
 	try {
 		const url = await firebase.storage().ref(filename).getDownloadURL();
 		res.status(200).json({ url: url });
