@@ -238,7 +238,7 @@ export default function AuctionRoomDisplay(props) {
                     </Grid>
                     <Grid container item>
                         <Grid item xs={10}>
-                            {isOwner ? (
+                            {!isOwner ? (
                                 <FormControl fullWidth sx={{ ml: 1, mr: 1 }}>
                                     <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
                                     <OutlinedInput onKeyPress={handleKeyPress}
