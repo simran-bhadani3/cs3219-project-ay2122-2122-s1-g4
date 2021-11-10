@@ -41,7 +41,7 @@ spec:
             configMapKeyRef:
               key: REACT_APP_dockercurrencymanagementserver
               name: frontend-config-poxr
-        image: gcr.io/graphical-mile-329010/frontendcluster:1.0
+        image: gcr.io/graphical-mile-329010/frontendcluster:latest
         imagePullPolicy: Always
         name: frontendcluster
         ports:
