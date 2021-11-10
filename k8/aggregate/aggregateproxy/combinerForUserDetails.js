@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 
 // note that you need the http:// part if youre not using localhost, for axios requests
-// ! duplication here
 const DEPLOYED_URL = process.env.API_GATEWAY_URL; // format: "http://...";
 const PATH_AUCTIONDETAILS = "/api/auctiondetails/user";
 const PATH_CURRENCY = "/api/currency";
