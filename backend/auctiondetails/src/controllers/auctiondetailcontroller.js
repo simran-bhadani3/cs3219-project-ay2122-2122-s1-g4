@@ -1,6 +1,7 @@
 const Auctiondetail = require("../models/auctiondetailmodel.js");
 const mongoose = require("mongoose");
 const firebase = require("../../firebase/db.js");
+const fs = require('fs')
 // const firestore = firebase.firestore();
 require("firebase/storage");
 global.XMLHttpRequest = require("xhr2");
@@ -56,29 +57,39 @@ exports.create = (req, res) => {
 
 exports.uploadImage = async (req, res) => {
 	const storage = firebase.storage().ref();
-	const image = req.file;
-	const detailsid = req.body.id;
-	const extension = image.originalname.split(".")[1];
-	if (extension != "jpg") {
-		return res.status(400).send({
-			message: "Only jpg format is allowed",
-		});
-	} else {
-		const filename = detailsid + "." + extension;
+	const image = req.body['file'];
+	const bimage = image.replace("data:image/jpeg;base64,", "");
+	const detailsid = req.params.id;
+	console.log(detailsid)
+	// console.log(image);
+	const extension = image.substr(11, 15);
+	console.log(extension);
+	// const extension = image.originalname.split(".")[1];
+	// if (extension != "jpeg") {
+	// 	return res.status(400).send({
+	// 		message: "Only jpeg format is allowed",
+	// 	});
+	// } else {
+		// console.log(detailsid);
+		// console.log(imageDecoded);
+		const filename = detailsid;
 		try {
 			const storageRef = storage.child(filename);
-			const snapshot = await storageRef.put(image.buffer);
+			const snapshot = await storageRef.putString(bimage, 'base64', {contentType:'image/jpeg'});
+			// const snapshot = await storageRef.put(imageDecoded);
 			res.status(200).json({ message: "File successfully uploaded" });
 		} catch (error) {
+			console.log(error)
 			return res.status(500).send({
 				message: error || "Error uploading image",
 			});
 		}
-	}
+	// }
 };
 
 exports.downloadImage = async (req, res) => {
-	const filename = req.params.id + ".jpg";
+	// const filename = req.params.id + ".jpeg";
+	const filename = req.params.id
 	try {
 		const url = await firebase.storage().ref(filename).getDownloadURL();
 		res.status(200).json({ url: url });

@@ -6,7 +6,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Grid, Typography } from '@mui/material';
 import AuctionForm from '../components/AuctionForm';
 import axios from 'axios';
-import {getAuthConfig,getAuctionDetailsUrl, getBidUrl} from '../actions.js';
+import { getAuthConfig, getAuctionDetailsUrl, getBidUrl } from '../actions.js';
 
 const useStyles = makeStyles(theme => ({
     fullScreenHeight: {
@@ -52,9 +52,9 @@ function AddAuctionPage() {
 
     async function onSubmit(values) {
         // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
-        const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
+        const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver || 'http://localhost/api/auctiondetails'}`;
         // const dockerAuctionRoomServer = 'http://localhost:3003/api/room/newroom';
-        const dockerAuctionRoomServer = `${process.env.REACT_APP_dockerauctionroomserver||'http://localhost/api/room/newroom'}`;
+        const dockerAuctionRoomServer = `${process.env.REACT_APP_dockerauctionroomserver || 'http://localhost/api/room/newroom'}`;
 
         let auctionId = "";
         const userId = JSON.parse(localStorage.getItem('userid'));
@@ -71,6 +71,7 @@ function AddAuctionPage() {
             .then(res => {
                 auctionId = res.data._id;
                 console.log("form added successfully", res);
+                //get room id and upload image
             })
             .catch(function (error) {
                 console.log("error", error);
@@ -79,14 +80,15 @@ function AddAuctionPage() {
         // @david: if the upload image is working, move that code before the creating of new room post.
         // Create auction room
         const roomData = { roomname: auctionId, owner: userId };
-        await axios.post(`${getBidUrl()}newroom`, roomData,  getAuthConfig())
+        await axios.post(`${getBidUrl()}newroom`, roomData, getAuthConfig())
             .then(res => {
                 console.log("auction room created successfully", res);
                 setIsSubmitted(true);
                 setCountdown(5);
-                setTimeout(function() {
+                setTimeout(function () {
                     history.push("/all");
                 }, 5000);
+
             })
             .catch(err => {
                 console.log("error", err, roomData);
@@ -94,20 +96,59 @@ function AddAuctionPage() {
 
         // unable to upload images: the function below takes very long to load, need to check!
         const imgBodyFormData = new FormData();
-        imgBodyFormData.append('id', auctionId);
+        // imgBodyFormData.append('id', auctionId);
         imgBodyFormData.append('file', image);
-        await axios({
-            method: "post",
-            url: `${dockerAuctionDetailsServer}/upload/`,
-            data: imgBodyFormData,
-            headers: { "Content-Type": "multipart/form-data", "Authorization": getAuthConfig()},  
-        })
+        console.log(image);
+        // const header = getAuthConfig();
+        // header["Content-Type"] = "multipart/form-data"
+        // const jwt = localStorage.getItem('user').toString();
+        // const userConfig = {
+        //     headers: {
+        //         "Authorization": jwt.substr(1, jwt.length - 2)
+        //     }
+        // };
+        // await axios({
+        //     method: "post",
+        //     url: `${getAuctionDetailsUrl()}upload/`,
+        //     data: imgBodyFormData,
+        //     // headers: header
+        //     headers: { "Content-Type": "multipart/form-data", "Authorization": jwt.substr(1, jwt.length - 2) },
+        // })
+        //     .then(response => {
+        //         console.log("image uploaded successfully", response);
+        //         setIsSubmitted(true);
+        //         setCountdown(5);
+        //         setTimeout(function () {
+        //             history.push("/all");
+        //         }, 5000);
+        //     })
+        //     .catch(function (error) {
+        //         console.log("image upload error", error);
+        //     });
+
+        const jwt = localStorage.getItem('user').toString();
+        const userConfig = {
+            headers: {
+                "Authorization": jwt.substr(1, jwt.length - 2)
+            },
+            data: {
+                id : auctionId
+            }
+        };
+        await axios.post(`${getAuctionDetailsUrl()}upload/${auctionId}`, imgBodyFormData, userConfig)
             .then(response => {
                 console.log("image uploaded successfully", response);
+                setIsSubmitted(true);
+                setCountdown(5);
+                setTimeout(function () {
+                    history.push("/all");
+                }, 5000);
+
             })
             .catch(function (error) {
                 console.log("image upload error", error);
             });
+
     };
 
     const renderHeader = (header) => {

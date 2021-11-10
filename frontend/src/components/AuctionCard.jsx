@@ -78,10 +78,10 @@ function AuctionCard({ item, updateAuctions, isEditDelete=false }) {
         // const dockerAuctionDetailsServer = 'http://localhost:4000/api/auctiondetails';
         // const dockerAuctionDetailsServer = `${process.env.REACT_APP_dockerauctiondetailsserver||'http://localhost/api/auctiondetails'}`;
         
-        axios.get(`${getAuctionDetailsUrl()}/download/${auctionId}`, getAuthConfig())
+        axios.get(`${getAuctionDetailsUrl()}download/${auctionId}`, getAuthConfig())
             .then(res => {
                 console.log("response", res);
-                setImageUrl(res.data);
+                setImageUrl(res.data.url);
             })
             .catch(err => {
                 console.log("error", err);

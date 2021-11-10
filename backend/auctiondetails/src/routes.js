@@ -13,7 +13,7 @@ router.get('/', auctiondetailcontroller.findAll);
 router.post('/', auctiondetailcontroller.create);
 
 // Upload to firebase cloud
-router.post('/upload', uploadMiddleware, auctiondetailcontroller.uploadImage);
+router.post('/upload/:id', uploadMiddleware, auctiondetailcontroller.uploadImage);
 
 //Get download URL
 router.get('/download/:id', auctiondetailcontroller.downloadImage);
