@@ -230,7 +230,8 @@ export default function AuctionRoomDisplay(props) {
                         <Grid item xs={10}>
                             <img
                                 // src='https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350'
-
+                                width="90%"
+                                height="90%"
                                 src={picture}
                             // alt="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
                             />
