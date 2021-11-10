@@ -6,6 +6,10 @@ Hi auctioneer, welcome to the github repo of the e_auction website!
 
 Head over to our auction homepage to get started with your auction: http://34.124.196.146/
 
+# For graders  
+
+Please find our report [4-FinalReport-1.pdf](4-FinalReport-1.pdf) in our repo's root directory.
+
 # For developers 
 
 If you want to manually setup the entire project and run everything locally, here are the steps.
