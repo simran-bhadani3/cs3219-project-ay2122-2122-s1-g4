@@ -19,7 +19,7 @@ spec:
         - env:
           - name: backend
             value: mongodb://mongouseraccounts:27017/useraccounts
-          image: gcr.io/graphical-mile-329010/auctionbackend-currencymanagement:1.0
+          image: gcr.io/auction-platform-338414/auctionbackend-currencymanagement:1.0
           imagePullPolicy: Always
           name: auctionbackend-currencymanagement
           ports:
