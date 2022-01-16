@@ -5,7 +5,6 @@ services:
     build:  
       context: ./frontend
       args:
-       # need to embed variables during build
        # can change this to change url when running frontend in docker-desktop container
        # change to aggregator url or ingress url
         - REACT_APP_dockerauthserver=http://localhost/api/user/
