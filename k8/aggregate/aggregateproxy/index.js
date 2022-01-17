@@ -19,7 +19,7 @@ app.use(cors())
 
 // Configuration
 // const PORT = process.env.PORT || 8085;
-const PORT = 8085;
+const PORT = process.env.PORT || 8085;
 const HOST = "0.0.0.0";
 
 // Configuring api gateway location for the proxy middleware
