@@ -83,4 +83,4 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: frontendcluster
-  targetCPUUtilizationPercentage: 80
+  targetCPUUtilizationPercentage: 10
