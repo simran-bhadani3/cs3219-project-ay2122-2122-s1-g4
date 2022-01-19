@@ -61,5 +61,5 @@ jobs:
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
       run: |-
-        kubectl apply -f ./k8/ingress/unauth-ingress.yaml
+        kubectl apply -f ./k8deployment/ingress/unauth-ingress.yaml
         kubectl get services -o wide
