@@ -24,7 +24,7 @@ spec:
   #       port:
   #         number: 3000
   rules:
-  - host: http://34.124.150.13/ #kubernetes.docker.internal
+  - host: 34.124.150.13 #kubernetes.docker.internal
   - http:
       paths:
       - path: /api/user
