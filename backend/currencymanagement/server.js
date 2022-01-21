@@ -26,6 +26,11 @@ const cors = require("cors");
 app.use(cors());
 app.use("/api/currency", currencyManagement);
 
+app.get("/", (req, res) => {
+	res.json({ message: "Hello World" });
+});
+
+
 const port = process.env.PORT || 8080;
 
 app.listen(port, () => {
