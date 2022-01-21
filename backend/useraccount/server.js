@@ -27,6 +27,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 const cors = require('cors');
 app.use(cors())
+app.get("/", (req, res) => {
+	res.json({ message: "Hello World" });
+});
 app.use("/api/user", userAccounts);
 
 const port = process.env.PORT || 8080;
