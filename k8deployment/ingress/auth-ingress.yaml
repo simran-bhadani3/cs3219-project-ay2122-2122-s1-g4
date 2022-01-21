@@ -1,65 +1,62 @@
-# This workflow will build a docker container, publish it to Google Container Registry, and deploy it to GKE when there is a push to the main branch.
-#
-# To configure this workflow:
-#
-# 1. Ensure that your repository contains the necessary configuration for your Google Kubernetes Engine cluster, including deployment.yml, kustomization.yml, service.yml, etc.
-#
-# 2. Set up secrets in your workspace: GKE_PROJECT with the name of the project and GKE_SA_KEY with the Base64 encoded JSON service account key (https://github.com/GoogleCloudPlatform/github-actions/tree/docs/service-account-key/setup-gcloud#inputs).
-#
-# 3. Change the values for the GKE_ZONE, GKE_CLUSTER, IMAGE, and DEPLOYMENT_NAME environment variables (below).
-#
-# For more support on how to run the workflow, please visit https://github.com/google-github-actions/setup-gcloud/tree/master/example-workflows/gke
-
-name: Deploy ingress
-
-on:
-  push:
-    branches:
-      - main
-
-env:
-  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  GKE_CLUSTER: cluster-1    # TODO: update to cluster name
-  GKE_ZONE: asia-southeast1-a  # TODO: update to cluster zone
-  INGRESS_NAME: auth-ingress # TODO: update to deployment name
-
-jobs:
-  setup-build-publish-deploy:
-    name: Setup, Build, Publish, and Deploy
-    runs-on: ubuntu-latest
-    environment: production
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    # Setup gcloud CLI
-    - uses: google-github-actions/setup-gcloud@v0.2.0
-      with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ secrets.GKE_PROJECT }}
-
-    # Configure Docker to use the gcloud command-line tool as a credential
-    # helper for authentication
-    - run: |-
-        gcloud --quiet auth configure-docker
-
-    # Get the GKE credentials so we can deploy to the cluster
-    - uses: google-github-actions/get-gke-credentials@v0.2.1
-      with:
-        cluster_name: cluster-1
-        location: asia-southeast1-a
-        credentials: ${{ secrets.GCP_SA_KEY }}
-
-
-    # Set up kustomize
-    - name: Set up Kustomize
-      run: |-
-        curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-        chmod u+x ./kustomize
-
-    # Deploy the Docker image to the GKE cluster
-    - name: Deploy
-      run: |-
-        kubectl apply -f ./k8deployment/ingress/auth-ingress.yaml
-        kubectl get services -o wide
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auth-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/auth-url: http://useraccount.default.svc.cluster.local:8080/api/user/user
+    # nginx.ingress.kubernetes.io/auth-response-headers: userId # todo response headers need to be set by user api
+    # enable cors
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost, https://cs3219-project-ay2122-2122-s1-g4-frontend-bsyylql4ka-as.a.run.app, https://aggproxy-bsyylql4ka-as.a.run.app, http://34.124.176.116/, http://34.124.176.116/, http://34.126.147.222/auctionroom" 
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Origin, Keep-Alive, Accept, Content-Type, Authorization"
+spec:
+  rules:
+    - host: kubernetes.docker.internal
+    - http:
+        paths:
+          - path: /api/auctiondetails
+            pathType: Prefix
+            backend:
+              service:
+                name: auctiondetails
+                port:
+                  number: 8081
+          - path: /api/currency
+            pathType: Prefix
+            backend:
+              service:
+                name: currencymanagement
+                port:
+                  number: 8082
+          - path: /api/room
+            pathType: Prefix
+            backend:
+                service:
+                  name: auctionroom
+                  port:
+                    number: 8083
+          # - path: /test-auth # todo this isn't necessary for deployment
+          #   pathType: Prefix
+          #   backend:
+          #       service:
+          #         name: frontend
+          #         port:
+          #           number: 3000
+          # - path: /auctionroom
+          #   pathType: Prefix
+          #   backend:
+          #       service:
+          #         name: auctionroommanager
+          #         port:
+          #           number: 9000
+          # - path: /socket.io
+          #   pathType: Prefix
+          #   backend:
+          #       service:
+          #         name: auctionroommanager
+          #         port:
+          #           number: 9000
+                    
